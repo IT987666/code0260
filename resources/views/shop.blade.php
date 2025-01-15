@@ -163,76 +163,57 @@
         </div>
       </div>
       <div class="shop-list flex-grow-1">
-       
         <div class="d-flex justify-content-between mb-4 pb-md-2">
-
-          <div class="shop-acs d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
-            <select class="shop-acs__select form-select w-auto border-0 py-0 order-1 order-md-0" aria-label="Sort Items"
-              name="orderby" id="orderby">
-              <option value="-1" {{$order == -1 ? 'selected':''}}>Default</option>
-              <option value="1" {{$order == 1 ? 'selected':''}}>Data, New To Old</option>
-              <option value="2" {{$order == 2 ? 'selected':''}}>Data, Old To New</option>
-          
-            </select>
-              
-            <div class="shop-filter d-flex align-items-center order-0 order-md-3 d-lg-none">
-              <button class="btn-link btn-link_f d-flex align-items-center ps-0 js-open-aside" data-aside="shopFilter">
-                <svg class="d-inline-block align-middle me-2" width="14" height="10" viewBox="0 0 14 10" fill="none"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <use href="#icon_filter" />
-                </svg>
-                <span class="text-uppercase fw-medium d-inline-block align-middle">Filter</span>
-              </button>
+            <div class="shop-acs d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
+                <select class="shop-acs__select form-select w-auto border-0 py-0 order-1 order-md-0" aria-label="Sort Items"
+                    name="orderby" id="orderby">
+                    <option value="-1" {{$order == -1 ? 'selected':''}}>Default</option>
+                    <option value="1" {{$order == 1 ? 'selected':''}}>Data, New To Old</option>
+                    <option value="2" {{$order == 2 ? 'selected':''}}>Data, Old To New</option>
+                </select>
             </div>
-          </div>
         </div>
-
+    
         <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Product</th>
- 
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach ($products as $product)
-            <tr>
-                <!-- العمود الأول: اسم المنتج -->
-                <td class="product-name">
-                    <a href="{{route('shop.product.details',['product_slug'=>$product->slug])}}">
-                        {{$product->name}}
-                    </a>
-                </td>
-                <!-- العمود الثاني: الإجراءات -->
-                <td class="action-buttons">
-                    @if (Cart::instance('cart')->content()->where('id', $product->id)->count() > 0)
-                        <a href="{{route('cart.index')}}" class="btn btn-warning">Go To Order</a>
-                    @else
-                    <form name="addtocart-form" method="post" action="{{route('cart.add')}}">
-                        @csrf
-                        <input type="hidden" name="id" value="{{$product->id}}" />
-                        <input type="hidden" name="quantity" value="1" />
-                        <input type="hidden" name="name" value="{{$product->name}}" />
-                        <button type="submit" class="btn btn-primary">Add Product</button>
-                    </form>
-                    @endif
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-        
-        
-        
+            <thead>
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($products as $product)
+                <tr>
+                    <!-- العمود الأول: اسم المنتج -->
+                    <td class="product-name">
+                        <a href="{{route('shop.product.details',['product_slug'=>$product->slug])}}">
+                            {{$product->name}}
+                        </a>
+                    </td>
+                    <!-- العمود الثاني: الإجراءات -->
+                    <td class="action-buttons">
+                        <form name="addtocart-form" method="post" action="{{route('cart.add')}}">
+                            @csrf
+                            <input type="hidden" name="id" value="{{$product->id}}" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <input type="hidden" name="name" value="{{$product->name}}" />
+                            <!-- إضافة مفتاح فريد -->
+                            <input type="hidden" name="unique_key" value="{{ uniqid() }}" />
+                            <button type="submit" class="btn btn-primary">Add Product</button>
+                        </form>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
         </table>
-
+    
         <div class="divider"></div>
-
+    
         <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">
-          {{$products->withQueryString()->links('pagination::bootstrap-5')}}
+            {{$products->withQueryString()->links('pagination::bootstrap-5')}}
         </div>
-
-      </div>
+    </div>
+    
     </div>
   </section>
 </main>

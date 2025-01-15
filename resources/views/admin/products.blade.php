@@ -22,16 +22,22 @@
         <div class="wg-box">
             <div class="flex items-center justify-between gap10 flex-wrap">
                 <div class="wg-filter flex-grow">
-                    <form class="form-search">
+                    <form class="form-search flex-grow">
                         <fieldset class="name">
-                            <input type="text" placeholder="Search here..." class="" name="name"
-                                tabindex="2" value="" aria-required="true" required="">
+                            <input type="text" placeholder="Search here..." class="show-search"
+                                name="name" id="search-input" tabindex="2" value=""
+                                aria-required="true" required="" autocomplete="off">
                         </fieldset>
                         <div class="button-submit">
                             <button class="" type="submit"><i class="icon-search"></i></button>
                         </div>
+                        <div class="box-content-search">
+                            <ul id="box-content-search">
+                            </ul>
+                        </div>
                     </form>
-                </div>
+                        
+</div>
                 <a class="tf-button style-1 w208" href="{{route('admin.product.add')}}"><i
                         class="icon-plus"></i>Add new</a>
             </div>
@@ -78,11 +84,7 @@
                      
                             <td>
                                 <div class="list-icon-function">
-                                    <a href="{{route('shop.product.details',['product_slug'=>$product->slug])}}" target="_blank">
-                                        <div class="item eye">
-                                            <i class="icon-eye"></i>
-                                        </div>
-                                    </a>
+                                   
                                     <a href="{{route('admin.product.edit',['id'=>$product->id])}}">
                                         <div class="item edit">
                                             <i class="icon-edit-3"></i>
@@ -131,5 +133,55 @@ form.submit();
 });
 });
 });
+
+
+
+  $(function() {
+        $("#search-input").on("keyup", function() {
+            var searchQuery = $(this).val();
+
+            if (searchQuery.length > 2) {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('admin.search') }}",
+                    data: {
+                        query: searchQuery
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $("#box-content-search").html(''); // تفريغ المحتوى الحالي
+
+                        $.each(data, function(index, item) {
+                            var url =
+                                "{{ route('admin.product.edit', ['id' => ':product_id']) }}";
+                            var link = url.replace(':product_id', item.id);
+
+                            $("#box-content-search").append(`
+                                <li>
+                                    <ul>
+                                        <li class="product-item gap14 mb-10">
+                                             
+                                            <div class="flex items-center justify-between gap20 flex-grow">
+                                                <div class="name">
+                                                    <a href="${link}" class="body-text">${item.name}</a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="mb-10">
+                                            <div class="divider"></div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            `);
+                        });
+                    },
+                    error: function() {
+                        console.error("Failed to fetch search results.");
+                    }
+                });
+            }
+        });
+    });
 </script>
+ 
 @endpush

@@ -14,12 +14,7 @@
             margin-bottom: 10px;
         }
 
-        .toggle-specification-btn {
-            background: #f0f0f0;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
+     
 
         #preview-container-$ {
             specificationCounter
@@ -35,8 +30,71 @@
         .specification-content {
             display: block;
         }
-    </style>
 
+
+
+        
+    </style>
+<style>
+    .tf-button:hover {
+      color: var(--Main);
+      background-color: #FFF;
+    }
+    .tf-button:hover span {
+      color: #FFF !important;
+    }
+    .tf-button i {
+      font-size: 20px;
+    }
+    .tf-button.style-1 {
+      color: var(--Main);
+      background-color: var(--White);
+    }
+    .tf-button.style-1:hover {
+      color: #FFF;
+      background-color: var(--Main);
+    }
+    .tf-button.style-2 {
+      color: #575864;
+      background-color: #FFF;
+      border-color: var(--Input);
+    }
+    .tf-button.style-2:hover {
+      color: #FFF;
+      background-color: var(--Main);
+    }
+    .tf-button.w208 {
+      width: 208px;
+    }
+    .tf-button.w230 {
+      width: 230px;
+    }
+    .tf-button.w180 {
+      width: 180px;
+    }
+    .tf-button.w128 {
+      width: 128px;
+    }
+    
+    .tf-button-funtion {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--Input);
+      border-radius: 12px;
+      padding: 14px 21px;
+      cursor: pointer;
+    }
+    .tf-button-funtion i {
+      color: var(--Body-Text);
+      font-size: 20px;
+    }
+    .tf-button-funtion div {
+      color: var(--Body-Text);
+    }
+    </style>
+    
     <div class="main-content-inner">
         <div class="main-content-wrap">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
@@ -98,22 +156,6 @@
                         <span class="alert alert-danger text-center">{{ $message }}</span>
                     @enderror
 
-
-
-                </div>
-                <div class="wg-box">
-
-                    <fieldset class="specifications">
-                        <!-- زر إضافة مواصفات -->
-                        <button type="button" id="add-specification-btn" class="tf-button">Add Specification</button>
-
-                        <!-- مكان إضافة الحقول الجديدة -->
-                        <div id="specifications-container">
-                            <!-- الحقول المضافة ديناميكياً ستظهر هنا -->
-                        </div>
-
-                    </fieldset>
-
                     <div class="cols gap22">
                         <fieldset class="name">
                             <div class="body-title mb-10">Status</div>
@@ -132,7 +174,27 @@
                     <div class="cols gap10">
                         <button class="tf-button w-full" type="submit">Add product</button>
                     </div>
+
                 </div>
+                <div class="wg-box">
+                    <fieldset class="specifications">
+                        <!-- مكان إضافة الحقول الجديدة -->
+                         <div class="body-title mb-10">Technical Specification <span class="tf-color-1">*</span>
+                        </div> 
+                        <div id="specifications-container">
+
+                            <!-- الحقول المضافة ديناميكياً ستظهر هنا -->
+                        </div>
+                    </fieldset>
+                
+                    <!-- زر إضافة مواصفات بعد الحقول المضافة -->
+                    <button type="button" id="add-specification-btn" class="tf-button w-full" style="margin-top: 20px;">Add Specification</button>
+                </div>
+                
+
+
+
+
             </form>
             <!-- /form-add-product -->
         </div>
@@ -153,11 +215,8 @@
                     if (!$(this).data('ckeditor-initialized')) {
                         CKEDITOR.replace(this);
 
-                        // بعد تهيئة الـ CKEditor، نزيل التاغات أو الدبل كوتيشن إذا كانت موجودة
-                        var content = $(this).val(); // الحصول على المحتوى
-                        //content = content.replace(/<[^>]*>/g, ''); // إزالة أي تاغات HTML
-                        // content = content.replace(/\"/g, ''); // إزالة الدبل كوتيشن
-
+                         var content = $(this).val(); // الحصول على المحتوى
+                      
                         // تعيين المحتوى المعدل داخل الـ CKEditor
                         CKEDITOR.instances[$(this).attr('id')].setData(content);
 
@@ -201,40 +260,45 @@
             <div class="specification-item" id="specification-${specificationCounter}">
                 <div class="spec-header">
                     <span id="specification-label-${specificationCounter}">Specification ${specificationCounter}</span>
-                    <button type="button" class="toggle-specification-btn" data-spec-id="${specificationCounter}">Hide</button>
                 </div>
                 <div class="specification-content">
                     <div class="specification-name">
                         <label for="spec-name-${specificationCounter}">Specification Name:</label>
                         <input type="text" name="specifications[${specificationCounter}][name]" id="spec-name-${specificationCounter}" placeholder="Enter specification name" required>
                     </div>
-                    <div class="specification-title">
-                        <label for="spec-title-${specificationCounter}">Specification Title:</label>
-                        <input type="text" name="specifications[${specificationCounter}][title]" id="spec-title-${specificationCounter}" placeholder="Enter specification title">
-                    </div>
+                         
+
+
+
+
+
+
+
+                    
                     <div class="specification-paragraphs">
                         <label for="spec-paragraphs-${specificationCounter}">Specification Paragraphs:</label>
                         <textarea name="specifications[${specificationCounter}][paragraphs]" id="spec-paragraphs-${specificationCounter}" placeholder="Enter paragraphs"></textarea>
                     </div>
                   <div class="specification-gallery">
-    <fieldset>
-        <label for="specifications[${specificationCounter}][images]">Images</label>
-        <div class="gallery-preview" id="preview-container-${specificationCounter}">
-            <!-- سيتم عرض الصور الحالية هنا -->
-            @foreach ($specification['images'] ?? [] as $image)
-                <div class="gitems">
-                    <img src="{{ asset('storage/' . $image) }}" alt="Specification Image">
-                    <button type="button" class="remove-old-image-btn" data-image="{{ $image }}">X</button>
-                </div>
-            @endforeach
-        </div>
-        <input type="file" name="specifications[${specificationCounter}][images][]" id="gFile-${specificationCounter}" class="form-control modern-input" accept="image/*" multiple>
-    </fieldset>
-</div>
+                                <fieldset>
+                                    <label for="specifications[${specificationCounter}][images]">Images</label>
+                                    <div class="gallery-preview" id="preview-container-${specificationCounter}">
+                                        <!-- سيتم عرض الصور الحالية هنا -->
+                                        @foreach ($specification['images'] ?? [] as $image)
+                                            <div class="gitems">
+                                                <img src="{{ asset('storage/' . $image) }}" alt="Specification Image">
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <input type="file" name="specifications[${specificationCounter}][images][]" id="gFile-${specificationCounter}" class="form-control modern-input" accept="image/*" multiple>
+                                </fieldset>
+                            </div>
 
                     <button type="button" class="remove-specification-btn" data-spec-id="${specificationCounter}">Remove</button>
                 </div>
-            </div>`;
+<button type="button" id="save-specification-btn" class="tf-button w-full toggle-specification-btn" data-spec-id="${specificationCounter}" style="margin: 0 auto; display: block;">SAVE</button>
+
+            </div>`; 
 
                 $('#specifications-container').append(newSpecification);
                 initializeTextEditor(`#spec-paragraphs-${specificationCounter}`);
@@ -251,18 +315,29 @@
 
             // إظهار/إخفاء قسم المواصفات
             $(document).on('click', '.toggle-specification-btn', function() {
-                const specId = $(this).data('spec-id');
-                const specContent = $(`#specification-${specId} .specification-content`);
-                const button = $(this);
+    const specId = $(this).data('spec-id');
+    const specContent = $(`#specification-${specId} .specification-content`);
+    const button = $(this);
+    const specName = $(`#spec-name-${specId}`).val() || `Specification ${specId}`;
 
-                if (specContent.is(':visible')) {
-                    specContent.slideUp();
-                    button.text('Show');
-                } else {
-                    specContent.slideDown();
-                    button.text('Hide');
-                }
-            });
+    // إضافة الكلاس tf-button للتأكد من أن الزر يتبع التنسيق الصحيح
+    button.addClass('tf-button');
+    
+    // توسيط الزر عند النقر
+    button.css({
+        'margin': '0 auto',
+        'display': 'block'
+    });
+
+    if (specContent.is(':visible')) {
+        specContent.slideUp();
+        button.text(`Show ${specName}`);
+    } else {
+        specContent.slideDown();
+button.text(`SAVE ${specName}`);
+    }
+});
+
 
             // معاينة الصور
             // معاينة الصور
@@ -282,10 +357,9 @@
                                 gItem.className = 'gitems';
                                 gItem.innerHTML = `
                         <img src="${e.target.result}" alt="Preview Image" style="max-width: 100px; max-height: 100px; object-fit: cover;">
-                        <button type="button" class="remove-old-image-btn">X</button>
+                     
                     `;
-                                gItem.querySelector('.remove-old-image-btn').addEventListener(
-                                    'click', () => gItem.remove());
+                               
                                 previewContainer.appendChild(gItem);
                             };
                             reader.readAsDataURL(file);
@@ -296,7 +370,7 @@
                 }
             });
 
-
+           
 
             // إزالة قسم المواصفات
             $(document).on('click', '.remove-specification-btn', function() {
@@ -307,5 +381,6 @@
             // تهيئة محرر النصوص للمواصفات
             initializeTextEditor('textarea[name^="specifications"]');
         });
+      
     </script>
 @endpush

@@ -1,7 +1,12 @@
 <ul class="account-nav">
     <li><a href="{{route('user.index')}}" class="menu-link menu-link_us-s">Dashboard</a></li>
     <li><a href="{{route('user.orders')}}" class="menu-link menu-link_us-s">Orders</a></li>
-   
+    <li  >        <a href="{{route('shop.index')}}" class="menu-link menu-link_us-s">New Order</a>
+
+        {{--<a href="{{route('shop.index')}}" class="menu-link menu-link_us-s">Product</a>--}}
+      </li>
+      <li >
+      </li>
     <li>
         <form method="POST" action="{{route('logout')}}" id="logout.form">
             @csrf

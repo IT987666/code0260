@@ -242,7 +242,7 @@
                                 multiple>
                 
                             <!-- Display Existing Images -->
-                            @if (!empty($spec->images))
+                            {{--@if (!empty($spec->images))
                                 <p>Existing Images:</p>
                                 <div class="mb-3">
                                     <ul class="list-unstyled">
@@ -256,7 +256,24 @@
                                         @endforeach
                                     </ul>
                                 </div>
-                            @endif
+                            @endif--}}
+                            <!-- Display Existing Images -->
+@if (!empty($spec->images) && is_string($spec->images) && !is_null(json_decode($spec->images, true)))
+<p>Existing Images:</p>
+<div class="mb-3">
+    <ul class="list-unstyled">
+        @foreach (json_decode($spec->images) as $image)
+            <li class="mb-2 d-flex align-items-center">
+                <img src="{{ asset('storage/' . $image) }}" alt="Specification Image"
+                    width="100" class="me-3">
+                <button type="button" class="btn btn-danger btn-sm"
+                    onclick="deleteSpecImage('{{ $image }}', '{{ $spec->id }}')">Delete</button>
+            </li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
                         </div>
                     </div>
                 @endforeach

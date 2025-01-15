@@ -3,8 +3,7 @@
 <style>
     .modal-backdrop {
         background-color: rgba(0, 0, 0, 0.1) !important;
-        /* Light grey backdrop */
-    }
+     }
 </style>
 
 <style>
@@ -22,6 +21,117 @@
         border-radius: 8px;
         /* Optional rounded corners */
     }
+    .list-icon-function {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* مسافة بين الأيقونات */
+}
+
+.list-icon-function a {
+    padding: 5px; /* لزيادة المساحة القابلة للنقر حول الأيقونة */
+    border-radius: 5px; /* إضافة زوايا مستديرة اختيارياً */
+    transition: background-color 0.2s ease; /* تأثير مرئي عند التمرير */
+}
+
+.list-icon-function a:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* تغيير اللون عند التمرير */
+}
+td.text-center a.edit-note {
+    white-space: nowrap; /* منع النص من الالتفاف */
+    overflow: hidden; /* إخفاء النص الزائد */
+    text-overflow: ellipsis; /* إضافة ثلاث نقاط (...) عند تجاوز النص */
+    display: inline-block;
+    max-width: 100px; /* عرض محدد للعنصر */
+    vertical-align: middle;
+}
+
+td.text-center a.edit-note:hover {
+    overflow: visible; /* إظهار النص الكامل عند التمرير */
+    white-space: normal;
+    word-wrap: break-word;
+    position: relative;
+    z-index: 10;
+    background-color: #f9f9f9; /* خلفية واضحة للنص */
+    padding: 5px;
+    border: 1px solid #ccc; /* حدود لإظهار النص بشكل مميز */
+    border-radius: 5px; /* زوايا دائرية */
+}
+
+
+
+
+
+/* تنسيق صندوق نتائج البحث */
+#box-content-search-order {
+    max-height: 300px; /* تحديد ارتفاع الصندوق */
+    overflow-y: auto; /* إتاحة التمرير إذا تجاوزت النتائج الطول */
+    border: 1px solid #ddd;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: absolute; /* ليظهر فوق العناصر الأخرى */
+    width: 100%;
+    z-index: 1000;
+}
+
+/* تنسيق العناصر الفردية */
+#box-content-search-order li {
+    list-style: none;
+    padding: 8px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: background-color 0.3s ease;
+}
+
+#box-content-search-order li:last-child {
+    border-bottom: none;
+}
+
+#box-content-search-order li:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+/* تنسيق النصوص داخل النتائج */
+.order-item .name {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
+
+.order-item .name:hover {
+    color: #007bff; /* لون عند التمرير */
+}
+
+.order-item .status {
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.order-item .status.badge-success {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.order-item .status.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.order-item .status.badge-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+.table-responsive {
+    overflow-y: auto !important; /* إجبار التمرير */
+    max-height: 500px !important; /* تحديد أقصى ارتفاع */
+}
+
 </style>
 
 @section('content')
@@ -106,28 +216,26 @@
                                             {{ $order->status == 'canceled' ? \Carbon\Carbon::parse($order->canceled_date)->format('Y-m-d H:i:s') : 'N/A' }}
                                             <!-- عرض تاريخ الإلغاء في العمود الجديد -->
                                         </td>
+                                        
                                         <td class="text-center">
                                             <a href="javascript:void(0)" class="edit-note"
                                                 data-order-id="{{ $order->id }}" data-note="{{ $order->note }}">
                                                 {{ $order->note ? $order->note : 'Add Note' }}
                                             </a>
                                         </td>
+                                        
 
                                         <td class="text-center">
-                                            <a href="{{ route('admin.order.details', ['order_id' => $order->id]) }}">
-                                                <div class="list-icon-function view-icon">
-                                                    <div class="item eye">
-                                                        <i class="icon-eye"></i>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <div>
-                                                <a href="{{ route('user.order.edit', ['order_id' => $order->id]) }}"
-                                                    class="ms-2" title="Edit Order">
+                                            <div class="list-icon-function">
+                                                <a href="{{ route('admin.order.details', ['order_id' => $order->id]) }}" title="View Details">
+                                                    <i class="icon-eye"></i>
+                                                </a>
+                                                <a href="{{ route('user.order.edit', ['order_id' => $order->id]) }}" title="Edit Order">
                                                     <i class="fa fa-edit text-primary" style="font-size: 1.2rem;"></i>
                                                 </a>
                                             </div>
                                         </td>
+                                        
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -173,64 +281,69 @@
 
     @push('scripts')
         <script>
-            $(function() {
-                $("#search-input-order").on("keyup", function() {
-                    var searchQuery = $(this).val();
+        $(function () {
+    $("#search-input-order").on("keyup", function () {
+        var searchQuery = $(this).val();
 
-                    // إذا كان النص المدخل أكبر من حرفين، نرسل طلب البحث
-                    if (searchQuery.length > 2) {
-                        $.ajax({
-                            type: "GET",
-                            url: "{{ route('admin.orders.search') }}", // تأكد من أن الـ route صحيح
-                            data: {
-                                query: searchQuery
-                            },
-                            dataType: 'json',
-                            success: function(data) {
-                                $("#box-content-search-order").html(''); // مسح النتائج القديمة
+        if (searchQuery.length > 2) {
+            $.ajax({
+                type: "GET",
+                url: "{{ route('admin.orders.search') }}",
+                data: { query: searchQuery },
+                dataType: 'json',
+                success: function (data) {
+                    $("#box-content-search-order").html(''); // مسح النتائج القديمة
 
-                                if (data.length === 0) {
-                                    $("#box-content-search-order").append(
-                                        '<li>No results found.</li>'); // إذا لم توجد نتائج
-                                } else {
-                                    $.each(data, function(index, item) {
-                                        if (item && item.name && item
-                                            .id) { // تحقق من وجود item وخصائصه
-                                            var link =
-                                                "{{ route('admin.order.details', ['order_id' => ':order_id']) }}";
-                                            link = link.replace(':order_id', item.id);
+                    if (data.length === 0) {
+                        $("#box-content-search-order").append('<li>No results found.</li>');
+                    } else {
+                        $.each(data, function (index, item) {
+                            if (item && item.name && item.id && item.status) {
+                                // تحديد الكلاس بناءً على الحالة
+                                let statusClass = '';
+                                switch (item.status.toLowerCase()) {
+                                    case 'delivered':
+                                        statusClass = 'badge-success'; // أخضر
+                                        break;
+                                    case 'canceled':
+                                        statusClass = 'badge-danger'; // أحمر
+                                        break;
+                                    case 'ordered':
+                                        statusClass = 'badge-warning'; // أصفر
+                                        break;
+                                    default:
+                                        statusClass = 'badge-secondary'; // رمادي (افتراضي)
+                                }
 
-                                            // تنسيق عرض الأوامر بشكل جميل
-                                            $("#box-content-search-order").append(`
+                                var link = "{{ route('admin.order.details', ['order_id' => ':order_id']) }}";
+                                link = link.replace(':order_id', item.id);
+
+                                $("#box-content-search-order").append(`
                                     <li>
-                                        <div class="order-item flex items-center gap-10 p-2">
-                                            <div class="image">
-                                                <img src="{{ asset('images/order-icon.png') }}" alt="Order" class="img-thumbnail" width="50" height="50">
-                                            </div>
-                                            <div class="order-info flex flex-col">
-                                                <a href="${link}" class="name text-bold">${item.name}</a>
-                                                <span class="order-id text-muted">Order ID: ${item.id}</span>
-                                                <span class="status badge badge-success">${item.status}</span>
+                                        <div class="order-item">
+                                            <div class="order-info">
+                                                <a href="${link}" class="name">${item.name}</a>
+                                                <span class="status badge ${statusClass}">${item.status}</span>
                                             </div>
                                         </div>
                                     </li>
                                 `);
-                                        } else {
-                                            console.warn("Invalid item data: ",
-                                                item); // لو كانت البيانات غير صحيحة
-                                        }
-                                    });
-                                }
-                            },
-                            error: function() {
-                                console.error("Failed to fetch search results.");
+                            } else {
+                                console.warn("Invalid item data: ", item);
                             }
                         });
-                    } else {
-                        $("#box-content-search-order").html(''); // إذا كان النص أقل من 3 حروف، نغلق النتائج
                     }
-                });
+                },
+                error: function () {
+                    console.error("Failed to fetch search results.");
+                }
             });
+        } else {
+            $("#box-content-search-order").html(''); // إخفاء النتائج
+        }
+    });
+});
+
         </script>
 
         <script>

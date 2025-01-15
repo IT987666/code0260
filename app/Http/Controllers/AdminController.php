@@ -277,6 +277,7 @@ class AdminController extends Controller
                 $specification->paragraphs = isset($spec['paragraphs']) ? $spec['paragraphs'] : null;
 
                 // إدارة الصور
+
                 if (isset($spec['images']) && is_array($spec['images'])) {
                     $imagePaths = [];
                     foreach ($spec['images'] as $image) {
@@ -406,133 +407,9 @@ class AdminController extends Controller
     }
 
 
-    public function slides()
-    {
-        $slides = Slide::orderBy('id', 'DESC')->paginate(12);
-        return view('admin.slides', compact('slides'));
-    }
+     
 
-    public function slide_add()
-    {
-        return view('admin.slide-add');
-    }
-
-
-    public function slide_store(Request $request)
-    {
-        // التحقق من صحة المدخلات
-        $request->validate([
-            'tagline' => 'required',
-            'title' => 'required',
-            'subtitle' => 'required',
-            'link' => 'required',
-            'status' => 'required',
-            'image' => 'required|mimes:png,jpg,jpeg'
-        ]);
-
-        // إنشاء السلايد
-        $slide = new Slide();
-        $slide->tagline = $request->tagline;
-        $slide->title = $request->title;
-        $slide->subtitle = $request->subtitle;
-        $slide->link = $request->link;
-        $slide->status = $request->status;
-
-        // معالجة الصورة
-        $image = $request->file('image');
-        $file_extension = $request->file('image')->extension(); // الحصول على امتداد الملف
-        $file_name = Carbon::now()->timestamp . '.' . $file_extension; // تعيين اسم الملف باستخدام الوقت الحالي
-
-        // إنشاء الصورة المصغرة
-        $this->GenerateSlideThumbailsImage($image, $file_name);
-
-        // حفظ السلايد
-        $slide->image = $file_name;
-        $slide->save();
-
-        // إعادة التوجيه مع رسالة النجاح
-        return redirect()->route('admin.slides')->with("status", "Slide added successfully!");
-    }
-
-    public function GenerateSlideThumbailsImage($image, $imageName)
-    {
-        // تحديد المسار الذي سيتم حفظ الصورة فيه
-        $destinationPath = public_path('uploads/slides');
-
-        // استخدام Intervention Image لقراءة وتعديل الصورة
-        $img = Image::read($image->path());
-
-        // تغيير حجم الصورة والحفاظ على نسبة الأبعاد
-        $img->cover(400, 690, "top");
-        $img->resize(400, 690, function ($constraint) {
-            $constraint->aspectRatio();
-        })
-
-            // حفظ الصورة في المسار المحدد
-            ->save($destinationPath . '/' . $imageName);
-    }
-
-
-    public function slide_edit($id)
-
-    {
-        $slide = Slide::find($id);
-        return view('admin.slide-edit', compact('slide'));
-    }
-
-    public function slide_update(Request $request)
-    {
-
-        $request->validate([
-            'tagline' => 'required',
-            'title' => 'required',
-            'subtitle' => 'required',
-            'link' => 'required',
-            'status' => 'required',
-            'image' => 'mimes:png,jpg,jpeg'
-        ]);
-
-        // إنشاء السلايد
-        $slide =  Slide::find($request->id);
-        $slide->tagline = $request->tagline;
-        $slide->title = $request->title;
-        $slide->subtitle = $request->subtitle;
-        $slide->link = $request->link;
-        $slide->status = $request->status;
-        if ($request->hasFile('image')) {
-            if (File::exists(public_path('uploads/slides') . '/' . $slide->image)) {
-                File::delete(public_path('uploads/slides') . '/' . $slide->image);
-            }
-            $image = $request->file('image');
-            $file_extension = $request->file('image')->extension(); // الحصول على امتداد الملف
-            $file_name = Carbon::now()->timestamp . '.' . $file_extension; // تعيين اسم الملف باستخدام الوقت الحالي
-
-            // إنشاء الصورة المصغرة
-            $this->GenerateSlideThumbailsImage($image, $file_name);
-
-            // حفظ السلايد
-            $slide->image = $file_name;
-        }
-
-        $slide->save();
-
-        // إعادة التوجيه مع رسالة النجاح
-        return redirect()->route('admin.slides')->with("status", "Slide update successfully!");
-    }
-
-
-    public function slide_delete($id)
-    {
-        $slide = Slide::find($id);
-
-        if (File::exists(public_path('uploads/slides') . '/' . $slide->image)) {
-            File::delete(public_path('uploads/slides') . '/' . $slide->image);
-        }
-
-        $slide->delete();
-
-        return redirect()->route('admin.slides')->with("status", "Slide deleted successfully!");
-    }
+  
 
 
 
@@ -541,11 +418,12 @@ class AdminController extends Controller
     {
         $query = $request->input('query');
 
-        $results = Product::where('name', 'LIKE', "%{$query}%")->limit(8)->get();
+        $results = Product::where('name', 'LIKE', "%{$query}%")->limit(50)->get();
 
         return response()->json($results);
     }
-
+    
+    
 
     public function search_order(Request $request)
     {
@@ -553,7 +431,7 @@ class AdminController extends Controller
 
         // البحث عن الأوامر باستخدام اسم العميل فقط
         $results = Order::where('name', 'LIKE', "%{$query}%")
-            ->limit(8)  // تحديد الحد الأقصى للنتائج
+            ->limit(50)  // تحديد الحد الأقصى للنتائج
             ->get();
 
         return response()->json($results);  // إرجاع النتائج بتنسيق JSON

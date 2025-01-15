@@ -338,10 +338,10 @@
   
         <div class="container">
           <div class="overflow-hidden">
-            <ul class="navigation__list list-unstyled position-relative">
+            {{--<ul class="navigation__list list-unstyled position-relative">
               {{--<li class="navigation__item">
                 <a href="{{route('home.index')}}" class="navigation__link">Home</a>
-              </li>--}}
+              </li>
               <li class="navigation__item">
                 <a href="{{route('shop.index')}}" class="navigation__link">Product</a>
               </li>
@@ -349,7 +349,7 @@
                 <a href="{{route('cart.index')}}" class="navigation__link">Order</a>
               </li>
          
-            </ul>
+            </ul>--}}
           </div>
         </div>
   
@@ -425,13 +425,13 @@
             <ul class="navigation__list list-unstyled d-flex">
               {{--<li class="navigation__item">
                 <a href="{{route('home.index')}}" class="navigation__link">Home</a>
-              </li>--}}
+              </li>
               <li class="navigation__item">
                 <a href="{{route('shop.index')}}" class="navigation__link">product</a>
               </li>
               <li class="navigation__item">
                 <a href="{{route('cart.index')}}" class="navigation__link">Order</a>
-              </li>
+              </li>--}}
             {{--
               <li class="navigation__item">
                 <a href="{{route('home.contact')}}" class="navigation__link">Contact</a>

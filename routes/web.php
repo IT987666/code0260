@@ -17,40 +17,39 @@ Route::delete('/specification/image/delete', [UserController::class, 'deleteSpec
 Route::middleware([RedirectIfNotAuthenticated::class])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home.index');
 });
-Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
-Route::get('/shop/{product_slug}', [ShopController::class, 'product_details'])->name('shop.product.details');
+Route::get('/manage-items', [ShopController::class, 'index'])->name('shop.index');
+Route::get('/manage-item/{product_slug}', [ShopController::class, 'product_details'])->name('shop.product.details');
 
 
 
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add', [CartController::class, 'add_to_cart'])->name('cart.add');
-Route::put('/cart/increase-quantity/{rowId}', [CartController::class, 'increase_cart_quantity'])->name('cart.qty.increase');
-Route::put('/cart/decrease-quantity/{rowId}', [CartController::class, 'decrease_cart_quantity'])->name('cart.qty.decrease');
-Route::put('/cart/update-price/{rowId}', [CartController::class, 'update_price'])->name('cart.price.update');
-Route::put('cart/qty/update/{rowId}', [CartController::class, 'update_qty'])->name('cart.qty.update');
-Route::post('/cart/duplicate/{rowId}', [CartController::class, 'duplicateItem'])->name('cart.duplicate');
+Route::get('/task-list', [CartController::class, 'index'])->name('cart.index');
+Route::post('/task-list/add', [CartController::class, 'add_to_cart'])->name('cart.add');
+Route::put('/task-list/increase-quantity/{rowId}', [CartController::class, 'increase_cart_quantity'])->name('cart.qty.increase');
+Route::put('/task-list/decrease-quantity/{rowId}', [CartController::class, 'decrease_cart_quantity'])->name('cart.qty.decrease');
+Route::put('/task-list/update-price/{rowId}', [CartController::class, 'update_price'])->name('cart.price.update');
+Route::put('task-list/qty/update/{rowId}', [CartController::class, 'update_qty'])->name('cart.qty.update');
+Route::post('/task-list/duplicate/{rowId}', [CartController::class, 'duplicateItem'])->name('cart.duplicate');
 
-Route::delete('/cart/remove/{rowId}', [CartController::class, 'remove_item'])->name('cart.item.remove');
-Route::delete('/cart/clear', [CartController::class, 'empty_cart'])->name('cart.empty');
+Route::delete('/task-list/remove/{rowId}', [CartController::class, 'remove_item'])->name('cart.item.remove');
+Route::delete('/task-list/clear', [CartController::class, 'empty_cart'])->name('cart.empty');
 
 
 // في ملف routes/web.php
-Route::get('cart/{rowId}/edit', [CartController::class, 'edit_cart_item'])->name('cart.edit');
-Route::prefix('cart')->group(function () {
+Route::get('task-list/{rowId}/edit', [CartController::class, 'edit_cart_item'])->name('cart.edit');
+Route::prefix('task-list')->group(function () {
     Route::put('update/{rowId}', [CartController::class, 'update_cart_item'])->name('cart.update');
     Route::put('specifications/update/{rowId}', [CartController::class, 'update_specifications'])->name('cart.specifications.update');
 });
 
 Route::get('/order/{orderId}/download-pdf', [CartController::class, 'downloadPdf'])->name('order.downloadPdf');
 
-//Route::put('/cart/specifications/update/{rowId}/{specIndex}', [CartController::class, 'updateSpecifications'])->name('cart.specifications.update');
-Route::put('/cart/description/update/{rowId}', [CartController::class, 'updateDescription'])->name('cart.description.update');
+ Route::put('/task-list/description/update/{rowId}', [CartController::class, 'updateDescription'])->name('cart.description.update');
 
 
 
-Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-Route::post('/place-an-order', [CartController::class, 'place_an_order'])->name('cart.place.an.order');
-Route::get('/order-confirmation', [CartController::class, 'order_confirmation'])->name('cart.order.confirmation');
+Route::get('/submit-tasks', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/place-a-request', [CartController::class, 'place_an_order'])->name('cart.place.an.order');
+Route::get('/request-confirmation', [CartController::class, 'order_confirmation'])->name('cart.order.confirmation');
 
 Route::get('/search', [HomeController::class, 'search'])->name('home.search');
 
@@ -106,14 +105,11 @@ Route::middleware(['auth', AuthAdmin::class])->group(function () {
     Route::put('/admin/order/update-status', [AdminController::class, 'update_order_status'])->name('admin.order.status.update');
 
 
-    Route::get('/admin/slides', [AdminController::class, 'slides'])->name('admin.slides');
-    Route::get('/admin/slide/add', [AdminController::class, 'slide_add'])->name('admin.slide.add');
-    Route::post('/admin/slide/store', [AdminController::class, 'slide_store'])->name('admin.slide.store');
-    Route::get('/admin/slide/edit/{id}', [AdminController::class, 'slide_edit'])->name('admin.slide.edit');
-    Route::put('/admin/slide/update', [AdminController::class, 'slide_update'])->name('admin.slide.update');
-    Route::delete('/admin/slide/{id}/delete', [AdminController::class, 'slide_delete'])->name('admin.slide.delete');
 
 
+ 
+
+    
     Route::get('/admin/search', [AdminController::class, 'search'])->name('admin.search');
     Route::get('/admin/orders/search', action: [AdminController::class, 'search_order'])->name('admin.orders.search');
 

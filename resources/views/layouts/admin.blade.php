@@ -29,6 +29,12 @@
     <script src="https://cdn.ckeditor.com/4.20.0/standard/ckeditor.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- CSS for Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- JavaScript for Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
 
 
@@ -130,36 +136,32 @@
                                 </li>
 
 
-                                <li class="menu-item">
-                                    <a href="{{ route('admin.orders') }}" class="menu-item-button">
-                                        <div class="icon"><i class="icon-file-plus"></i></div>
-                                        <div class="text">Orders</div>
-                                    </a>
+                               
 
-
+                                <li class="menu-item has-children">
+                                    <a href="javascript:void(0);" class="menu-item-button">>
+                                        <div class="icon">
+                                            <i class="icon-file-plus"></i>  
+                                        </div>
+                                        <div class="text"> Order </div>
+                                    </a> 
+                                    <ul class="sub-menu">
+                                        <li class="sub-menu-item">
+                                            <a href="{{ route('shop.index') }}" class="">
+                                                <div class="text">New Order</div>
+                                            </a>
+                                        </li>
+                                        <li class="sub-menu-item">
+                                            <a href="{{ route('admin.orders') }}" class="">
+                                                <div class="text">Orders</div>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
+                                
 
 
-
-
-                                <li class="menu-item">
-                                    <a href="settings.html" class="">
-                                        <div class="icon"><i class="icon-settings"></i></div>
-                                        <div class="text">Settings</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <form method="POST" action="{{ route('logout') }}" id="logout.form">
-                                        @csrf
-                                        <a href="{{ route('logout') }}" class=""
-                                            onclick="event.preventDefault();document.getElementById('logout.form').submit();">
-                                            <div class="icon">
-                                                <i class="fas fa-sign-out-alt"></i>
-                                            </div>
-                                            <div class="text">Logout</div>
-                                        </a>
-                                    </form>
-                                </li>
+                               
                             </ul>
                         </div>
                     </div>
@@ -174,69 +176,62 @@
                                         src="images/logo/logo.png" data-light="images/logo/logo.png"
                                         data-dark="images/logo/logo.png" data-width="154px" data-height="52px"
                                         data-retina="images/logo/logo.png">
-                                </a>
-                                <div class="button-show-hide">
-                                    <i class="icon-menu-left"></i>
-                                </div>
+                                            </a>
+                                            <div class="button-show-hide">
+                                                <i class="icon-menu-left"></i>
+                                            </div>
 
 
-                                <form class="form-search flex-grow">
-                                    <fieldset class="name">
-                                        <input type="text" placeholder="Search here..." class="show-search"
-                                            name="name" id="search-input" tabindex="2" value=""
-                                            aria-required="true" required="" autocomplete="off">
-                                    </fieldset>
-                                    <div class="button-submit">
-                                        <button class="" type="submit"><i class="icon-search"></i></button>
-                                    </div>
-                                    <div class="box-content-search">
-                                        <ul id="box-content-search">
-                                        </ul>
-                                    </div>
-                                </form>
+                               
 
                             </div>
+
+
+
+
+
+
+
                             <div class="header-grid">
 
-                                <div class="popup-wrap message type-header">
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span class="header-item">
-                                                <span class="text-tiny">1</span>
-                                                <i class="icon-bell"></i>
-                                            </span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end has-content"
-                                            aria-labelledby="dropdownMenuButton2">
-                                            <li>
-                                                <h6 class="notifications-header">Notifications</h6>
-                                            </li>
-
-
-                                            <li><a href="#" class="tf-button w-full">View all</a></li>
-                                        </ul>
-
-                                    </div>
-                                </div>
-
-
-
-
-
+     
                                 <div class="popup-wrap user type-header">
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                             id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="header-user wg-user">
-
+                                               
                                                 <span class="flex flex-column">
                                                     <span class="body-title mb-2">{{ Auth::user()->name }}</span>
                                                     <span class="text-tiny">Admin</span>
                                                 </span>
                                             </span>
                                         </button>
-
+                                        <ul class="dropdown-menu dropdown-menu-end has-content"
+                                            aria-labelledby="dropdownMenuButton3">
+                                            <li>
+                                                <a href="#" class="user-item">
+                                                    <div class="icon">
+                                                        <i class="icon-user"></i>
+                                                    </div>
+                                                    <div class="body-title-2">Users</div>
+                                                </a>
+                                            </li>
+                                            
+                                            
+                                            <li>
+                                                <a href="#" class="user-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                    <div class="icon">
+                                                        <i class="icon-log-out"></i>
+                                                    </div>
+                                                    <div class="body-title-2">Log out</div>
+                                                </a>
+                                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                                    @csrf
+                                                </form>
+                                            </li>
+                                            
+                                            
                                         </ul>
                                     </div>
                                 </div>
@@ -266,56 +261,7 @@
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
-    <script>
-        $(function() {
-            $("#search-input").on("keyup", function() {
-                var searchQuery = $(this).val();
-
-                if (searchQuery.length > 2) {
-                    $.ajax({
-                        type: "GET",
-                        url: "{{ route('admin.search') }}",
-                        data: {
-                            query: searchQuery
-                        },
-                        dataType: 'json',
-                        success: function(data) {
-                            $("#box-content-search").html(''); // تفريغ المحتوى الحالي
-
-                            $.each(data, function(index, item) {
-                                var url =
-                                    "{{ route('admin.product.edit', ['id' => ':product_id']) }}";
-                                var link = url.replace(':product_id', item.id);
-
-                                $("#box-content-search").append(`
-                                    <li>
-                                        <ul>
-                                            <li class="product-item gap14 mb-10">
-                                                <div class="image no-bg">
-                                                    <img src="{{ asset('uploads/products/thumbnails') }}/${item.image}" alt="${item.name}">
-                                                </div>
-                                                <div class="flex items-center justify-between gap20 flex-grow">
-                                                    <div class="name">
-                                                        <a href="${link}" class="body-text">${item.name}</a>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li class="mb-10">
-                                                <div class="divider"></div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                `);
-                            });
-                        },
-                        error: function() {
-                            console.error("Failed to fetch search results.");
-                        }
-                    });
-                }
-            });
-        });
-    </script>
+  
 
     @stack('scripts')
 
