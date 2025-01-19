@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Category;
 
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ class CartController extends Controller
         return view('cart', compact('products', 'items'));
     }
 
-   /* public function add_to_cart(Request $request)
+    /* public function add_to_cart(Request $request)
     {
         $product = Product::with('specifications')->find($request->id);
         $price = $request->price ?? 0.00;
@@ -52,13 +53,13 @@ class CartController extends Controller
     public function add_to_cart(Request $request)
     {
         $product = Product::with('specifications')->find($request->id);
-    
+
         if (!$product) {
             return redirect()->back()->withErrors('The product does not exist.');
         }
-    
+
         $price = $request->price ?? 0.00;
-    
+
         $specifications = $product->specifications->map(function ($spec) {
             return [
                 'name' => $spec->name,
@@ -67,10 +68,10 @@ class CartController extends Controller
                 'images' => is_string($spec->images) ? json_decode($spec->images, true) : $spec->images,
             ];
         })->toArray();
-    
+
         // إنشاء Row ID فريد
         $uniqueRowId = uniqid($request->id . '_');
-    
+
         Cart::instance('cart')->add([
             'id' => $request->id,
             'name' => $product->name,
@@ -85,21 +86,21 @@ class CartController extends Controller
                 'unique_key' => $uniqueRowId,
             ],
         ])->associate('App\Models\Product');
-    
+
         return redirect()->back()->with('success', 'Product added to cart successfully!');
     }
-    
+
     public function duplicateItem($rowId)
     {
         $item = Cart::instance('cart')->get($rowId);
-    
+
         if (!$item) {
             return redirect()->back()->withErrors('The item does not exist in the cart.');
         }
-    
+
         // إنشاء Row ID فريد للمنتج الجديد
         $uniqueRowId = uniqid($item->id . '_');
-    
+
         Cart::instance('cart')->add([
             'id' => $item->id,
             'name' => $item->name,
@@ -107,10 +108,10 @@ class CartController extends Controller
             'price' => $item->price,
             'options' => array_merge($item->options->toArray(), ['unique_key' => $uniqueRowId]),
         ]);
-    
+
         return redirect()->back()->with('success', 'Product duplicated successfully!');
     }
-    
+
 
     public function increase_cart_quantity($rowId)
     {
@@ -174,10 +175,10 @@ class CartController extends Controller
         $user_id = Auth::user()->id;
         $request->validate([
             'name' => 'required|max:100',
-            'phone' => 'nullable|digits:10',
+            'phone' => 'required|string|regex:/^\+\d{1,4}\d{6,15}$/',
             'zip' => 'nullable|digits:6',
             'state' => 'nullable',
-            'city' => 'nullable',
+            'email' => 'nullable|email',
             'address' => 'nullable',
             'locality' => 'nullable',
             'extra' => 'required',
@@ -202,6 +203,7 @@ class CartController extends Controller
         $address = new Address();
         $address->name = $request->name;
         $address->phone = $request->phone;
+        $address->email = $request->email;
         $address->zip = '00000';
         $address->state = '02135';
         $address->city = 'Mashru Dummar';
@@ -216,7 +218,7 @@ class CartController extends Controller
         $this->setAmountforCheckout();
         $order = new Order();
         $order->user_id = $user_id;
- 
+
         // معالجة القيم
         $subtotal = str_replace(',', '', Session::get('checkout')['subtotal']);
         $subtotal = (float)$subtotal;
@@ -309,11 +311,11 @@ class CartController extends Controller
                 'total' => number_format(floatval(Cart::instance('cart')->total()), 2, '.', '')
             ]);
         }
-    } 
-  
-    
-    
-    
+    }
+
+
+
+
     /*public function order_confirmation()
                    {
                        if (Session::has('order_id')) {
@@ -387,7 +389,7 @@ class CartController extends Controller
         $product = Cart::instance('cart')->get($rowId);
 
         // تحديث السعر
-        Cart::instance('cart')->update($rowId, [ 
+        Cart::instance('cart')->update($rowId, [
             'price' => $request->price,  // تحديث السعر
             'qty' => $product->qty       // الحفاظ على الكمية كما هي
         ]);
@@ -401,22 +403,22 @@ class CartController extends Controller
         $validated = $request->validate([
             'qty' => 'required|integer|min:1',
         ]);
-    
+
         // استرجاع العنصر من السلة
         $item = Cart::instance('cart')->get($rowId);
-    
+
         if (!$item) {
             return redirect()->route('cart.index')->with('error', 'Item not found in the cart');
         }
-    
+
         // تحديث الكمية في السلة
         Cart::instance('cart')->update($rowId, [
             'qty' => $validated['qty'],
         ]);
-    
+
         return redirect()->route('cart.index')->with('success', 'Quantity updated successfully!');
     }
-    
+
 
     // في CartController
     public function edit_cart_item($rowId)
