@@ -1,291 +1,314 @@
 @extends('layouts.app')
+
 @section('content')
-<style>
-  table {
-     width: 100%;  
-     border-collapse: collapse;
-     margin-bottom: 20px;
-     border-radius: 8px;
-     overflow: hidden;
- }
- 
-  th {
-     background-color: #007bff;  
-     color: white;
-     padding: 12px;
-     font-weight: bold;
-     text-align: left;
- }
- 
- /* تنسيق الأعمدة */
- td {
-     padding: 12px;
-     vertical-align: middle;
-     border-bottom: 1px solid #ddd;  
- }
- 
-  .product-name {
-     text-align: left;
-     font-weight: 500;
-     color: #333;
- }
- 
-  .action-buttons {
-     text-align: right;
- }
- 
-  th {
-     text-align: left;
- }
- 
-  button,
- .btn {
-     padding: 10px 20px;
-     border-radius: 4px;
-     font-size: 14px;
-     background-color: #20bec6; 
-     color: rgb(0, 0, 0);
-     border: none;
-     transition: background-color 0.3s ease, transform 0.3s ease;
- }
- 
-  button:hover,
- .btn:hover {
-     background-color: #20bec6;
-     transform: scale(1.05);
- }
- 
-  button:disabled,
- .btn:disabled {
-     background-color: #ccc;
-     color: #666;
-     cursor: not-allowed;
- }
-  .btn-warning {
-     background-color: #20bec6;  
-     border-color: #20bec6;  
- 
- .btn-warning:hover {
-     background-color: #20bec6;   
-     border-color: #20bec6;  
- }
- 
- 
-  tr:hover {
-     background-color: #f1f1f1;
- }
- 
-  .table-empty {
-     text-align: center;
-     font-size: 18px;
-     color: #888;
-     padding: 50px 0;
- }
- 
-  .shop-list {
-     width: 100%;  
-     overflow-x: auto;  
- }
- </style>
- <style>
-   th {
-       background-color: #20bec6 !important;  
-       color: white !important;  
-       border: 2px solid #20bec6!important;  
-       padding: 12px !important;  
-       text-align: left !important; 
-   }
- 
-   th:last-child {
-       text-align: right !important;  
-   }
- 
-   th:hover {
-       background-color:  #20bec6 !important;  
-       border-color: #20bec6  !important;  
-   }
- </style>
- 
-<main class="pt-90">
-  <section class="shop-main container d-flex pt-4 pt-xl-5">
-    <div class="shop-sidebar side-sticky bg-body" id="shopFilter">
-      <div class="aside-header d-flex d-lg-none align-items-center">
-        <h3 class="text-uppercase fs-6 mb-0">Filter By</h3>
-        <button class="btn-close-lg js-close-aside btn-close-aside ms-auto"></button>
-      </div>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      <div class="pt-4 pt-lg-0"></div>
+        .container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
 
-      <div class="accordion" id="categories-list">
-        <div class="accordion-item mb-4 pb-3">
-          <h5 class="accordion-header" id="accordion-heading-1">
-            <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
-              data-bs-target="#accordion-filter-1" aria-expanded="true" aria-controls="accordion-filter-1">
-              Product Type 
-              <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
-                <g aria-hidden="true" stroke="none" fill-rule="evenodd">
-                  <path
-                    d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
-                </g>
-              </svg>
-            </button> 
-          </h5>
-          <div id="accordion-filter-1" class="accordion-collapse collapse show border-0"
-            aria-labelledby="accordion-heading-1" data-bs-parent="#categories-list">
-            <div class="accordion-body px-0 pb-0 pt-3 category-list">
-              <ul class="list list-inline mb-0">
-                @foreach ($categories as $category)
+        .table-container {
+            flex: 3;
+        }
 
-                      <li class="list-item">
-                      <sapn class="menu-link py-1">
-                      <input type="checkbox" class="chk-category" name="categories" value="{{$category->id}}" 
-                      @if (in_array($category->id,explode(',',$f_categories))) checked="checked"  
-                      @endif
-                      />
-                      {{$category->name}}
-                      </sapn>
-                      <span class="text-right float-end">{{$category->products->count()}}</span>
-                      </li>
-                      @endforeach
-            
-              </ul>
+        .cart-summary {
+            flex: 1;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 20px;
+        }
+
+        .cart-summary h3 {
+            text-align: center;
+            font-size: 22px;
+            color: #333;
+        }
+
+        .cart-summary ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cart-summary ul li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e5e5e5;
+        }
+
+        th {
+            background-color: #20bec6;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #20bec6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1ea9b4;
+            transform: scale(1.05);
+        }
+
+        /* Add margin to the main content to move it down */
+        main.pt-90 {
+            margin-top: 60px;
+            /* Adds margin to the top, moving the content down */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .cart-summary {
+                position: static;
+                margin-top: 20px;
+            }
+        }
+    </style>
+
+    <main class="pt-90">
+        <section class="shop-main container d-flex pt-4 pt-xl-5
+">
+            <!-- Main Content -->
+            <div class="table-container">
+                <!-- Products Table -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($products as $product)
+                            <tr>
+                                <td>
+                                    <a href="{{ route('shop.product.details', ['product_slug' => $product->slug]) }}">
+                                        {{ $product->name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <form name="addtocart-form" method="post" action="{{ route('cart.add') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $product->id }}" />
+                                        <input type="hidden" name="quantity" value="1" />
+                                        <input type="hidden" name="name" value="{{ $product->name }}" />
+                                        <!-- إضافة مفتاح فريد -->
+                                        <input type="hidden" name="unique_key" value="{{ uniqid() }}" />
+                                        <button type="submit" class="btn btn-primary">Add Product</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+                <!-- Cart Table -->
+                @if ($items->count() > 0)
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($items as $item)
+                                <tr>
+                                    <td>
+                                        <h4>{{ $item->name }}</h4>
+                                    </td>
+                                    <td>
+                                        <form method="POST"
+                                            action="{{ route('cart.price.update', ['rowId' => $item->rowId]) }}"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="number" name="price" value="{{ $item->price }}" step="0.01"
+                                                class="price-input"
+                                                onkeydown="if(event.key === 'Enter'){this.form.submit();}">
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST"
+                                            action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="number" class="qty-control__number" name="qty"
+                                                value="{{ $item->qty }}" min="1"
+                                                onkeydown="if(event.key === 'Enter'){this.form.submit();}"
+                                                style="width: 60px; text-align: center;">
+                                        </form>
+                                    </td>
+                                    <td>${{ $item->subTotal() }}</td>
+
+
+
+
+                                    <td>
+                                        <form method="POST"
+                                            action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="description-container">
+                                                <textarea id="description-{{ $item->rowId }}" name="description" placeholder="Insert a description for the product..."
+                                                    class="form-control description-input" rows="3" style="resize: none;"
+                                                    oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px';"
+                                                    onkeydown="if(event.key === 'Enter'){event.preventDefault(); this.form.submit();}"></textarea>
+                                            </div>
+                                        </form>
+                                    </td>
+
+
+
+                                    <td>
+                                        <form method="POST"
+                                            action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-danger">Remove</button>
+                                        </form>
+                                        <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}"
+                                            class="btn btn-info">Edit Specifications</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
             </div>
-          </div>
-        </div>
-      </div>
 
-
-     
-
-
-
-          </div>
-        </div>
-      </div>
-      <div class="shop-list flex-grow-1">
-        <div class="d-flex justify-content-between mb-4 pb-md-2">
-            <div class="shop-acs d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
-                <select class="shop-acs__select form-select w-auto border-0 py-0 order-1 order-md-0" aria-label="Sort Items"
-                    name="orderby" id="orderby">
-                    <option value="-1" {{$order == -1 ? 'selected':''}}>Default</option>
-                    <option value="1" {{$order == 1 ? 'selected':''}}>Data, New To Old</option>
-                    <option value="2" {{$order == 2 ? 'selected':''}}>Data, Old To New</option>
-                </select>
-            </div>
-        </div>
-    
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Product</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($products as $product)
-                <tr>
-                    <!-- العمود الأول: اسم المنتج -->
-                    <td class="product-name">
-                        <a href="{{route('shop.product.details',['product_slug'=>$product->slug])}}">
-                            {{$product->name}}
-                        </a>
-                    </td>
-                    <!-- العمود الثاني: الإجراءات -->
-                    <td class="action-buttons">
-                        <form name="addtocart-form" method="post" action="{{route('cart.add')}}">
-                            @csrf
-                            <input type="hidden" name="id" value="{{$product->id}}" />
-                            <input type="hidden" name="quantity" value="1" />
-                            <input type="hidden" name="name" value="{{$product->name}}" />
-                            <!-- إضافة مفتاح فريد -->
-                            <input type="hidden" name="unique_key" value="{{ uniqid() }}" />
-                            <button type="submit" class="btn btn-primary">Add Product</button>
-                        </form>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    
-        <div class="divider"></div>
-    
-        <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">
-            {{$products->withQueryString()->links('pagination::bootstrap-5')}}
-        </div>
-    </div>
-    
-    </div>
-  </section>
-</main>
-
-<form id="frmfilter" method="GET" action="{{route('shop.index')}}">
-  <input type="hidden" name="page" value="{{$products->currentPage()}}">
-  <input type="hidden" name="size" id="size" value="{{$size}}" />    
-  <input type="hidden" name="order" id="order" value="{{$order}}" /> 
-  <input type="hidden" name="categories" id="hdnCategories" value="{{$f_categories}}">
-
-</form>
-
+            <!-- Sidebar -->
+            <aside class="cart-summary">
+                <h3>Cart Summary</h3>
+                <ul>
+                    <li><span>Total Items:</span><span>{{ $items->count() }}</span></li>
+                    <li><span>Total Price:</span><span>$ {{ $items->sum('subTotal') }}</span></li>
+                </ul>
+                <a href="{{ route('cart.checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
+            </aside>
+        </section>
+    </main>
 @endsection
 
-@push('scripts')   
-<script>    
-$(function(){    
-    // عند تغيير عدد العناصر في الصفحة
-    $("#pagesize").on("change", function(){   
-        $("#size").val($("#pagesize option:selected").val());   
-        $("#frmfilter").submit();   
-    });
 
-    // عند تغيير ترتيب العناصر
-    $("#orderby").on("change", function(){   
-        $("#order").val($("#orderby option:selected").val());   
-        $("#frmfilter").submit();  
-    });
-           $("input[name='brands']").on("change", function(){
-         var brands = "";
-         $("input[name='brands']:checked").each(function(){
-if(brands == "")
-{
-brands += $(this).val();
-}
-else{
-brands += "," + $(this).val();
-}
-});
-$("#hdnBrands").val(brands);
-$("#frmfilter").submit();
-});
+@push('scripts')
+    <script>
+        document.getElementById('orderby').addEventListener('change', function() {
+            this.form.submit();
+        });
+
+        $(function() {
+            // Handle page size change
+            $("#pagesize").on("change", function() {
+                $("#size").val($("#pagesize option:selected").val());
+                $("#frmfilter").submit();
+            });
+
+            // Handle sorting order change
+            $("#orderby").on("change", function() {
+                $("#order").val($("#orderby option:selected").val());
+                $("#frmfilter").submit();
+            });
+
+            // Handle category filtering
+            $("input[name='categories']").on("change", function() {
+                var categories = "";
+                $("input[name='categories']:checked").each(function() {
+                    if (categories === "") {
+                        categories += $(this).val();
+                    } else {
+                        categories += "," + $(this).val();
+                    }
+                });
+                $("#hdnCategories").val(categories);
+                $("#frmfilter").submit();
+            });
+
+            // Handle price range changes
+            $("[name='price_range']").on("change", function() {
+                var min = $(this).val().split(',')[0];
+                var max = $(this).val().split(',')[1];
+                $("#hdnMinPrice").val(min);
+                $("#hdnMaxPrice").val(max);
+                setTimeout(() => {
+                    $("#frmfilter").submit();
+                }, 2000);
+            });
+        });
 
 
-$("input[name='categories']").on("change", function(){
-         var categories = "";
-         $("input[name='categories']:checked").each(function(){
-if(categories == "")
-{
-  categories += $(this).val();
-}
-else{
-  categories += "," + $(this).val();
-}
-});
-$("#hdnCategories").val(categories);
-$("#frmfilter").submit();
-});
-$("[name='price_range']").on("change", function(){
-    var min = $(this).val().split(',')[0];
-    var max = $(this).val().split(',')[1];
- 
-    $("#hdnMinPrice").val(min);
-    $("#hdnMaxPrice").val(max); // أضفنا علامة #
-    setTimeout(() => {
-      $("#frmfilter").submit();
-
-    }, 2000);
-    
-});
-
-});   
-</script>   
+        $(function() {
+            $(".qty-control__increase").on("click", function() {
+                $(this).closest('form').submit();
+            });
+            $(".qty-control__reduce").on("click", function() {
+                $(this).closest('form').submit();
+            });
+            $('.remove-cart').on("click", function() {
+                $(this).closest('form').submit();
+            });
+        })
+    </script>
 @endpush
-
