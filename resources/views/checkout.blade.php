@@ -145,12 +145,23 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6"> 
                                 <div class="form-floating my-3">
-                                    <input type="tel" id="phone" name="phone" class="form-control" required
-                                        placeholder="Phone Number" />
-                                    <label for="phone"></label>
+                                    <input type="text" class="form-control" id="phone" name="phone" required="">
+                                    <label for="phone">Phone Number *</label>
                                     @error('phone')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror 
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating my-3">
+                                    <select class="form-select" id="country" name="country" required="">
+                                        <option value="" disabled selected>Select Country</option>
+    
+                                    </select>
+                                    <label for="country">Country *</label>
+                                    @error('country')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -166,15 +177,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <div class="form-floating my-3">
-                                    <input type="text" class="form-control" name="country" required="">
-                                    <label for="country">country *</label>
-                                    @error('country')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
+                            
 
                             <div class="col-md-12">
                                 <div class="form-group my-3">
@@ -253,7 +256,28 @@
             document.getElementById('images').addEventListener('change', previewImages);
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener('DOMContentLoaded', () => {
+    const countrySelect = document.querySelector('#country');
+
+     [...countrySelect.options].forEach(option => {
+        option.title = option.textContent;
+    });
+});
+
+
+
+  // إضافة رمز الدولة تلقائيًا عند اختيار الدولة
+  document.getElementById('country').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const countryCode = selectedOption.getAttribute('data-code');
+            const phoneInput = document.getElementById('phone');
+            
+            if (countryCode) {
+                phoneInput.value = countryCode + ' ';
+            }
+        });
+       /* document.addEventListener('DOMContentLoaded', function() {
             var phoneInput = document.querySelector("#phone");
             var form = phoneInput.closest('form');
 
@@ -269,7 +293,7 @@
                 const fullPhoneNumber = iti.getNumber(); // Gets the full phone number with country code
                 phoneInput.value = fullPhoneNumber; // Set it as the input value
             });
-        });
+        });*/
 
 
         /*document.querySelector("form[name='checkout-form']").addEventListener('submit', function(event) {
@@ -294,6 +318,31 @@ Best Regards.
                 .catch(error => {
                     console.error(error);
                 });
+        });
+    </script>
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const countrySelect = document.getElementById("country");
+
+             fetch('https://restcountries.com/v3.1/all')
+                .then(response => response.json())
+                .then(data => {
+                     const sortedCountries = data.sort((a, b) => 
+                        a.name.common.localeCompare(b.name.common)
+                    );
+
+                     sortedCountries.forEach(country => {
+                        const dialCode = country.idd?.root + (country.idd?.suffixes ? country.idd.suffixes[0] : "");
+                        if (dialCode) {
+                            const option = document.createElement("option");
+                            option.value = country.cca2; 
+                            option.textContent = `${country.name.common} (${dialCode})`; 
+                            option.setAttribute("data-code", dialCode); 
+                            countrySelect.appendChild(option); 
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching countries:', error));
         });
     </script>
     <style>
@@ -335,5 +384,34 @@ Best Regards.
             border-color: #20bec6;
             box-shadow: 0 0 5px rgba(32, 190, 198, 0.5);
         }
+
+
+
+
+ .form-floating .form-select {
+    width: 100%;  
+    height: calc(3.5rem + 2px); 
+    font-size: 16px;  
+    line-height: 1.5;  
+    padding: 0.75rem 1.25rem;  
+}
+
+ .form-select option {
+    white-space: nowrap;  
+    overflow: hidden;  
+    text-overflow: ellipsis; 
+}
+
+ .form-select:hover, .form-select:focus {
+    border-color: #20bec6;  
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+ .select-dropdown {
+    max-height: 300px;  
+    overflow-y: auto;  
+    border-radius: 5px;  
+}
+
+
     </style>
 @endpush
