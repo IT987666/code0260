@@ -241,12 +241,12 @@
 
             <!-- Sidebar -->
             <aside class="cart-summary">
-                <h3>Cart Summary</h3>
+                <h3>Summary</h3>
                 <ul>
-                    <li><span>Total Items:</span><span>{{ $items->count() }}</span></li>
+                    <li><span>Total Selected Items:</span><span>{{ $items->count() }}</span></li>
                     <li><span>Total Price:</span><span>$ {{ $items->sum('subTotal') }}</span></li>
                 </ul>
-                <a href="{{ route('cart.checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
+                <a href="{{ route('cart.checkout') }}" class="btn btn-primary">Proceed</a>
             </aside>
         </section>
     </main>

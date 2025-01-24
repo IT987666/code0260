@@ -28,7 +28,7 @@
                 <input type="number" name="price" id="price" class="form-control modern-input"
                     value="{{ $item->price }}" min="0.01" step="0.01">
             </div>
- 
+
             <!-- Stock Status field - غير قابل للتعديل -->
             <div class="form-group">
                 <label for="stock_status">Status</label>

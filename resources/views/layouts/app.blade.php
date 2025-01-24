@@ -522,7 +522,7 @@
 
             </a>
   --}}
-                    <a href="{{ route('cart.index') }}" class="header-tools__item header-tools__cart">
+                    {{-- <a href="{{ route('cart.index') }}" class="header-tools__item header-tools__cart">
                         <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                         </svg>
@@ -540,7 +540,7 @@
                             <span class="cart-amount d-block position-absolute js-cart-items-count"
                                 style="background-color: #20bec6; color: white;">{{ Cart::instance('cart')->content()->count() }}</span>
                         @endif
-                    </a>
+                    </a> --}}
 
                 </div>
             </div>

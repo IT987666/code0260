@@ -40,15 +40,14 @@
 
 @section('priceOffer')
     <h3>Attachment-1: Price Offer</h3>
-    @include('orders.components.products-table', ['cartItems' => $cartItems])
+    @include('orders.components.products-table', ['orderItems' => $orderItems]) <!-- Use orderItems -->
 @endsection
 
 {{-- ------------------------------------------------------- --}}
 
 @section('technicalSpecification')
     <h3>Attachment-2: Technical Specification</h3>
-    @include('orders.components.products-specification', ['orderItems' => $orderItems])
-
+    @include('orders.components.products-specification', ['orderItems' => $orderItems]) <!-- Use orderItems -->
 @endsection
 
 {{-- ------------------------------------------------------- --}}

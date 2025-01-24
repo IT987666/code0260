@@ -8,7 +8,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($cartItems as $cartItem)
+        @foreach ($orderItems as $cartItem)
             <tr>
                 <td>{{ $cartItem->options->description ?? 'No description available' }}</td>
                 <td>{{ $cartItem->qty }}</td>

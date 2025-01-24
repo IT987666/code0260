@@ -69,8 +69,8 @@ class CartController extends Controller
             ];
         })->toArray();
 
-        // إنشاء Row ID فريد
-        $uniqueRowId = uniqid($request->id . '_');
+        // Generate a unique identifier for this cart item (even if it's the same product)
+        $uniqueIdentifier = uniqid();
 
         Cart::instance('cart')->add([
             'id' => $request->id,
@@ -78,17 +78,19 @@ class CartController extends Controller
             'qty' => $request->quantity,
             'price' => $price,
             'options' => [
+                'unique_key' => $uniqueIdentifier, // Force a unique option to make the item distinct
                 'description' => $product->description,
                 'stock_status' => $product->stock_status,
                 'featured' => $product->featured,
                 'specifications' => $specifications,
                 'status' => $product->status,
-                'unique_key' => $uniqueRowId,
             ],
         ])->associate('App\Models\Product');
 
         return redirect()->back()->with('success', 'Product added to cart successfully!');
     }
+
+
 
     public function duplicateItem($rowId)
     {
@@ -103,6 +105,8 @@ class CartController extends Controller
 
         Cart::instance('cart')->add([
             'id' => $item->id,
+            'rowId' => $uniqueRowId,
+
             'name' => $item->name,
             'qty' => $item->qty,
             'price' => $item->price,
@@ -173,33 +177,29 @@ class CartController extends Controller
     public function place_an_order(Request $request)
     {
         $user_id = Auth::user()->id;
+
         $request->validate([
             'name' => 'required|max:100',
-            'phone' => 'required|string|regex:/^\+\d{1,4}\d{6,15}$/',
+            'phone' => 'required|string',
             'zip' => 'nullable|digits:6',
             'state' => 'nullable',
             'email' => 'nullable|email',
             'address' => 'nullable',
             'locality' => 'nullable',
             'extra' => 'required',
-            'images' => 'nullable|array', // Validate as an array
-            'images.*' => 'image|mimes:jpg,jpeg,png|max:2048', // Validate each file in the array
-
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $uploadedImages = [];
         if ($request->hasFile('images')) {
-
             foreach ($request->file('images') as $image) {
-                $path = $image->store('orders/images', 'public'); // Store in the public disk
+                $path = $image->store('orders/images', 'public');
                 $uploadedImages[] = $path;
             }
         }
 
-
-
-        // إضافة العنوان الجديد
-        // إضافة العنوان الجديد للمستخدم
+        // Save the address
         $address = new Address();
         $address->name = $request->name;
         $address->phone = $request->phone;
@@ -209,44 +209,38 @@ class CartController extends Controller
         $address->city = 'Mashru Dummar';
         $address->address = 'Mashru Dummar';
         $address->locality = 'Mashru Dummar';
-        $address->country =  $request->country;
+        $address->country = $request->country;
         $address->user_id = $user_id;
         $address->isdefault = false;
         $address->save();
 
-        // تحديد المبلغ للطلب
+        // Set the checkout amount
         $this->setAmountforCheckout();
+
+        // Save the order
         $order = new Order();
         $order->user_id = $user_id;
-
-        // معالجة القيم
-        $subtotal = str_replace(',', '', Session::get('checkout')['subtotal']);
-        $subtotal = (float)$subtotal;
-        $order->subtotal = $subtotal;
-
-        $total = str_replace(',', '', Session::get('checkout')['total']);
-        $total = (float)$total;
-        $order->total = $total;
-
+        $order->subtotal = (float)str_replace(',', '', Session::get('checkout')['subtotal']);
+        $order->total = (float)str_replace(',', '', Session::get('checkout')['total']);
         $order->discount = Session::get('checkout')['discount'];
         $order->tax = Session::get('checkout')['tax'];
         $order->name = $address->name;
         $order->phone = $address->phone;
         $order->locality = $address->locality;
         $order->address = $address->address;
-        $order->city =  $address->city;
+        $order->city = $address->city;
         $order->state = $address->state;
         $order->country = $address->country;
         $order->extra = $request->extra;
         $order->zip = $address->zip;
         $order->images = $uploadedImages ? json_encode($uploadedImages) : null;
-
         $order->save();
 
-
-        // إضافة تفاصيل الطلب
+        // Add order items
         foreach (Cart::instance('cart')->content() as $item) {
             $product = Product::find($item->id);
+
+            // Save the order item
             $orderItem = OrderItem::create([
                 'product_id' => $item->id,
                 'order_id' => $order->id,
@@ -256,16 +250,13 @@ class CartController extends Controller
                 'custom_specifications' => json_encode($item->options['specifications']), // Serialize the array
             ]);
 
-
+            // Save product specifications for the current order item
             foreach ($item->options['specifications'] as $spec) {
-
-
-
                 ProductOrderSpecification::create([
                     'name' => $spec['name'] ?? null,
                     'title' => $spec['title'] ?? null,
                     'paragraphs' => $spec['paragraphs'] ?? null,
-                    'images' => json_encode($spec['images'] ?? null,),
+                    'images' => isset($spec['images']) ? json_encode($spec['images']) : null,
                     'description' => $spec['description'] ?? null,
                     'order_item_id' => $orderItem->id,
                     'product_id' => $item->id,
@@ -273,7 +264,7 @@ class CartController extends Controller
             }
         }
 
-        // إضافة المعاملة
+        // Add the transaction
         Transaction::create([
             'user_id' => $user_id,
             'order_id' => $order->id,
@@ -281,12 +272,13 @@ class CartController extends Controller
             'status' => 'pending',
         ]);
 
-        // تفريغ السلة وتنظيف الجلسة
-
+        // Clear the cart and session
+        // Cart::instance('cart')->destroy();
         Session::put('order_id', $order->id);
 
         return redirect()->route('cart.order.confirmation');
     }
+
     public function setAmountforCheckout()
     {
         if (!Cart::instance('cart')->content()->count() > 0) {
@@ -335,40 +327,27 @@ class CartController extends Controller
             $order = Order::find(Session::get('order_id'));
 
             if (!$order) {
-                return redirect()->route('cart.index')->with('error', 'Order not found');
+                return redirect()->route('shop.index')->with('error', 'Order not found');
             }
 
             // Fetch order items
             $orderItems = OrderItem::where('order_id', $order->id)->get();
 
-            // Get all cart items
-            $cartItems = Cart::instance('cart')->content();
-
             // Attach specifications and descriptions to order items
             foreach ($orderItems as $item) {
-                foreach ($cartItems as $cartItem) {
-                    if ($cartItem->id == $item->product_id) { // Match product ID
-                        $specifications = $cartItem->options->specifications ?? [];
-
-                        // Ensure specifications are always an array
-                        if (!is_array($specifications)) {
-                            $specifications = json_decode($specifications, true);
-                        }
-
-                        $item->specifications = $specifications;
-                        $item->description = $cartItem->options->description ?? '';
-                        break;
-                    }
-                }
+                // Fetch the specifications directly from the `custom_specifications` column
+                $item->specifications = json_decode($item->custom_specifications, true);
             }
 
+            // Clear session data
             Session::forget(['checkout', 'coupon', 'discounts']);
 
             return view('order-confirmation', compact('order', 'orderItems'));
         }
 
-        return redirect()->route('cart.index');
+        return redirect()->route('shop.index');
     }
+
 
 
 
@@ -408,7 +387,7 @@ class CartController extends Controller
         $item = Cart::instance('cart')->get($rowId);
 
         if (!$item) {
-            return redirect()->route('cart.index')->with('error', 'Item not found in the cart');
+            return redirect()->route('shop.index')->with('error', 'Item not found in the cart');
         }
 
         // تحديث الكمية في السلة
@@ -416,7 +395,7 @@ class CartController extends Controller
             'qty' => $validated['qty'],
         ]);
 
-        return redirect()->route('cart.index')->with('success', 'Quantity updated successfully!');
+        return redirect()->route('shop.index')->with('success', 'Quantity updated successfully!');
     }
 
 
@@ -427,7 +406,7 @@ class CartController extends Controller
         $item = Cart::instance('cart')->get($rowId);
 
         if (!$item) {
-            return redirect()->route('cart.index')->with('error', 'Item not found in the cart');
+            return redirect()->route('shop.index')->with('error', 'Item not found in the cart');
         }
 
         // عرض نموذج التعديل
@@ -440,7 +419,7 @@ class CartController extends Controller
         $item = Cart::instance('cart')->get($rowId);
 
         if (!$item) {
-            return redirect()->route('cart.index')->with('error', 'Item not found in the cart');
+            return redirect()->route('shop.index')->with('error', 'Item not found in the cart');
         }
 
         // التحقق من صحة المدخلات (الكمية والسعر)
@@ -468,6 +447,7 @@ class CartController extends Controller
 
         Cart::instance('cart')->update($rowId, [
             'qty' => $validated['qty'],
+            'rowId' => $rowId,
             'price' => $validated['price'],
             'options' => array_merge((array)$item->options, [
                 'specifications' => $specifications,
@@ -475,7 +455,7 @@ class CartController extends Controller
             ]),
         ]);
 
-        return redirect()->route('cart.index')->with('success', 'Cart item updated successfully!');
+        return redirect()->route('shop.index')->with('success', 'Cart item updated successfully!');
     }
 
 
@@ -531,45 +511,32 @@ class CartController extends Controller
 
     public function downloadPdf($orderId)
     {
-        // جلب الطلب
+        // Retrieve the order
         $order = Order::findOrFail($orderId);
-        $cartItems = Cart::instance('cart')->content();
 
-        // جلب عناصر الطلب مع مواصفات المنتج
+        // Fetch order items with product details
         $orderItems = OrderItem::with(['product' => function ($query) {
             $query->select('id', 'name', 'slug');
         }])->where('order_id', $order->id)->get();
 
-        // دمج المواصفات والوصف
+        // Attach specifications to order items
         foreach ($orderItems as $item) {
-            foreach ($cartItems as $cartItem) {
-                if ($cartItem->id == $item->product_id) { // مطابقة المنتج
-                    $specifications = $cartItem->options->specifications ?? [];
-
-                    // التأكد من أن المواصفات هي مصفوفة
-                    if (!is_array($specifications)) {
-                        $specifications = json_decode($specifications, true);
-                    }
-
-                    $item->specifications = $specifications;
-                    $item->description = $cartItem->options->description ?? '';
-                    break;
-                }
-            }
+            $item->specifications = json_decode($item->custom_specifications, true);
         }
 
-        // تحميل ملف PDF
+        // Generate the PDF
         $pdf = PDF::loadView('orders.pdf', [
             'order' => $order,
             'orderItems' => $orderItems,
-            'cartItems' => $cartItems,
-            'base64EncodeImageA' => [$this, 'base64EncodeImageA'], // تم تمرير دالة تحويل الصورة
+            'base64EncodeImageA' => [$this, 'base64EncodeImageA'], // Pass the image encoding function
         ]);
 
         Cart::instance('cart')->destroy();
 
         return $pdf->download('order_' . $order->id . '.pdf');
     }
+
+
 
 
 

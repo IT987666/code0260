@@ -55,7 +55,6 @@ class ShopController extends Controller
 
         // جلب بيانات السلة
         $items = Cart::instance('cart')->content();
-
         // تمرير البيانات إلى العرض
         return view('shop', compact('products', 'size', 'order', 'categories', 'f_categories', 'items'));
     }
