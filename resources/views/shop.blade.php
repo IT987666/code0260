@@ -8,46 +8,34 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            padding-top: 20px;
+            /* Adds space at the top of the body content */
+
+        }
+
+        header {
+            margin-bottom: 20px;
+            /* Added spacing below the header */
         }
 
         .container {
             display: flex;
             gap: 20px;
-            margin-top: 20px;
+            margin: 20px;
         }
 
-        .table-container {
-            flex: 3;
-        }
-
+        .product-container,
         .cart-summary {
             flex: 1;
-            border: 1px solid #e5e5e5;
+            /* border: 1px solid #e5e5e5; */
             border-radius: 8px;
             padding: 20px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 20px;
+            /* background-color: #f9f9f9; */
+            /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); */
         }
 
-        .cart-summary h3 {
-            text-align: center;
-            font-size: 22px;
-            color: #333;
-        }
-
-        .cart-summary ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .cart-summary ul li {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 16px;
+        .cart-container {
+            flex: 2;
         }
 
         /* Table Styles */
@@ -82,13 +70,36 @@
         }
 
         /* Buttons */
+        /* Button Group Styling */
+        .button-group {
+            display: flex;
+            gap: 6px;
+            /* Reduces spacing between the buttons */
+            justify-content: center;
+            /* Centers the buttons within the cell */
+            align-items: center;
+            /* Aligns buttons vertically */
+        }
+
+        /* Smaller Buttons */
         .btn {
-            padding: 10px 15px;
-            border: none;
+            padding: 6px 10px;
+            /* Smaller padding for a compact size */
+            font-size: 12px;
+            /* Reduces font size */
             border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: transform 0.3s ease, background-color 0.3s ease;
+            /* Slightly rounded corners */
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger {
+            background-color: #ff4d4d;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #e60000;
+            transform: scale(1.05);
         }
 
         .btn-primary {
@@ -101,32 +112,55 @@
             transform: scale(1.05);
         }
 
-        /* Add margin to the main content to move it down */
+
+        /* Cart Summary */
+        .cart-summary h3 {
+            text-align: center;
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .cart-summary ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cart-summary ul li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        /* Add spacing to main content */
         main.pt-90 {
-            margin-top: 60px;
-            /* Adds margin to the top, moving the content down */
+            margin-top: 80px;
+            /* Resolves header overlap */
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
+                gap: 10px;
             }
 
+            .product-container,
+            .cart-container,
             .cart-summary {
-                position: static;
-                margin-top: 20px;
+                margin-bottom: 20px;
             }
         }
     </style>
 
     <main class="pt-90">
-        <section class="shop-main container d-flex pt-4 pt-xl-5
-">
-            <!-- Main Content -->
-            <div class="table-container">
-                <!-- Products Table -->
-                <table class="table table-striped">
+        <section class="shop-main container">
+            <!-- Product List -->
+            <div class="product-container">
+                <h3>Products</h3>
+                <table>
                     <thead>
                         <tr>
                             <th scope="col">Product</th>
@@ -146,18 +180,18 @@
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $product->id }}" />
                                         <input type="hidden" name="quantity" value="1" />
-                                        <input type="hidden" name="name" value="{{ $product->name }}" />
-                                        <!-- إضافة مفتاح فريد -->
-                                        <input type="hidden" name="unique_key" value="{{ uniqid() }}" />
-                                        <button type="submit" class="btn btn-primary">Add Product</button>
+                                        <button type="submit" class="btn btn-primary">Add</button>
                                     </form>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+            </div>
 
-                <!-- Cart Table -->
+            <!-- Cart Table -->
+            <div class="cart-container">
+                <h3>Selected Products</h3>
                 @if ($items->count() > 0)
                     <table>
                         <thead>
@@ -173,81 +207,60 @@
                         <tbody>
                             @foreach ($items as $item)
                                 <tr>
-                                    <td>
-                                        <h4>{{ $item->name }}</h4>
-                                    </td>
+                                    <td>{{ $item->name }}</td>
                                     <td>
                                         <form method="POST"
-                                            action="{{ route('cart.price.update', ['rowId' => $item->rowId]) }}"
-                                            style="display:inline;">
+                                            action="{{ route('cart.price.update', ['rowId' => $item->rowId]) }}">
                                             @csrf
                                             @method('PUT')
-                                            <input type="number" name="price" value="{{ $item->price }}" step="0.01"
-                                                class="price-input"
-                                                onkeydown="if(event.key === 'Enter'){this.form.submit();}">
+                                            <input type="number" name="price" value="{{ $item->price }}"
+                                                step="0.01" />
                                         </form>
                                     </td>
-
                                     <td>
                                         <form method="POST"
-                                            action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}"
-                                            style="display:inline;">
+                                            action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}">
                                             @csrf
                                             @method('PUT')
-                                            <input type="number" class="qty-control__number" name="qty"
-                                                value="{{ $item->qty }}" min="1"
-                                                onkeydown="if(event.key === 'Enter'){this.form.submit();}"
-                                                style="width: 60px; text-align: center;">
+                                            <input type="number" name="qty" value="{{ $item->qty }}"
+                                                min="1" />
                                         </form>
                                     </td>
                                     <td>${{ $item->subTotal() }}</td>
-
-
-
-
                                     <td>
                                         <form method="POST"
-                                            action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}"
-                                            style="display:inline;">
+                                            action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}">
                                             @csrf
                                             @method('PUT')
-                                            <div class="description-container">
-                                                <textarea id="description-{{ $item->rowId }}" name="description" placeholder="Insert a description for the product..."
-                                                    class="form-control description-input" rows="3" style="resize: none;"
-                                                    oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px';"
-                                                    onkeydown="if(event.key === 'Enter'){event.preventDefault(); this.form.submit();}"></textarea>
-                                            </div>
+                                            <textarea name="description">{{ $item->description }}</textarea>
                                         </form>
                                     </td>
-
-
-
                                     <td>
-                                        <form method="POST"
-                                            action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-danger">Remove</button>
-                                        </form>
-                                        <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}"
-                                            class="btn btn-info">Edit Specifications</a>
+                                        <div class="button-group">
+                                            <form method="POST"
+                                                action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-danger">Remove</button>
+                                            </form>
+                                            <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}"
+                                                class="btn btn-primary">Edit Specifications</a>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="{{ route('cart.checkout') }}" class="btn btn-primary"
+                            style="font-size: 16px; padding: 10px 20px;">
+                            Proceed to order
+                        </a>
+                    </div>
+                @else
+                    <p>No items selected.</p>
                 @endif
             </div>
-
-            <!-- Sidebar -->
-            <aside class="cart-summary">
-                <h3>Summary</h3>
-                <ul>
-                    <li><span>Total Selected Items:</span><span>{{ $items->count() }}</span></li>
-                    <li><span>Total Price:</span><span>$ {{ $items->sum('subTotal') }}</span></li>
-                </ul>
-                <a href="{{ route('cart.checkout') }}" class="btn btn-primary">Proceed</a>
-            </aside>
         </section>
     </main>
 @endsection
