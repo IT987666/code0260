@@ -4,10 +4,7 @@
     <style>
         /* General Styles */
         body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+
             padding-top: 20px;
             /* Adds space at the top of the body content */
 
@@ -19,7 +16,6 @@
         }
 
         .container {
-            display: flex;
             gap: 20px;
             margin: 20px;
         }
@@ -36,6 +32,11 @@
 
         .cart-container {
             flex: 2;
+        }
+
+        .shop-main.container {
+            display: flex;
+
         }
 
         /* Table Styles */
@@ -138,20 +139,6 @@
         main.pt-90 {
             margin-top: 80px;
             /* Resolves header overlap */
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .product-container,
-            .cart-container,
-            .cart-summary {
-                margin-bottom: 20px;
-            }
         }
     </style>
 
