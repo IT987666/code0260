@@ -187,6 +187,7 @@ class CartController extends Controller
             'address' => 'nullable',
             'locality' => 'nullable',
             'extra' => 'required',
+            'billing_info' => 'required',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
@@ -232,6 +233,7 @@ class CartController extends Controller
         $order->state = $address->state;
         $order->country = $address->country;
         $order->extra = $request->extra;
+        $order->billing_info = $request->billing_info;
         $order->zip = $address->zip;
         $order->images = $uploadedImages ? json_encode($uploadedImages) : null;
         $order->save();

@@ -2,33 +2,33 @@
 @section('content')
 
     <style>
-         .btn-primary {
+        .btn-primary {
             background-color: #20bec6;
-             color: white;
+            color: white;
         }
 
         .btn-primary:hover {
             background-color: #20bec6;
-             transform: scale(1.05);
+            transform: scale(1.05);
             transition: transform 0.3s ease, background-color 0.3s ease;
         }
 
-         .checkout__pdf-button {
+        .checkout__pdf-button {
             display: flex;
             justify-content: center;
             align-items: center;
             margin-top: 20px;
         }
 
-         .order-info__item span {
+        .order-info__item span {
             word-wrap: break-word;
-             word-break: break-word;
-         }
+            word-break: break-word;
+        }
 
         <style>.btn-primary:hover {
             background-color: #20bec6;
-             transform: scale(1.05);
-         }
+            transform: scale(1.05);
+        }
     </style>
 
     </style>
@@ -38,14 +38,14 @@
             <div class="order-complete">
                 <div class="order-complete__message">
                     <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                         <path d="M52.9743 35.7612C52.9743 35.3426 ..." fill="white" />
+                        <path d="M52.9743 35.7612C52.9743 35.3426 ..." fill="white" />
                     </svg>
                     <h3>The order is complete and prepared for printing.
                     </h3>
                 </div>
 
                 <div class="order-info">
-                    
+
                     <div class="order-info__item">
                         <label>Date</label>
                         <span>{{ $order->created_at }}</span>
@@ -94,6 +94,16 @@
                                 <ul>
                                     <li>
                                         {!! $order->extra !!}
+                                    </li>
+                                </ul>
+                            </div>
+                        @endif
+
+                        @if (!empty($order->billing_info))
+                            <div class="order-extras">
+                                <ul>
+                                    <li>
+                                        {!! $order->billing_info !!}
                                     </li>
                                 </ul>
                             </div>
@@ -187,13 +197,13 @@
         </section>
     </main>
 @endsection
- {{--@push('scripts')
+{{-- @push('scripts')
     <script>
         function disableButton(event) {
             const button = event.currentTarget;
 
-             button.style.pointerEvents = 'none';  
-            button.style.opacity = '0.6';  
+             button.style.pointerEvents = 'none';
+            button.style.opacity = '0.6';
 
              button.innerHTML = 'Processing...';
         }

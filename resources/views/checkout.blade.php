@@ -145,20 +145,20 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6"> 
+                            <div class="col-md-6">
                                 <div class="form-floating my-3">
                                     <input type="text" class="form-control" id="phone" name="phone" required="">
                                     <label for="phone">Phone Number *</label>
                                     @error('phone')
                                         <span class="text-danger">{{ $message }}</span>
-                                    @enderror 
+                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-floating my-3">
                                     <select class="form-select" id="country" name="country" required="">
                                         <option value="" disabled selected>Select Country</option>
-    
+
                                     </select>
                                     <label for="country">Country *</label>
                                     @error('country')
@@ -177,7 +177,7 @@
                                 </div>
                             </div>
 
-                            
+
 
                             <div class="col-md-12">
                                 <div class="form-group my-3">
@@ -185,6 +185,17 @@
                                     <textarea class="form-control ckeditor" name="extra" id="extra" rows="5"></textarea>
 
                                     @error('extra')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- New Billing Info Section -->
+                            <div class="col-md-12 mt-4">
+                                <div class="form-group my-3">
+                                    <label for="billing_info">Billing Information *</label>
+                                    <textarea class="form-control ckeditor" name="billing_info" id="billing_info" rows="5"></textarea>
+                                    @error('billing_info')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -258,42 +269,49 @@
 
 
         document.addEventListener('DOMContentLoaded', () => {
-    const countrySelect = document.querySelector('#country');
+            const countrySelect = document.querySelector('#country');
 
-     [...countrySelect.options].forEach(option => {
-        option.title = option.textContent;
-    });
-});
+            [...countrySelect.options].forEach(option => {
+                option.title = option.textContent;
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            ClassicEditor
+                .create(document.querySelector('#billing_info'))
+                .catch(error => {
+                    console.error(error);
+                });
+        });
 
 
-
-  // إضافة رمز الدولة تلقائيًا عند اختيار الدولة
-  document.getElementById('country').addEventListener('change', function() {
+        // إضافة رمز الدولة تلقائيًا عند اختيار الدولة
+        document.getElementById('country').addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             const countryCode = selectedOption.getAttribute('data-code');
             const phoneInput = document.getElementById('phone');
-            
+
             if (countryCode) {
                 phoneInput.value = countryCode + ' ';
             }
         });
-       /* document.addEventListener('DOMContentLoaded', function() {
-            var phoneInput = document.querySelector("#phone");
-            var form = phoneInput.closest('form');
+        /* document.addEventListener('DOMContentLoaded', function() {
+             var phoneInput = document.querySelector("#phone");
+             var form = phoneInput.closest('form');
 
-            // Initialize intl-tel-input
-            var iti = intlTelInput(phoneInput, {
-                initialCountry: "sy",
-                separateDialCode: true,
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
-            });
+             // Initialize intl-tel-input
+             var iti = intlTelInput(phoneInput, {
+                 initialCountry: "sy",
+                 separateDialCode: true,
+                 utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+             });
 
-            // Update the input value with combined phone number on form submit
-            form.addEventListener('submit', function() {
-                const fullPhoneNumber = iti.getNumber(); // Gets the full phone number with country code
-                phoneInput.value = fullPhoneNumber; // Set it as the input value
-            });
-        });*/
+             // Update the input value with combined phone number on form submit
+             form.addEventListener('submit', function() {
+                 const fullPhoneNumber = iti.getNumber(); // Gets the full phone number with country code
+                 phoneInput.value = fullPhoneNumber; // Set it as the input value
+             });
+         });*/
 
 
         /*document.querySelector("form[name='checkout-form']").addEventListener('submit', function(event) {
@@ -320,25 +338,26 @@ Best Regards.
                 });
         });
     </script>
-      <script>
+    <script>
         document.addEventListener("DOMContentLoaded", () => {
             const countrySelect = document.getElementById("country");
 
-             fetch('https://restcountries.com/v3.1/all')
+            fetch('https://restcountries.com/v3.1/all')
                 .then(response => response.json())
                 .then(data => {
-                     const sortedCountries = data.sort((a, b) => 
+                    const sortedCountries = data.sort((a, b) =>
                         a.name.common.localeCompare(b.name.common)
                     );
 
-                     sortedCountries.forEach(country => {
-                        const dialCode = country.idd?.root + (country.idd?.suffixes ? country.idd.suffixes[0] : "");
+                    sortedCountries.forEach(country => {
+                        const dialCode = country.idd?.root + (country.idd?.suffixes ? country.idd
+                            .suffixes[0] : "");
                         if (dialCode) {
                             const option = document.createElement("option");
-                            option.value = country.cca2; 
-                            option.textContent = `${country.name.common} (${dialCode})`; 
-                            option.setAttribute("data-code", dialCode); 
-                            countrySelect.appendChild(option); 
+                            option.value = country.cca2;
+                            option.textContent = `${country.name.common} (${dialCode})`;
+                            option.setAttribute("data-code", dialCode);
+                            countrySelect.appendChild(option);
                         }
                     });
                 })
@@ -388,30 +407,30 @@ Best Regards.
 
 
 
- .form-floating .form-select {
-    width: 100%;  
-    height: calc(3.5rem + 2px); 
-    font-size: 16px;  
-    line-height: 1.5;  
-    padding: 0.75rem 1.25rem;  
-}
+        .form-floating .form-select {
+            width: 100%;
+            height: calc(3.5rem + 2px);
+            font-size: 16px;
+            line-height: 1.5;
+            padding: 0.75rem 1.25rem;
+        }
 
- .form-select option {
-    white-space: nowrap;  
-    overflow: hidden;  
-    text-overflow: ellipsis; 
-}
+        .form-select option {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
- .form-select:hover, .form-select:focus {
-    border-color: #20bec6;  
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
- .select-dropdown {
-    max-height: 300px;  
-    overflow-y: auto;  
-    border-radius: 5px;  
-}
+        .form-select:hover,
+        .form-select:focus {
+            border-color: #20bec6;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
 
-
+        .select-dropdown {
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 5px;
+        }
     </style>
 @endpush
