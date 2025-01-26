@@ -217,8 +217,7 @@
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Order Date</th>
                                     <th class="text-center">Total Items</th>
-                                    <th class="text-center">Delivered On</th>
-                                    <th class="text-center">Canceled On</th>  
+                              
                                     <th></th>
                                 </tr>
                             </thead>
@@ -257,10 +256,7 @@
                                     
                                     <td class="text-center">{{$order->created_at}}</td>
                                     <td class="text-center">{{$order->orderItems->count()}}</td>
-                                    <td class="text-center">{{ $order->delivered_date ? \Carbon\Carbon::parse($order->delivered_date)->format('Y-m-d H:i:s') : 'N/A' }}</td>
-                                    <td class="text-center">
-                                        {{ $order->status == 'canceled' ? \Carbon\Carbon::parse($order->canceled_date)->format('Y-m-d H:i:s') : 'N/A' }} <!-- عرض تاريخ الإلغاء في العمود الجديد -->
-                                    </td>
+                                     
                                     <td class="text-center">
                                         <a href="{{route('admin.order.details',['order_id'=>$order->id])}}">
                                             <div class="list-icon-function view-icon">

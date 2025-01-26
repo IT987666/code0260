@@ -105,6 +105,7 @@ Route::middleware(['auth', AuthAdmin::class])->group(function () {
     
     Route::get('/admin/search', [AdminController::class, 'search'])->name('admin.search');
     Route::get('/admin/orders/search', action: [AdminController::class, 'search_order'])->name('admin.orders.search');
+     Route::get('/orders/export/excel', [UserController::class, 'exportExcel'])->name('orders.export.excel');
 
     Route::get('/admin/order/{id}/generate-pdf', [AdminController::class, 'generateOrderPDF'])->name('admin.order.generate.pdf');
 });

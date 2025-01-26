@@ -182,9 +182,7 @@ td.text-center a.edit-note:hover {
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Order Date</th>
                                     <th class="text-center">Total Items</th>
-                                    <th class="text-center">Delivered On</th>
-                                    <th class="text-center">Canceled On</th>
-                                    <th class="text-center">Notes</th>
+                                     <th class="text-center">Notes</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -223,13 +221,7 @@ td.text-center a.edit-note:hover {
                                         
                                         <td class="text-center">{{ $order->created_at }}</td>
                                         <td class="text-center">{{ $order->orderItems->count() }}</td>
-                                        <td class="text-center">
-                                            {{ $order->delivered_date ? \Carbon\Carbon::parse($order->delivered_date)->format('Y-m-d H:i:s') : 'N/A' }}
-                                        </td>
-                                        <td class="text-center">
-                                            {{ $order->status == 'canceled' ? \Carbon\Carbon::parse($order->canceled_date)->format('Y-m-d H:i:s') : 'N/A' }}
-                                            <!-- عرض تاريخ الإلغاء في العمود الجديد -->
-                                        </td>
+                                         
                                         
                                         <td class="text-center">
                                             <a href="javascript:void(0)" class="edit-note"
@@ -253,7 +245,9 @@ td.text-center a.edit-note:hover {
                                     </tr>
                                 @endforeach
                             </tbody>
-
+ <div class="export-buttons">
+    <a href="{{ route('orders.export.excel') }}" class="btn btn-success">Export Orders to Excel</a>
+ </div> 
                         </table>
                     </div>
                 </div>
@@ -263,7 +257,7 @@ td.text-center a.edit-note:hover {
                 </div>
             </div>
         </div>
-
+    
         <div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" aria-hidden="true"
             data-bs-backdrop="false">
             <div class="modal-dialog modal-dialog-centered">
@@ -281,12 +275,14 @@ td.text-center a.edit-note:hover {
                             <input type="hidden" id="order-id">
                         </form>
                     </div>
+                  
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-primary" id="save-note-btn">Save Note</button>
                     </div>
                 </div>
             </div>
+          
         </div>
     @endsection
 
