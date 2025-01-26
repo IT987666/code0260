@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
- 
+
 use App\Models\Product;
 use App\Models\Order;
- use App\Models\OrderItem;
+use App\Models\OrderItem;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -78,7 +78,7 @@ class AdminController extends Controller
         ));
     }
 
-    
+
     public function products()
 
     {
@@ -92,8 +92,8 @@ class AdminController extends Controller
 
     {
         $product = Product::orderBy('created_at', 'DESC')->first();
- 
-        return view('admin.product-add', compact(  'product'));
+
+        return view('admin.product-add', compact('product'));
     }
 
 
@@ -109,13 +109,13 @@ class AdminController extends Controller
             'code' => 'required',
             'featured' => 'nullable|boolean',
         ]);
-    
+
         // إيجاد أصغر ID متاح
         $minAvailableId = DB::table('products')
             ->select(DB::raw('COALESCE(MIN(id + 1), 1) as id'))
             ->whereRaw('id + 1 NOT IN (SELECT id FROM products)')
             ->value('id');
-    
+
         // إنشاء المنتج
         $product = new Product();
         $product->id = $minAvailableId;
@@ -127,7 +127,7 @@ class AdminController extends Controller
         $product->featured = $request->featured ?? false;
         $product->adding_date = now();
         $product->save();
-    
+
         // حفظ المواصفات
         if ($request->has('specifications')) {
             foreach ($request->specifications as $spec) {
@@ -158,13 +158,13 @@ class AdminController extends Controller
     }
 
 
- 
+
     public function product_edit($id)
     {
         $product = Product::find($id);
         $specifications = ProductSpecification::where('product_id', $id)->get();
- 
-        return view('admin.product-edit', compact('product', 'specifications' ));
+
+        return view('admin.product-edit', compact('product', 'specifications'));
     }
 
     public function product_update(Request $request)
@@ -173,10 +173,10 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'stock_status' => 'required|in:active,inactive',
             'description' => 'nullable',
-            'companies_responsibilities' => 'nullable', 
+            'companies_responsibilities' => 'nullable',
             'customers_responsibilities' => 'nullable',
-             'code' => 'nullable',
-                         'featured' => 'nullable|boolean',
+            'code' => 'nullable',
+            'featured' => 'nullable|boolean',
             'specifications.*.id' => 'nullable|integer|exists:product_specifications,id',
             'specifications.*.name' => 'required|string|max:255',
             'specifications.*.title' => 'nullable|string|max:255',
@@ -187,7 +187,7 @@ class AdminController extends Controller
         // تحديث المنتج
         $product = Product::findOrFail($request->id);
         $product->name = $request->name;
-      
+
         $product->companies_responsibilities = $request->companies_responsibilities;
         $product->customers_responsibilities = $request->customers_responsibilities;
         $product->code = $request->code;
@@ -200,9 +200,9 @@ class AdminController extends Controller
         $updatedSpecIds = [];
 
         if ($specifications && is_array($specifications)) {
-            foreach ($specifications as $spec) {
-                if (isset($spec['id']) && $spec['id']) {
-                    $specification = ProductSpecification::findOrFail($spec['id']);
+            foreach ($specifications as $id => $spec) {
+                if (is_numeric($id)) {
+                    $specification = ProductSpecification::findOrFail($id);
                 } else {
                     $specification = new ProductSpecification();
                     $specification->product_id = $product->id;
@@ -212,7 +212,6 @@ class AdminController extends Controller
                 $specification->title = $spec['title'] ?? null;
                 $specification->paragraphs = isset($spec['paragraphs']) ? $spec['paragraphs'] : null;
 
-                // إدارة الصور
                 if (isset($spec['images']) && is_array($spec['images'])) {
                     $imagePaths = [];
                     foreach ($spec['images'] as $image) {
@@ -221,7 +220,6 @@ class AdminController extends Controller
                         }
                     }
 
-                    // دمج الصور القديمة مع الجديدة
                     $existingImages = $specification->images ? json_decode($specification->images, true) : [];
                     $specification->images = json_encode(array_merge($existingImages, $imagePaths));
                 }
@@ -270,7 +268,7 @@ class AdminController extends Controller
     public function orders()
     {
         $orders = Order::orderBy('created_at', 'DESC')->paginate(12); // جلب البيانات مع التصفح
- 
+
         return view('admin.orders', compact('orders')); // تمرير المتغير إلى الـ View
     }
 
@@ -297,10 +295,10 @@ class AdminController extends Controller
         $orderItems = OrderItem::where('order_id', $order_id)
             ->orderBy('id')
             ->paginate(12);
-  // جلب عناصر الطلب مع مواصفات المنتج
+        // جلب عناصر الطلب مع مواصفات المنتج
 
 
-        return view('admin.order-details', compact('order', 'orderItems' ));
+        return view('admin.order-details', compact('order', 'orderItems'));
     }
 
 
@@ -340,9 +338,9 @@ class AdminController extends Controller
     }
 
 
-     
 
-  
+
+
 
 
 
@@ -355,8 +353,8 @@ class AdminController extends Controller
 
         return response()->json($results);
     }
-    
-    
+
+
 
     public function search_order(Request $request)
     {
@@ -378,7 +376,7 @@ class AdminController extends Controller
 
 
 
-   /* public function generateOrderPDF($id)
+    /* public function generateOrderPDF($id)
     {
         $order = Order::with('orderItems.product.category')->findOrFail($id);
 
