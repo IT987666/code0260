@@ -69,7 +69,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:15',
             'subtotal' => 'required|numeric|min:0',
-            'status' => 'required|string|in:ordered,delivered,canceled',
+'status' => 'required|string|in:ordered,delivered,canceled,offer_sent,offer_signed,downpayment_received,in_production,pending_final_payment,final_payment_received,shipped,cancelled',
             'note' => 'nullable|string',
             'order_images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'items.*.quantity' => 'required|integer|min:1',

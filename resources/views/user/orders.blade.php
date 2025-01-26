@@ -70,14 +70,29 @@
                                             <td class="text-center">{{ $order->phone }}</td>
                                             <td class="text-center">${{ $order->subtotal }}</td>
                                             <td class="text-center">
-                                                @if ($order->status == 'delivered')
+                                                @if($order->status == 'delivered')
                                                     <span class="badge bg-success">Delivered</span>
-                                                @elseif($order->status == 'canceled')
+                                                @elseif($order->status == 'canceled' || $order->status == 'cancelled')
                                                     <span class="badge bg-danger">Canceled</span>
+                                                @elseif($order->status == 'offer_sent')
+                                                    <span class="badge bg-info">Offer Sent</span>
+                                                @elseif($order->status == 'offer_signed')
+                                                    <span class="badge bg-primary">Offer Signed</span>
+                                                @elseif($order->status == 'downpayment_received')
+                                                    <span class="badge bg-secondary">Downpayment Received</span>
+                                                @elseif($order->status == 'in_production')
+                                                    <span class="badge bg-warning">In Production</span>
+                                                @elseif($order->status == 'pending_final_payment')
+                                                    <span class="badge bg-dark">Pending Final Payment</span>
+                                                @elseif($order->status == 'final_payment_received')
+                                                    <span class="badge bg-success">Final Payment Received</span>
+                                                @elseif($order->status == 'shipped')
+                                                    <span class="badge bg-info">Shipped</span>
                                                 @else
                                                     <span class="badge bg-warning">Ordered</span>
                                                 @endif
                                             </td>
+                                            
                                             <td class="text-center">{{ $order->created_at }}</td>
                                             <td class="text-center">{{ $order->orderItems->count() }}</td>
                                             <td class="text-center">{{ $order->delivered_date ?? 'N/A' }}</td>

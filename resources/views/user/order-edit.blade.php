@@ -149,8 +149,16 @@
                 <select class="form-control" id="status" name="status">
                     <option value="ordered" {{ $order->status == 'ordered' ? 'selected' : '' }}>Ordered</option>
                     <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                    <option value="canceled" {{ $order->status == 'canceled' ? 'selected' : '' }}>Canceled</option>
+                    <option value="canceled" {{ $order->status == 'canceled' || $order->status == 'cancelled' ? 'selected' : '' }}>Canceled</option>
+                    <option value="offer_sent" {{ $order->status == 'offer_sent' ? 'selected' : '' }}>Offer Sent</option>
+                    <option value="offer_signed" {{ $order->status == 'offer_signed' ? 'selected' : '' }}>Offer Signed</option>
+                    <option value="downpayment_received" {{ $order->status == 'downpayment_received' ? 'selected' : '' }}>Downpayment Received</option>
+                    <option value="in_production" {{ $order->status == 'in_production' ? 'selected' : '' }}>In Production</option>
+                    <option value="pending_final_payment" {{ $order->status == 'pending_final_payment' ? 'selected' : '' }}>Pending Final Payment</option>
+                    <option value="final_payment_received" {{ $order->status == 'final_payment_received' ? 'selected' : '' }}>Final Payment Received</option>
+                    <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Shipped</option>
                 </select>
+                
             </div>
 
             <div class="mb-3">

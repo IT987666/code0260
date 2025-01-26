@@ -60,12 +60,27 @@
                         <td colspan="5">
                             @if($order->status == 'delivered')
                                 <span class="badge bg-success">Delivered</span>
-                            @elseif($order->status == 'canceled')
+                            @elseif($order->status == 'canceled' || $order->status == 'cancelled')
                                 <span class="badge bg-danger">Canceled</span>
+                            @elseif($order->status == 'offer_sent')
+                                <span class="badge bg-info">Offer Sent</span>
+                            @elseif($order->status == 'offer_signed')
+                                <span class="badge bg-primary">Offer Signed</span>
+                            @elseif($order->status == 'downpayment_received')
+                                <span class="badge bg-secondary">Downpayment Received</span>
+                            @elseif($order->status == 'in_production')
+                                <span class="badge bg-warning">In Production</span>
+                            @elseif($order->status == 'pending_final_payment')
+                                <span class="badge bg-dark">Pending Final Payment</span>
+                            @elseif($order->status == 'final_payment_received')
+                                <span class="badge bg-success">Final Payment Received</span>
+                            @elseif($order->status == 'shipped')
+                                <span class="badge bg-info">Shipped</span>
                             @else
                                 <span class="badge bg-warning">Ordered</span>
                             @endif
                         </td>
+                        
                     </tr>
                 </table>
                 
@@ -149,15 +164,19 @@
             
                 <div class="col-md-3">
                 
-                <select id="order_status" name="order_status">
-                
-                <option value="ordered" {{ $order->status == 'ordered' ? 'selected' : '' }}>Ordered</option>
-                
-                <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                
-                <option value="canceled" {{ $order->status == 'canceled' ? 'selected' : '' }}>Canceled</option>
-                
-                </select>
+                    <select id="order_status" name="order_status">
+                        <option value="ordered" {{ $order->status == 'ordered' ? 'selected' : '' }}>Ordered</option>
+                        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                        <option value="canceled" {{ $order->status == 'canceled' || $order->status == 'cancelled' ? 'selected' : '' }}>Canceled</option>
+                        <option value="offer_sent" {{ $order->status == 'offer_sent' ? 'selected' : '' }}>Offer Sent</option>
+                        <option value="offer_signed" {{ $order->status == 'offer_signed' ? 'selected' : '' }}>Offer Signed</option>
+                        <option value="downpayment_received" {{ $order->status == 'downpayment_received' ? 'selected' : '' }}>Downpayment Received</option>
+                        <option value="in_production" {{ $order->status == 'in_production' ? 'selected' : '' }}>In Production</option>
+                        <option value="pending_final_payment" {{ $order->status == 'pending_final_payment' ? 'selected' : '' }}>Pending Final Payment</option>
+                        <option value="final_payment_received" {{ $order->status == 'final_payment_received' ? 'selected' : '' }}>Final Payment Received</option>
+                        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                    </select>
+                    
                 
                 </div>
                 
