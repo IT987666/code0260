@@ -181,12 +181,8 @@ class CartController extends Controller
         $request->validate([
             'name' => 'required|max:100',
             'phone' => 'required|string',
-            'zip' => 'nullable|digits:6',
-            'state' => 'nullable',
-            'email' => 'nullable|email',
-            'address' => 'nullable',
-            'locality' => 'nullable',
-            'extra' => 'required',
+             'email' => 'nullable|email',
+             'extra' => 'required',
             'billing_info' => 'required',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpg,jpeg,png|max:2048',
@@ -205,11 +201,7 @@ class CartController extends Controller
         $address->name = $request->name;
         $address->phone = $request->phone;
         $address->email = $request->email;
-        $address->zip = '00000';
-        $address->state = '02135';
-        $address->city = 'Mashru Dummar';
-        $address->address = 'Mashru Dummar';
-        $address->locality = 'Mashru Dummar';
+       
         $address->country = $request->country;
         $address->user_id = $user_id;
         $address->isdefault = false;
@@ -221,21 +213,20 @@ class CartController extends Controller
         // Save the order
         $order = new Order();
         $order->user_id = $user_id;
+
+        $order->reference_code= $this->generateReferenceCode($request);
         $order->subtotal = (float)str_replace(',', '', Session::get('checkout')['subtotal']);
         $order->total = (float)str_replace(',', '', Session::get('checkout')['total']);
         $order->discount = Session::get('checkout')['discount'];
         $order->tax = Session::get('checkout')['tax'];
         $order->name = $address->name;
         $order->phone = $address->phone;
-        $order->locality = $address->locality;
-        $order->address = $address->address;
-        $order->city = $address->city;
-        $order->state = $address->state;
-        $order->country = $address->country;
+        $order->email = $address->email;
+
+          $order->country = $address->country;
         $order->extra = $request->extra;
         $order->billing_info = $request->billing_info;
-        $order->zip = $address->zip;
-        $order->images = $uploadedImages ? json_encode($uploadedImages) : null;
+         $order->images = $uploadedImages ? json_encode($uploadedImages) : null;
         $order->save();
 
         // Add order items
@@ -280,7 +271,7 @@ class CartController extends Controller
 
         return redirect()->route('cart.order.confirmation');
     }
-
+  
     public function setAmountforCheckout()
     {
         if (!Cart::instance('cart')->content()->count() > 0) {
@@ -307,6 +298,44 @@ class CartController extends Controller
         }
     }
 
+
+    private function generateReferenceCode(Request $request)
+    {
+        // الحصول على تاريخ اليوم
+        $date = Carbon::now()->format('ymd');
+
+        // تحديد كود نوع المنتج بناءً على الاسم أو معايير أخرى
+        //$productType = $this->getProductCodeByName($request->name);
+
+        // الحصول على كود الفئة من قاعدة البيانات بناءً على الـ category_id
+// الحصول على الكود من المنتج
+foreach (Cart::instance('cart')->content() as $item) {
+    $product = Product::find($item->id);
+
+
+ $categoryCode = $product->code;
+}
+        // الحصول على رقم الموظف
+        $employeeId = str_pad(Auth::user()->id, 3, '0', STR_PAD_LEFT);
+
+        // تحديد الرقم التسلسلي
+        $sequence = Order::whereDate('created_at', Carbon::today())->count() + 1;
+        $sequenceFormatted = str_pad($sequence, 3, '0', STR_PAD_LEFT);
+
+        // صياغة الريفرنس كود الأساسي ليشمل كود الفئة
+        $baseReferenceCode = "{$date}-{$categoryCode}-{$employeeId}-{$sequenceFormatted}";
+        $referenceCode = $baseReferenceCode;
+
+        $counter = 1;
+
+        // التأكد من أن الكود فريد
+        while (Order::where('reference_code', $referenceCode)->exists()) {
+            $referenceCode = "{$baseReferenceCode}-{$counter}";
+            $counter++;
+        }
+
+        return $referenceCode;
+    }
 
 
 
@@ -518,7 +547,7 @@ class CartController extends Controller
 
         // Fetch order items with product details
         $orderItems = OrderItem::with(['product' => function ($query) {
-            $query->select('id', 'name', 'slug');
+            $query->select('id', 'name', );
         }])->where('order_id', $order->id)->get();
 
         // Attach specifications to order items

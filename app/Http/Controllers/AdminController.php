@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-
+ 
 use App\Models\Product;
 use App\Models\Order;
-use App\Models\Slide;
-use App\Models\OrderItem;
+ use App\Models\OrderItem;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -80,60 +78,7 @@ class AdminController extends Controller
         ));
     }
 
-    public function categories()
-    {
-        $categories = Category::orderBy('id', 'DESC')->paginate(10);
-        return view('admin.categories', compact('categories'));
-    }
-
-    public function category_add()
-    {
-        return view('admin.category-add');
-    }
-
-    public function category_store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:categories,name',
-            'code' => 'required|unique:categories,code|size:3', // يجب أن يكون طوله 3 أحرف
-        ]);
-
-        $category = new Category();
-        $category->name = $request->name;
-        $category->code = strtoupper($request->code); // تحويل الكود إلى أحرف كبيرة
-        $category->save();
-
-        return redirect()->route('admin.categories')->with('status', 'Category has been added successfully!');
-    }
-
-    public function category_edit($id)
-    {
-        $category = Category::find($id);
-        return view('admin.category-edit', compact('category'));
-    }
-
-    public function category_update(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:categories,name,' . $request->id,
-            'code' => 'required|unique:categories,code,' . $request->id . '|size:3', // تعديل الكود بشرط فريد
-        ]);
-
-        $category = Category::find($request->id);
-        $category->name = $request->name;
-        $category->code = strtoupper($request->code); // تحويل الكود إلى أحرف كبيرة
-        $category->save();
-
-        return redirect()->route('admin.categories')->with('status', 'Category has been updated successfully!');
-    }
-
-    public function category_delete($id)
-    {
-        $category = Category::find($id);
-        $category->delete();
-
-        return redirect()->route('admin.categories')->with('status', 'Category has been deleted successfully!');
-    }
+    
     public function products()
 
     {
@@ -147,9 +92,8 @@ class AdminController extends Controller
 
     {
         $product = Product::orderBy('created_at', 'DESC')->first();
-        $categories = Category::select('id', 'name')->orderBy('name')->get();
-
-        return view('admin.product-add', compact('categories', 'product'));
+ 
+        return view('admin.product-add', compact(  'product'));
     }
 
 
@@ -160,27 +104,30 @@ class AdminController extends Controller
             'name' => 'required',
             'stock_status' => 'required|in:active,inactive',
             'description' => 'nullable',
-            'category_id' => 'required',
-
+            'companies_responsibilities' => 'required',
+            'customers_responsibilities' => 'required',
+            'code' => 'required',
             'featured' => 'nullable|boolean',
-            'specifications.*.name' => 'required|string',
-            'specifications.*.title' => 'nullable|string',
-            'specifications.*.paragraphs' => 'nullable',
-            'specifications.*.images' => 'array', // تحقق من أن الصور مصفوفة
         ]);
-
+    
+        // إيجاد أصغر ID متاح
+        $minAvailableId = DB::table('products')
+            ->select(DB::raw('COALESCE(MIN(id + 1), 1) as id'))
+            ->whereRaw('id + 1 NOT IN (SELECT id FROM products)')
+            ->value('id');
+    
         // إنشاء المنتج
         $product = new Product();
+        $product->id = $minAvailableId;
         $product->name = $request->name;
-        $product->slug = $this->generateReferenceCode($request);
-        $product->description = $request->description ?? 'Insert Description.';
-        $product->category_id = $request->category_id;
-
+        $product->companies_responsibilities = $request->companies_responsibilities;
+        $product->customers_responsibilities = $request->customers_responsibilities;
+        $product->code = $request->code;
         $product->stock_status = $request->stock_status;
         $product->featured = $request->featured ?? false;
-        $product->adding_date = Carbon::now();
+        $product->adding_date = now();
         $product->save();
-
+    
         // حفظ المواصفات
         if ($request->has('specifications')) {
             foreach ($request->specifications as $spec) {
@@ -211,27 +158,13 @@ class AdminController extends Controller
     }
 
 
-
-    public function GenerateProductThumbnailImage($image, $imageName)
-    {
-        $destinationPathThumbnail = public_path('uploads/products/thumbnails');
-        $destinationPath = public_path('uploads/products');
-        $img = Image::read($image->path());
-        $img->cover(540, 689, "top");
-        $img->resize(540, 689, function ($constraint) {
-            $constraint->aspectRatio();
-        })->save($destinationPath . '/' . $imageName, 100);
-        $img->resize(104, 104, function ($constraint) {
-            $constraint->aspectRatio();
-        })->save($destinationPathThumbnail . '/' . $imageName, 100);
-    }
+ 
     public function product_edit($id)
     {
         $product = Product::find($id);
         $specifications = ProductSpecification::where('product_id', $id)->get();
-        $categories = Category::select('id', 'name')->orderBy('name')->get();
-
-        return view('admin.product-edit', compact('product', 'specifications', 'categories'));
+ 
+        return view('admin.product-edit', compact('product', 'specifications' ));
     }
 
     public function product_update(Request $request)
@@ -240,8 +173,10 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'stock_status' => 'required|in:active,inactive',
             'description' => 'nullable',
-            'category_id' => 'required',
-            'featured' => 'nullable|boolean',
+            'companies_responsibilities' => 'nullable', 
+            'customers_responsibilities' => 'nullable',
+             'code' => 'nullable',
+                         'featured' => 'nullable|boolean',
             'specifications.*.id' => 'nullable|integer|exists:product_specifications,id',
             'specifications.*.name' => 'required|string|max:255',
             'specifications.*.title' => 'nullable|string|max:255',
@@ -252,9 +187,10 @@ class AdminController extends Controller
         // تحديث المنتج
         $product = Product::findOrFail($request->id);
         $product->name = $request->name;
-        $product->slug = $this->generateReferenceCode($request);
-        $product->description = $request->description ?? 'Insert Description..';
-        $product->category_id = $request->category_id;
+      
+        $product->companies_responsibilities = $request->companies_responsibilities;
+        $product->customers_responsibilities = $request->customers_responsibilities;
+        $product->code = $request->code;
         $product->stock_status = $request->stock_status;
         $product->featured = $request->featured ?? false;
         $product->save();
@@ -277,7 +213,6 @@ class AdminController extends Controller
                 $specification->paragraphs = isset($spec['paragraphs']) ? $spec['paragraphs'] : null;
 
                 // إدارة الصور
-
                 if (isset($spec['images']) && is_array($spec['images'])) {
                     $imagePaths = [];
                     foreach ($spec['images'] as $image) {
@@ -310,7 +245,6 @@ class AdminController extends Controller
 
 
 
-
     public function product_delete($id)
     {
         $product = Product::find($id);
@@ -336,8 +270,7 @@ class AdminController extends Controller
     public function orders()
     {
         $orders = Order::orderBy('created_at', 'DESC')->paginate(12); // جلب البيانات مع التصفح
-        $categories = Category::orderBy('name', 'ASC')->get();
-
+ 
         return view('admin.orders', compact('orders')); // تمرير المتغير إلى الـ View
     }
 
@@ -438,39 +371,6 @@ class AdminController extends Controller
     }
 
 
-    private function generateReferenceCode(Request $request)
-    {
-        // الحصول على تاريخ اليوم
-        $date = Carbon::now()->format('ymd');
-
-        // تحديد كود نوع المنتج بناءً على الاسم أو معايير أخرى
-        //$productType = $this->getProductCodeByName($request->name);
-
-        // الحصول على كود الفئة من قاعدة البيانات بناءً على الـ category_id
-        $categoryCode = Category::find($request->category_id)->code;
-
-        // الحصول على رقم الموظف
-        $employeeId = str_pad(Auth::user()->id, 3, '0', STR_PAD_LEFT);
-
-        // تحديد الرقم التسلسلي
-        $sequence = Product::whereDate('created_at', Carbon::today())->count() + 1;
-        $sequenceFormatted = str_pad($sequence, 3, '0', STR_PAD_LEFT);
-
-        // صياغة الريفرنس كود الأساسي ليشمل كود الفئة
-        $baseReferenceCode = "{$date}-{$categoryCode}-{$employeeId}-{$sequenceFormatted}";
-        $referenceCode = $baseReferenceCode;
-
-        $counter = 1;
-
-        // التأكد من أن الكود فريد
-        while (Product::where('slug', $referenceCode)->exists()) {
-            $referenceCode = "{$baseReferenceCode}-{$counter}";
-            $counter++;
-        }
-
-        return $referenceCode;
-    }
-
 
     // دالة جديدة للحصول على كود نوع المنتج بناءً على الاسم
 
@@ -478,7 +378,7 @@ class AdminController extends Controller
 
 
 
-    public function generateOrderPDF($id)
+   /* public function generateOrderPDF($id)
     {
         $order = Order::with('orderItems.product.category')->findOrFail($id);
 
@@ -499,5 +399,5 @@ class AdminController extends Controller
 
 
         return response()->download($path . $fileName);
-    }
+    }*/
 }

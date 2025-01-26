@@ -17,8 +17,7 @@ class ShopController extends Controller
         $o_column = "";
         $o_order = "";
         $order = $request->query('order') ? $request->query('order') : -1;
-        $f_categories = $request->query('categories'); // التصنيفات فقط
-
+    
         // ترتيب النتائج حسب الخيارات
         switch ($order) {
             case 1:
@@ -41,23 +40,17 @@ class ShopController extends Controller
                 $o_column = 'id';
                 $o_order = 'DESC';
         }
-
-        // جلب قائمة التصنيفات
-        $categories = Category::orderBy('name', 'ASC')->get();
-
-        // تصفية المنتجات بناءً على التصنيفات فقط
-        $products = Product::where(function ($query) use ($f_categories) {
-            $query->whereIn('category_id', explode(',', $f_categories))
-                ->orWhereRaw("'" . $f_categories . "' = ''");
-        })
-            ->orderBy($o_column, $o_order)
-            ->paginate($size);
-
+    
+        // جلب قائمة المنتجات
+        $products = Product::orderBy($o_column, $o_order)->paginate($size);
+    
         // جلب بيانات السلة
         $items = Cart::instance('cart')->content();
+    
         // تمرير البيانات إلى العرض
-        return view('shop', compact('products', 'size', 'order', 'categories', 'f_categories', 'items'));
+        return view('shop', compact('products', 'size', 'order', 'items'));
     }
+    
 
 
     public function product_details($product_slug)

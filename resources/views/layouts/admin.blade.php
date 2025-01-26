@@ -119,36 +119,12 @@
                                 <li class="menu-item has-children">
                                     <a href="javascript:void(0);" class="menu-item-button">
                                         <div class="icon"><i class="icon-layers"></i></div>
-                                        <div class="text"> Product Type </div>
+                                        <div class="text"> Order </div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
-                                            <a href="{{route('admin.category.add')}}" class="">
-                                                <div class="text">New Product Type</div>
-                                            </a>
-                                        </li>
-                                        <li class="sub-menu-item">
-                                            <a href="{{route('admin.categories')}}" class="">
-                                                <div class="text">Product Types</div>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-
-
-                               
-
-                                <li class="menu-item has-children">
-                                    <a href="javascript:void(0);" class="menu-item-button">>
-                                        <div class="icon">
-                                            <i class="icon-file-plus"></i>  
-                                        </div>
-                                        <div class="text"> Order </div>
-                                    </a> 
-                                    <ul class="sub-menu">
-                                        <li class="sub-menu-item">
                                             <a href="{{ route('shop.index') }}" class="">
-                                                <div class="text">New Order</div>
+                                                <div class="text">New Orde</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
@@ -158,9 +134,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                                
-
-
+ 
                                
                             </ul>
                         </div>

@@ -44,8 +44,8 @@
                         <td>{{ $order->id }}</td>
                         <th>Mobile</th>
                         <td>{{ $order->phone }}</td>
-                        <th>Zip Code</th>
-                        <td>{{ $order->zip }}</td>
+                        <th> </th>
+                        <td> </td>
                     </tr>
                     <tr>
                         <th>Order Date</th>
@@ -85,44 +85,24 @@
                             <th>Name</th>
                             <th class="text-center">Price</th>
                             <th class="text-center">Quantity</th>
-                            <th class="text-center">Reference Code</th>
-                             <th class="text-center">Options</th>
-                            <th class="text-center">Return Status</th>
-                            <th class="text-center">Action</th>
-                        </tr>
+                          </tr>
                     </thead>
                     <tbody>
                         @foreach ($orderItems as $item) 
                         <tr>
                             <td class="pname">
-                                <div class="image">
-                                    <img src="{{ asset('uploads/products/thumbnails/' . $item->product->image) }}" 
-                                         alt="{{ $item->product->name }}" class="image">
-                                </div>
+                                
                                 <div class="name">
-                                    <a href="{{ route('shop.product.details', ['product_slug' => $item->product->slug]) }}" 
-                                       target="_blank" class="body-title-2">
-                                        {{ $item->product->name }}
+                                         {{ $item->product->name }}
                                     </a>
                                 </div>
                             </td>
                             <td class="text-center">${{ $item->price }}</td>
                             <td class="text-center">{{ $item->quantity }}</td>
-                            <td class="text-center">{{ $item->product->slug }}</td>
-                             <td class="text-center">{{ $item->options }}</td>
-                            <td class="text-center">{{ $item->rstatus == 0 ? 'No' : 'Yes' }}</td>
-                            <td class="text-center">
-                               
-                                <div class="list-icon-function view-icon">
-                                    <div class="item eye">
-                                        <a href=" {{ route('shop.product.details', ['product_slug' => $item->product->slug]) }}" target="_blank">
-                                            <div class="item eye">
-                                                <i class="icon-eye"></i>
-                                            </div>
-                                        </a>    </div>
-                                </div>
+                                
+                                
                             </td> 
-                        </tr>
+                        </tr> 
                         @endforeach
                         
 
@@ -142,11 +122,10 @@
             <div class="my-account__address-item col-md-6">
                 <div class="my-account_address-item_detail">
                     <p>{{ $order->name }}</p>
-                    <p>{{ $order->address }}</p>
-                    <p>{{ $order->locality }}</p>
-                    <p>{{ $order->city }}, {{ $order->country }}</p>
-                    <p>{{ $order->landmark }}</p>
-                    <p>{{ $order->zip }}</p>
+                    
+                    
+                    {{ $order->country }}</p>
+                     <p>{{ $order->email }}</p> 
                     <br>
                     <p><strong>Mobile:</strong> {{ $order->phone }}</p>
                 </div>

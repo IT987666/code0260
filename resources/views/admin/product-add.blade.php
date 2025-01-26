@@ -1,5 +1,6 @@
 @extends('layouts.admin')
 @section('content')
+
     <style>
         .specification-item {
             border: 1px solid #ddd;
@@ -123,79 +124,69 @@
             </div>
             <!-- form-add-product -->
             <form class="tf-section-2 form-add-product" method="POST" enctype="multipart/form-data"
-                action="{{ route('admin.product.store') }}">
-
-                @csrf
-                <div class="wg-box">
-                    <fieldset class="name">
-                        <div class="body-title mb-10">Product name <span class="tf-color-1">*</span>
-                        </div>
-                        <input class="mb-10" type="text" placeholder="Enter product name" name="name" tabindex="0"
-                            value="{{ old('name') }}" aria-required="true" required="">
-                        <div class="text-tiny">Do not exceed 100 characters when entering the
-                            product name.</div>
-                    </fieldset>
-                    @error('name')
-                        <span class="alert alert-danger text-center">{{ $message }}</span>
-                    @enderror
-
-                    <fieldset class="category">
-                        <div class="body-title mb-10">Product Type <span class="tf-color-1">*</span>
-                        </div>
-                        <div class="select">
-                            <select class="" name="category_id">
-                                <option>Choose Product Type </option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-
-                            </select>
-                        </div>
-                    </fieldset>
-                    @error('category_id')
-                        <span class="alert alert-danger text-center">{{ $message }}</span>
-                    @enderror
-
-                    <div class="cols gap22">
-                        <fieldset class="name">
-                            <div class="body-title mb-10">Status</div>
-                            <div class="select mb-10">
-                                <select class="" name="stock_status">
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                </select>
-                            </div>
-                        </fieldset>
-                        @error('stock_status')
-                            <span class="alert alert-danger text-center">{{ $message }}</span>
-                        @enderror
-
-                    </div>
-                    <div class="cols gap10">
-                        <button class="tf-button w-full" type="submit">Add product</button>
-                    </div>
-
-                </div>
-                <div class="wg-box">
-                    <fieldset class="specifications">
-                        <!-- مكان إضافة الحقول الجديدة -->
-                         <div class="body-title mb-10">Technical Specification <span class="tf-color-1">*</span>
-                        </div> 
-                        <div id="specifications-container">
-
-                            <!-- الحقول المضافة ديناميكياً ستظهر هنا -->
-                        </div>
-                    </fieldset>
-                
-                    <!-- زر إضافة مواصفات بعد الحقول المضافة -->
-                    <button type="button" id="add-specification-btn" class="tf-button w-full" style="margin-top: 20px;">Add Specification</button>
-                </div>
-                
-
-
-
-
-            </form>
+            action="{{ route('admin.product.store') }}">
+      
+          @csrf
+          <div class="wg-box">
+              <fieldset class="name">
+                  <div class="body-title mb-10">Product name <span class="tf-color-1">*</span></div>
+                  <input class="mb-10" type="text" placeholder="Enter product name" name="name" tabindex="0"
+                         value="{{ old('name') }}" aria-required="true" required="">
+                  <div class="text-tiny">Do not exceed 100 characters when entering the product name.</div>
+              </fieldset>
+              @error('name')
+              <span class="alert alert-danger text-center">{{ $message }}</span>
+              @enderror
+      
+              <fieldset class="name">
+                <div class="body-title mb-10">Company’s responsibilities <span class="tf-color-1">*</span></div>
+                <textarea id="companies-responsibilities-editor" name="companies_responsibilities"></textarea>
+            </fieldset>
+            
+            <fieldset class="name">
+                <div class="body-title mb-10">Customer’s responsibilities <span class="tf-color-1">*</span></div>
+                <textarea id="customers-responsibilities-editor" name="customers_responsibilities"></textarea>
+            </fieldset>
+            
+              <fieldset>
+                  <label for="code">Code:</label>
+                  <input type="text" name="code" maxlength="3" value="{{ old('code') }}" required>
+                  @error('code') <span class="text-danger">{{ $message }}</span> @enderror
+              </fieldset>
+      
+              <div class="cols gap22">
+                  <fieldset class="name">
+                      <div class="body-title mb-10">Status</div>
+                      <div class="select mb-10">
+                          <select class="" name="stock_status">
+                              <option value="active">Active</option>
+                              <option value="inactive">Inactive</option>
+                          </select>
+                      </div>
+                  </fieldset>
+                  @error('stock_status')
+                  <span class="alert alert-danger text-center">{{ $message }}</span>
+                  @enderror
+              </div>
+      
+              <div class="wg-box">
+                  <fieldset class="specifications">
+                      <div class="body-title mb-10">Technical Specifications <span class="tf-color-1">*</span></div>
+                      <div id="specifications-container">
+                          <!-- Dynamic specifications will be added here -->
+                      </div>
+                  </fieldset>
+                  <button type="button" id="add-specification-btn" class="tf-button w-full" data-bs-toggle="modal"
+                          data-bs-target="#addSpecificationModal" style="margin-top: 20px;">Add Specification
+                  </button>
+              </div>
+      
+              <div class="cols gap10">
+                  <button class="tf-button w-full" type="submit">Add Product</button>
+              </div>
+          </div>
+      </form>
+          
             <!-- /form-add-product -->
         </div>
         <!-- /main-content-wrap -->
@@ -203,7 +194,7 @@
     <!-- /main-content-wrap -->
 @endsection
 @push('scripts')
-    <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script>
+  <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -226,24 +217,16 @@
             };
             $(document).ready(function() {
                 $(".ckeditor").each(function() {
-                    // الحصول على المحتوى مع إزالة أي تاغات HTML والفواصل
-                    var content = $(this).val(); // أو استخدم .html() إذا كان المحتوى داخل HTML
-                    // content = content.replace(/<[^>]*>/g, ''); // إزالة أي تاغات HTML
-                    // content = content.replace(/[\r\n\t]/g, ''); // إزالة \r\n و \t (الفواصل)
-                    // content = content.replace(/\"/g, ''); // إزالة الدبل كوتيشن (علامات الاقتباس)
-
-                    // تهيئة CKEditor وتعيين المحتوى المعدل فيه
+                     var content = $(this).val();  
+                   
                     ClassicEditor
                         .create(this)
                         .then(editor => {
                             editor.setData(content);
 
-                            // عند حدوث تغيير في البيانات داخل الـ CKEditor
-                            editor.model.document.on('change:data', () => {
+                             editor.model.document.on('change:data', () => {
                                 let data = editor.getData();
-                                // data = data.replace(/<[^>]*>/g, ''); // إزالة التاغات HTML
-                                // data = data.replace(/[\r\n\t]/g, ''); // إزالة الفواصل غير المرغوب فيها
-                                // data = data.replace(/\"/g, ''); // إزالة الدبل كوتيشن
+                               
                                 console.log(data); // طباعة النص المعدل
                             });
                         })
@@ -251,8 +234,8 @@
                             console.error(error);
                         });
                 });
-            });
-
+            }); 
+             
             // إضافة قسم مواصفات جديد
             $('#add-specification-btn').on('click', function() {
                 specificationCounter++;
@@ -381,6 +364,95 @@ button.text(`SAVE ${specName}`);
             // تهيئة محرر النصوص للمواصفات
             initializeTextEditor('textarea[name^="specifications"]');
         });
-      
+    document.addEventListener('DOMContentLoaded', function () {
+    // تهيئة CKEditor لحقل Company’s responsibilities
+    ClassicEditor
+        .create(document.querySelector('#companies-responsibilities-editor'))
+        .catch(error => console.error(error));
+
+    // تهيئة CKEditor لحقل Customer’s responsibilities
+    ClassicEditor
+        .create(document.querySelector('#customers-responsibilities-editor'))
+        .catch(error => console.error(error));
+});
+document.querySelector('form').addEventListener('submit', function () {
+    const companyEditor = ClassicEditor.instances['companies-responsibilities-editor'];
+    const customerEditor = ClassicEditor.instances['customers-responsibilities-editor'];
+
+    // تحديث القيم في الحقول النصية
+    if (companyEditor) {
+        companyEditor.updateSourceElement();
+    }
+    if (customerEditor) {
+        customerEditor.updateSourceElement();
+    }
+});
+
+
+    </script>
+    
+@endpush
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            let specificationCounter = 0;
+
+            // Save specification
+            $('#save-specification').on('click', function () {
+                specificationCounter++;
+                const specName = $('#spec-name').val();
+                const specParagraphs = $('#spec-paragraphs').val();
+                const specImages = $('#spec-images')[0].files;
+
+                let imagePreview = '';
+                if (specImages.length > 0) {
+                    Array.from(specImages).forEach(file => {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            imagePreview += `
+                                <div class="gitems">
+                                    <img src="${e.target.result}" alt="Preview Image"
+                                         style="max-width: 100px; max-height: 100px; object-fit: cover;">
+                                </div>`;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+
+                const newSpecification = `
+                    <div class="specification-item" id="specification-${specificationCounter}">
+                        <div class="spec-header">
+                            <span>Specification ${specificationCounter}: ${specName}</span>
+                        </div>
+                        <div class="specification-content">
+                            <p>${specParagraphs}</p>
+                            <div class="gallery-preview">${imagePreview}</div>
+                            <button type="button" class="remove-specification-btn btn btn-danger btn-sm"
+                                    data-spec-id="${specificationCounter}">Remove</button>
+                        </div>
+                    </div>`;
+                $('#specifications-container').append(newSpecification);
+
+                // Close modal and reset form
+                $('#addSpecificationModal').modal('hide');
+                $('#specification-form')[0].reset();
+            });
+            $('#addSpecificationModal').on('shown.bs.modal', function () {
+    if (!CKEDITOR.instances['spec-paragraphs']) {
+        CKEDITOR.replace('spec-paragraphs');
+    }
+});
+$('#addSpecificationModal').on('hidden.bs.modal', function () {
+    if (CKEDITOR.instances['spec-paragraphs']) {
+        CKEDITOR.instances['spec-paragraphs'].destroy(true);
+    }
+});
+
+            // Remove specification
+            $(document).on('click', '.remove-specification-btn', function () {
+                const specId = $(this).data('spec-id');
+                $(`#specification-${specId}`).remove();
+            });
+        });
     </script>
 @endpush

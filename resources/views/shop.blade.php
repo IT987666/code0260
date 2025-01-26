@@ -157,11 +157,10 @@
                     <tbody>
                         @foreach ($products as $product)
                             <tr>
-                                <td>
-                                    <a href="{{ route('shop.product.details', ['product_slug' => $product->slug]) }}">
-                                        {{ $product->name }}
-                                    </a>
-                                </td>
+                                  <td class="product-name">
+                             {{$product->name}}
+                        </a>
+                    </td> 
                                 <td>
                                     <form name="addtocart-form" method="post" action="{{ route('cart.add') }}">
                                         @csrf

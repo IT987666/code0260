@@ -77,24 +77,43 @@
                     @error('name')
                         <span class="alert alert-danger text-center">{{ $message }}</span>
                     @enderror
-                    <fieldset class="category">
-                        <div class="body-title mb-10">Product Type <span class="tf-color-1">*</span>
-                        </div>
-                        <div class="select">
-                            <select class="" name="category_id">
-                                <option>Choose Product Type </option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}"
-                                        {{ $product->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}
-                                    </option>
-                                @endforeach
-
-                            </select>
-                        </div>
+                    <fieldset class="name">
+                        <div class="body-title mb-10">companies_responsibilities<span class="tf-color-1">*</span></div>
+                        <textarea name="companies_responsibilities" id="companies_responsibilities" 
+                                  class="ckeditor" placeholder="Enter companies responsibilities" 
+                                  tabindex="0" aria-required="true" required="">
+                            {!! old('companies_responsibilities', htmlspecialchars_decode(stripslashes($product->companies_responsibilities))) !!}
+                        </textarea>
+                        <div class="text-tiny">You can use rich text editing for companies' responsibilities.</div>
                     </fieldset>
-                    @error('category_id')
+                    @error('companies_responsibilities')
                         <span class="alert alert-danger text-center">{{ $message }}</span>
                     @enderror
+                    
+                    <fieldset class="name">
+                        <div class="body-title mb-10">customers_responsibilities <span class="tf-color-1">*</span></div>
+                        <textarea name="customers_responsibilities" id="customers_responsibilities" 
+                                  class="ckeditor" placeholder="Enter customers responsibilities" 
+                                  tabindex="0" aria-required="true" required="">
+                            {!! old('customers_responsibilities', htmlspecialchars_decode(stripslashes($product->customers_responsibilities))) !!}
+                        </textarea>
+                        <div class="text-tiny">You can use rich text editing for customers' responsibilities.</div>
+                    </fieldset>
+                    @error('customers_responsibilities')
+                        <span class="alert alert-danger text-center">{{ $message }}</span>
+                    @enderror
+                    
+                    
+                    <fieldset class="name">
+                        <div class="body-title mb-10">Code:<span class="tf-color-1">*</span></div>
+                        <input type="text" name="code" maxlength="3" value="{{ old('code') }}" required>
+
+                        <div class="text-tiny">code.</div>
+                    </fieldset>
+                    @error('code')
+                        <span class="alert alert-danger text-center">{{ $message }}</span>
+                    @enderror<fieldset class="code">
+                  
                     <div class="wg-box">
                         <fieldset class="name">
                             <div class="body-title mb-10">Status</div>

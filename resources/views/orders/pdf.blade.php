@@ -10,7 +10,7 @@
         </tr>
         <tr>
             <th>REF:</th>
-            <td>{{ $orderItems->first()->product->slug }}</td>
+            <td>{{ $orderItems->first()->order->reference_code }}</td>
         </tr>
         <tr>
             <th>Date:</th>

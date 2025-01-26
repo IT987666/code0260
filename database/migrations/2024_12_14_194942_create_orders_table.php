@@ -18,24 +18,35 @@ return new class extends Migration
             $table->decimal('subtotal');
             $table->string('note')->nullable();
             $table->decimal('discount')->default(0);
+
             $table->decimal('tax')->nullable();
             $table->decimal('total');
             $table->string('name')->nullable();
             $table->string('phone')->nullable();
-            $table->string('locality')->nullable();
-            $table->text('address')->nullable();
-            $table->string('city')->nullable();
-            $table->string('state')->nullable();
-            $table->string('country')->nullable();
+              $table->string('country')->nullable();
             $table->string('landmark')->nullable();
-            $table->string('zip')->nullable();
-            $table->string('type')->default('home');
-            $table->enum('status', ['ordered', 'delivered', 'canceled'])->default('ordered');
-            $table->boolean('is_shipping_different')->default(false);
+             $table->string('type')->default('home');
+             $table->enum('status', [
+                'ordered', 
+                'delivered', 
+                'canceled', 
+                'offer_sent', 
+                'offer_signed', 
+                'downpayment_received', 
+                'in_production', 
+                'pending_final_payment', 
+                'final_payment_received', 
+                'shipped', 
+                'cancelled'
+            ])->default('ordered');
+            
+                        $table->boolean('is_shipping_different')->default(false);
             $table->date('delivered_date')->nullable();
             $table->date('canceled_date')->nullable();
             $table->json('images')->nullable();
             $table->text('extra')->nullable();
+            $table->text('billing_info')->nullable();
+
             $table->string('reference_code')->nullable()->unique(); // كود الريفرنس للطلب، الآن يمكن أن يكون null
 
             $table->timestamps();

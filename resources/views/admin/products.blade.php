@@ -51,10 +51,9 @@
                             <th>#</th>
                             <th>Name</th>
                            
-                            <th>Reference Code</th>
+                            <th>Product Code</th>
                              <th>Status</th>
-                             <th> Product Type </th>
-
+                             <th>Last Modification</th>
                              <th>Action</th>
                         </tr>
                     </thead>
@@ -63,14 +62,15 @@
                          
                     
                         <tr>
-                            <td>{{$product->id}}</td>
+                            <td>{{ str_pad($product->id, 3, '0', STR_PAD_LEFT) }}
+                            </td>
                             <td class="pname">
                                 
                                 <div class="name">
                                     <a href="#" class="body-title-2">{{$product->name}}</a>
                                 </div>
                             </td>
-                            <td>{{$product->slug}}</td>
+                            <td>{{$product->code}}</td>
                              <td class="text-center">
                                 @if($product->stock_status == 'active')
                                     <span class="badge bg-success">Active</span>
@@ -80,8 +80,7 @@
                                     <span class="badge bg-warning">Unknown</span>
                                 @endif
                             </td>
-                            <td>{{ $product->category->name ?? 'N/A' }}</td>
-                     
+                            <td>{{$product->updated_at}}</td>
                             <td>
                                 <div class="list-icon-function">
                                    

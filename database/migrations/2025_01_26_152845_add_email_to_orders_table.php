@@ -9,20 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->text('billing_info')->nullable();
+            $table->string('email')->nullable();  // يمكنك تغيير نوع البيانات بناءً على احتياجك
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    
+    public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            //
+            $table->dropColumn('email');
         });
     }
+    
 };
