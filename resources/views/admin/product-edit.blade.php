@@ -9,7 +9,7 @@
             margin-bottom: 10px;
         }
 
-        .spec-header { 
+        .spec-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -31,8 +31,6 @@
         .specification-content {
             display: block;
         }
-
-   
     </style>
     <div class="main-content-inner">
         <div class="main-content-wrap">
@@ -79,31 +77,35 @@
                     @enderror
                     <fieldset class="name">
                         <div class="body-title mb-10">companies_responsibilities<span class="tf-color-1">*</span></div>
-                        <textarea name="companies_responsibilities" id="companies_responsibilities" 
-                                  class="ckeditor" placeholder="Enter companies responsibilities" 
-                                  tabindex="0" aria-required="true" required="">
-                            {!! old('companies_responsibilities', htmlspecialchars_decode(stripslashes($product->companies_responsibilities))) !!}
+                        <textarea name="companies_responsibilities" id="companies_responsibilities" class="ckeditor"
+                            placeholder="Enter companies responsibilities" tabindex="0" aria-required="true" required="">
+                            {!! old(
+                                'companies_responsibilities',
+                                htmlspecialchars_decode(stripslashes($product->companies_responsibilities)),
+                            ) !!}
                         </textarea>
                         <div class="text-tiny">You can use rich text editing for companies' responsibilities.</div>
                     </fieldset>
                     @error('companies_responsibilities')
                         <span class="alert alert-danger text-center">{{ $message }}</span>
                     @enderror
-                    
+
                     <fieldset class="name">
                         <div class="body-title mb-10">customers_responsibilities <span class="tf-color-1">*</span></div>
-                        <textarea name="customers_responsibilities" id="customers_responsibilities" 
-                                  class="ckeditor" placeholder="Enter customers responsibilities" 
-                                  tabindex="0" aria-required="true" required="">
-                            {!! old('customers_responsibilities', htmlspecialchars_decode(stripslashes($product->customers_responsibilities))) !!}
+                        <textarea name="customers_responsibilities" id="customers_responsibilities" class="ckeditor"
+                            placeholder="Enter customers responsibilities" tabindex="0" aria-required="true" required="">
+                            {!! old(
+                                'customers_responsibilities',
+                                htmlspecialchars_decode(stripslashes($product->customers_responsibilities)),
+                            ) !!}
                         </textarea>
                         <div class="text-tiny">You can use rich text editing for customers' responsibilities.</div>
                     </fieldset>
                     @error('customers_responsibilities')
                         <span class="alert alert-danger text-center">{{ $message }}</span>
                     @enderror
-                    
-                    
+
+
                     <fieldset class="name">
                         <div class="body-title mb-10">Code:<span class="tf-color-1">*</span></div>
                         <input type="text" name="code" maxlength="3" value="{{ old('code') }}" required>
@@ -112,29 +114,31 @@
                     </fieldset>
                     @error('code')
                         <span class="alert alert-danger text-center">{{ $message }}</span>
-                    @enderror<fieldset class="code">
-                  
-                    <div class="wg-box">
-                        <fieldset class="name">
-                            <div class="body-title mb-10">Status</div>
-                            <div class="select mb-10">
-                                <select name="stock_status">
-                                    <option value="active" {{ $product->stock_status == 'active' ? 'selected' : '' }}>
-                                        Active
-                                    </option>
-                                    <option value="inactive" {{ $product->stock_status == 'inactive' ? 'selected' : '' }}>
-                                        Inactive</option>
-                                </select>
-                            </div>
-                        </fieldset>
-                        @error('stock_status')
-                            <span class="alert alert-danger text-center">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    @enderror
+                    <fieldset class="code">
 
-                    <div class="cols gap10">
-                        <button class="tf-button w-full" type="submit">Update Product</button>
-                    </div>
+                        <div class="wg-box">
+                            <fieldset class="name">
+                                <div class="body-title mb-10">Status</div>
+                                <div class="select mb-10">
+                                    <select name="stock_status">
+                                        <option value="active" {{ $product->stock_status == 'active' ? 'selected' : '' }}>
+                                            Active
+                                        </option>
+                                        <option value="inactive"
+                                            {{ $product->stock_status == 'inactive' ? 'selected' : '' }}>
+                                            Inactive</option>
+                                    </select>
+                                </div>
+                            </fieldset>
+                            @error('stock_status')
+                                <span class="alert alert-danger text-center">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="cols gap10">
+                            <button class="tf-button w-full" type="submit">Update Product</button>
+                        </div>
                 </div>
 
                 <div class="wg-box">
@@ -151,7 +155,7 @@
                                     <div class="specification-content" id="specification-content-{{ $specification->id }}"
                                         style="display: none;">
                                         <div class="cols gap10">
-                                            
+
 
 
                                             <fieldset class="other-info">
@@ -161,7 +165,7 @@
                                                     placeholder="Enter specification name"
                                                     value="{{ old('specifications.' . $specification->id . '.name', $specification->name) }}"
                                                     required>
-                                                
+
                                                 <label for="spec-paragraphs-{{ $specification->id }}">Specification
                                                     Paragraphs</label>
                                                 <textarea name="specifications[{{ $specification->id }}][paragraphs]" id="spec-paragraphs-{{ $specification->id }}"
@@ -199,32 +203,33 @@
                                                     data-preview-id="gallery-preview-{{ $specification->id }}" multiple>
                                                 <button type="button" class="remove-specification-btn"
                                                     data-spec-id="{{ $specification->id }}">Remove</button>
- 
+
                                         </div>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
-                     
+
                     </fieldset>
- 
-                
+
+
                     <div class="wg-box">
-                    
+
                         <fieldset class="specifications">
-                           
+
                             <!-- مكان إضافة الحقول الجديدة -->
                             <div id="specifications-container">
                                 <!-- الحقول المضافة ديناميكياً ستظهر هنا -->
                             </div>
                         </fieldset>
-                    
+
                         <!-- زر إضافة مواصفات بعد الحقول المضافة -->
-                        <button type="button" id="add-specification-btn" class="tf-button w-full" style="margin-top: 20px;">Add Specification</button>
+                        <button type="button" id="add-specification-btn" class="tf-button w-full"
+                            style="margin-top: 20px;">Add Specification</button>
                     </div>
                 </div>
 
-              
+
 
             </form>
             <!-- /form-edit-product -->
@@ -256,21 +261,6 @@
             });
             $(document).ready(function() {
                 let specificationCounter = 0;
-
-                // Initialize CKEditor for existing specification paragraphs
-                document.addEventListener("DOMContentLoaded", function() {
-                    document.querySelectorAll('.ckeditor').forEach(editorElement => {
-                        ClassicEditor
-                            .create(editorElement)
-                            .catch(error => console.error(error));
-                    });
-                });
-                // Initialize CKEditor for existing .ckeditor fields on document ready
-
-              
-
-
-                // حذف الصور القديمة والجديدة
                 // حذف الصور القديمة والجديدة
                 $(document).on('click', '.remove-old-image-btn, .remove-new-image-btn', function() {
                     const imageDiv = $(this).closest('.gitems');
@@ -289,7 +279,7 @@
                 });
 
 
-              
+
             });
 
         });
@@ -327,8 +317,6 @@
     </script>
 @endpush
 @push('scripts')
-    <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script>
-
     <script>
         $(document).ready(function() {
             let specificationCounter = 0;
@@ -341,7 +329,7 @@
 
                         // بعد تهيئة الـ CKEditor، نزيل التاغات أو الدبل كوتيشن إذا كانت موجودة
                         var content = $(this).val(); // الحصول على المحتوى
-                        
+
                         // تعيين المحتوى المعدل داخل الـ CKEditor
                         CKEDITOR.instances[$(this).attr('id')].setData(content);
 
@@ -349,30 +337,6 @@
                     }
                 });
             };
-            $(document).ready(function() {
-                $(".ckeditor").each(function() {
-                     var content = $(this).val(); // أو استخدم .html() إذا كان المحتوى داخل HTML
-          
-
-                    // تهيئة CKEditor وتعيين المحتوى المعدل فيه
-                    ClassicEditor
-                        .create(this)
-                        .then(editor => {
-                            editor.setData(content);
-
-                            // عند حدوث تغيير في البيانات داخل الـ CKEditor
-                            editor.model.document.on('change:data', () => {
-                                let data = editor.getData();
-                               
-                                console.log(data); // طباعة النص المعدل
-                            });
-                        })
-                        .catch(error => {
-                            console.error(error);
-                        });
-                });
-            });
-
             // إضافة قسم مواصفات جديد
             $('#add-specification-btn').on('click', function() {
                 specificationCounter++;
@@ -386,9 +350,9 @@
                         <label for="spec-name-${specificationCounter}">Specification Name:</label>
                         <input type="text" name="specifications[${specificationCounter}][name]" id="spec-name-${specificationCounter}" placeholder="Enter specification name" required>
                     </div>
-                         
- 
-                    
+
+
+
                     <div class="specification-paragraphs">
                         <label for="spec-paragraphs-${specificationCounter}">Specification Paragraphs:</label>
                         <textarea name="specifications[${specificationCounter}][paragraphs]" id="spec-paragraphs-${specificationCounter}" placeholder="Enter paragraphs"></textarea>
@@ -396,22 +360,22 @@
                   <div class="specification-gallery">
   <fieldset>
     <label for="specifications[${specificationCounter}][images]">Images</label>
-    
+
     <div class="gallery-preview" id="preview-container-${specificationCounter}">
         <!-- سيتم عرض الصور الحالية هنا -->
         @php
-             $images = isset($specification['images']) ? (is_array($specification['images']) ? $specification['images'] : json_decode($specification['images'], true)) : [];
+            $images = isset($specification['images']) ? (is_array($specification['images']) ? $specification['images'] : json_decode($specification['images'], true)) : [];
         @endphp
 
-       
+
     </div>
-    <input type="file" 
-           name="specifications[${specificationCounter}][images][]" 
-           id="gFile-${specificationCounter}" 
-           class="form-control modern-input" 
-           accept="image/*" 
+    <input type="file"
+           name="specifications[${specificationCounter}][images][]"
+           id="gFile-${specificationCounter}"
+           class="form-control modern-input"
+           accept="image/*"
            multiple>
-           
+
 </fieldset>
 
 </div>
@@ -419,7 +383,7 @@
                     <button type="button" class="remove-specification-btn w-full" data-spec-id="${specificationCounter}">Remove</button>
                 </div>
           <button type="button" class="tf-button w-full toggle-specification-btn1" data-spec-id="${specificationCounter}" style="margin: 0 auto; display: block;">SAVE</button>
- 
+
             </div>`;
 
                 $('#specifications-container').append(newSpecification);
@@ -436,7 +400,7 @@
             });
 
             // إظهار/إخفاء قسم المواصفات
-          
+
 
 
             // معاينة الصور
@@ -471,26 +435,26 @@
                 }
             });
 
-    // إظهار/إخفاء قسم المواصفات
-    $(document).on('click', '.toggle-specification-btn1', function() {//////////
-    const specId = $(this).data('spec-id');
-    const specContent = $(`#specification-${specId} .specification-content`);
-    const button = $(this);
-      // إضافة الكلاس tf-button للتأكد من أن الزر يتبع التنسيق الصحيح
-    button.addClass('tf-button w-full');
-    
-    // جلب اسم السبيسفكيشن من الحقل الموجود داخل الـ HTML
-    const specName = $(`#spec-name-${specId}`).val();
+            // إظهار/إخفاء قسم المواصفات
+            $(document).on('click', '.toggle-specification-btn1', function() { //////////
+                const specId = $(this).data('spec-id');
+                const specContent = $(`#specification-${specId} .specification-content`);
+                const button = $(this);
+                // إضافة الكلاس tf-button للتأكد من أن الزر يتبع التنسيق الصحيح
+                button.addClass('tf-button w-full');
 
-if (specContent.is(':visible')) {
-    specContent.slideUp();
-    button.text(`Show ${specName}`); // عرض اسم السبيسفكيشن في الزر
-} else {
-    specContent.slideDown();
-    button.text(`SAVE ${specName}`); // عرض اسم السبيسفكيشن في الزر
-}
-});
- 
+                // جلب اسم السبيسفكيشن من الحقل الموجود داخل الـ HTML
+                const specName = $(`#spec-name-${specId}`).val();
+
+                if (specContent.is(':visible')) {
+                    specContent.slideUp();
+                    button.text(`Show ${specName}`); // عرض اسم السبيسفكيشن في الزر
+                } else {
+                    specContent.slideDown();
+                    button.text(`SAVE ${specName}`); // عرض اسم السبيسفكيشن في الزر
+                }
+            });
+
 
             // إزالة قسم المواصفات
             $(document).on('click', '.remove-specification-btn', function() {
