@@ -19,6 +19,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Session;
 use Surfsidemedia\Shoppingcart\Facades\Cart;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -166,7 +167,6 @@ class AdminController extends Controller
 
         return view('admin.product-edit', compact('product', 'specifications'));
     }
-
     public function product_update(Request $request)
     {
         $request->validate([
@@ -182,12 +182,12 @@ class AdminController extends Controller
             'specifications.*.title' => 'nullable|string|max:255',
             'specifications.*.paragraphs' => 'nullable',
             'specifications.*.images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'specifications.*.existing_images.*' => 'nullable|string', // for existing images
         ]);
 
-        // تحديث المنتج
+        // Update the product
         $product = Product::findOrFail($request->id);
         $product->name = $request->name;
-
         $product->companies_responsibilities = $request->companies_responsibilities;
         $product->customers_responsibilities = $request->customers_responsibilities;
         $product->code = $request->code;
@@ -195,7 +195,7 @@ class AdminController extends Controller
         $product->featured = $request->featured ?? false;
         $product->save();
 
-        // تحديث المواصفات
+        // Update specifications
         $specifications = $request->specifications;
         $updatedSpecIds = [];
 
@@ -210,33 +210,55 @@ class AdminController extends Controller
 
                 $specification->name = $spec['name'];
                 $specification->title = $spec['title'] ?? null;
-                $specification->paragraphs = isset($spec['paragraphs']) ? $spec['paragraphs'] : null;
+                $specification->paragraphs = $spec['paragraphs'] ?? null;
+
+                // Handle images
+                $existingImages = $specification->images ? json_decode($specification->images, true) : [];
+                $newImages = [];
+                $imagesToDelete = [];
 
                 if (isset($spec['images']) && is_array($spec['images'])) {
-                    $imagePaths = [];
+                    // Upload new images
                     foreach ($spec['images'] as $image) {
                         if ($image instanceof \Illuminate\Http\UploadedFile) {
-                            $imagePaths[] = $image->store('products/specifications', 'public');
+                            $newImages[] = $image->store('products/specifications', 'public');
                         }
                     }
-
-                    $existingImages = $specification->images ? json_decode($specification->images, true) : [];
-                    $specification->images = json_encode(array_merge($existingImages, $imagePaths));
                 }
+
+                // Check for images that are marked for deletion
+                if (isset($spec['existing_images']) && is_array($spec['existing_images'])) {
+                    // Keep only the images that are still marked as existing and delete the rest
+                    $imagesToDelete = array_diff($existingImages, $spec['existing_images']);
+                } else {
+                    // If no existing images are provided, delete all
+                    $imagesToDelete = $existingImages;
+                }
+
+                // Delete images that are no longer needed
+                foreach ($imagesToDelete as $image) {
+                    // Delete from the storage
+                    if (Storage::disk('public')->exists($image)) {
+                        Storage::disk('public')->delete($image);
+                    }
+                }
+
+
+                // Merge the new images with the existing ones, keeping only the ones not deleted
+                $specification->images = json_encode(array_merge(array_diff($existingImages, $imagesToDelete), $newImages));
 
                 $specification->save();
                 $updatedSpecIds[] = $specification->id;
             }
         }
 
-        // حذف المواصفات المحذوفة
+        // Optionally, delete specifications not included in the updated IDs
         ProductSpecification::where('product_id', $product->id)
             ->whereNotIn('id', $updatedSpecIds)
             ->delete();
 
-        return redirect()->route('admin.products')->with('status', 'Product has been updated successfully!');
+        return redirect()->back()->with('success', 'Product updated successfully');
     }
-
 
 
 

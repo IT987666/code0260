@@ -22,11 +22,14 @@
         }
 
         img {
+            width: 150px;
+            /* Adjust the size as needed */
             border: 1px solid #ddd;
             border-radius: 5px;
             margin: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
+
 
         .specification-content {
             display: block;
@@ -64,6 +67,7 @@
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="id" value="{{ $product->id }}" />
+
 
                 <div class="wg-box">
                     <fieldset class="name">
@@ -108,9 +112,10 @@
 
                     <fieldset class="name">
                         <div class="body-title mb-10">Code:<span class="tf-color-1">*</span></div>
-                        <input type="text" name="code" maxlength="3" value="{{ old('code') }}" required>
+                        <input type="text" name="code" maxlength="3" value="{{ old('code', $product->code) }}"
+                            required>
 
-                        <div class="text-tiny">code.</div>
+                        {{-- <div class="text-tiny">code.</div> --}}
                     </fieldset>
                     @error('code')
                         <span class="alert alert-danger text-center">{{ $message }}</span>
@@ -197,6 +202,11 @@
                                                         @endif
                                                     </div>
                                                 </div>
+                                                @isset($image)
+                                                    <input type="hidden"
+                                                        name="specifications[{{ $specification->id }}][deleted_images][]"
+                                                        value="{{ $image }}" class="deleted-image-input">
+                                                @endisset
                                                 <input type="file"
                                                     name="specifications[{{ $specification->id }}][images][]"
                                                     class="form-control gallery-input"
@@ -262,13 +272,18 @@
             $(document).ready(function() {
                 let specificationCounter = 0;
                 // حذف الصور القديمة والجديدة
-                $(document).on('click', '.remove-old-image-btn, .remove-new-image-btn', function() {
+                $(document).on('click', '.remove-old-image-btn', function() {
                     const imageDiv = $(this).closest('.gitems');
-                    if (imageDiv.length) {
-                        imageDiv.remove();
-                    } else {
-                        console.error('Image container not found.');
-                    }
+                    const imagePath = $(this).data('image'); // The path of the image
+
+                    // Add the image to a hidden input for deletion tracking
+                    const specId = $(this).closest('.gallery-preview').attr('id').split('-').pop();
+                    $(`#specification-${specId}`).append(`
+        <input type="hidden" name="specifications[${specId}][deleted_images][]" value="${imagePath}">
+    `);
+
+                    // Remove the image from the UI
+                    imageDiv.remove();
                 });
 
 
@@ -457,10 +472,18 @@
 
 
             // إزالة قسم المواصفات
-            $(document).on('click', '.remove-specification-btn', function() {
-                const specId = $(this).data('spec-id');
-                $(`#specification-${specId}`).remove();
+            $(document).on('click', '.remove-old-image-btn', function() {
+                const image = $(this).data('image');
+                const specId = $(this).closest('.gallery-preview').attr('id').split('-').pop();
+                $(this).closest('.gitems').remove();
+
+                $('<input>')
+                    .attr('type', 'hidden')
+                    .attr('name', `specifications[${specId}][deleted_images][]`)
+                    .val(image)
+                    .appendTo(`#specification-${specId}`);
             });
+
 
             // تهيئة محرر النصوص للمواصفات
             initializeTextEditor('textarea[name^="specifications"]');
