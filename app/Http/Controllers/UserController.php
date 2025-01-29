@@ -238,7 +238,7 @@ class UserController extends Controller
                         <td><span class='badge {$statusClass}'>" . ucfirst(str_replace('_', ' ', $order->status)) . "</span></td>
                         <td>{$order->created_at}</td>
                         <td>" . $order->orderItems->count() . "</td>
-                        <td>" . ($order->note ?? 'Add Note') . "</td>
+                        <td>" . ($order->note) . "</td>
                     </tr>";
                 }
                 
