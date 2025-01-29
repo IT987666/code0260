@@ -169,22 +169,23 @@
                   @enderror
               </div>
       
-              <div class="wg-box">
-                  <fieldset class="specifications">
-                      <div class="body-title mb-10">Technical Specifications <span class="tf-color-1">*</span></div>
-                      <div id="specifications-container">
-                          <!-- Dynamic specifications will be added here -->
-                      </div>
-                  </fieldset>
-                  <button type="button" id="add-specification-btn" class="tf-button w-full" data-bs-toggle="modal"
-                          data-bs-target="#addSpecificationModal" style="margin-top: 20px;">Add Specification
-                  </button>
-              </div>
+             
       
               <div class="cols gap10">
                   <button class="tf-button w-full" type="submit">Add Product</button>
               </div>
           </div>
+          <div class="wg-box">
+            <fieldset class="specifications">
+                <div class="body-title mb-10">Technical Specifications <span class="tf-color-1">*</span></div>
+                <div id="specifications-container">
+                    <!-- Dynamic specifications will be added here -->
+                </div>
+            </fieldset>
+            <button type="button" id="add-specification-btn" class="tf-button w-full" data-bs-toggle="modal"
+                    data-bs-target="#addSpecificationModal" style="margin-top: 20px;">Add Specification
+            </button>
+        </div>
       </form>
           
             <!-- /form-add-product -->
