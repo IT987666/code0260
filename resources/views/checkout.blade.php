@@ -240,31 +240,41 @@
         document.addEventListener('DOMContentLoaded', function() {
             const imageInput = document.getElementById('images');
             const previewContainer = document.getElementById('preview-container');
-            let allFiles = []; // Array to store all selected files
+            let allFiles = []; // Store all selected files
+
+            function updateFileList() {
+                const dataTransfer = new DataTransfer();
+                allFiles.forEach(file => dataTransfer.items.add(file));
+                imageInput.files = dataTransfer.files;
+            }
 
             function previewImages(event) {
-                // Get newly selected files
-                const newFiles = event.target.files;
+                const newFiles = Array.from(event.target.files); // Convert FileList to array
 
-                // Append new files to the existing files
-                allFiles = [...allFiles, ...newFiles];
+                // Append new files only if they are not already selected
+                newFiles.forEach(file => {
+                    if (!allFiles.some(existingFile => existingFile.name === file.name && existingFile
+                            .size === file.size)) {
+                        allFiles.push(file);
+                    }
+                });
 
-                // Clear the preview container
-                previewContainer.innerHTML = '';
+                renderPreview();
+                updateFileList();
+            }
 
-                // Loop through all files and display them in preview
-                for (let i = 0; i < allFiles.length; i++) {
-                    const file = allFiles[i];
+            function renderPreview() {
+                previewContainer.innerHTML = ''; // Clear existing previews
+
+                allFiles.forEach((file, index) => {
                     const reader = new FileReader();
 
                     reader.onload = function(e) {
-                        // Create container for each image with delete button
                         const imageWrapper = document.createElement('div');
                         imageWrapper.style.position = 'relative';
                         imageWrapper.style.display = 'inline-block';
                         imageWrapper.style.margin = '5px';
 
-                        // Create the image element
                         const img = document.createElement('img');
                         img.src = e.target.result;
                         img.alt = 'Image Preview';
@@ -272,7 +282,6 @@
                         img.style.maxHeight = '100px';
                         img.style.objectFit = 'cover';
 
-                        // Create the delete button
                         const deleteButton = document.createElement('button');
                         deleteButton.innerHTML = 'X';
                         deleteButton.style.position = 'absolute';
@@ -284,46 +293,23 @@
                         deleteButton.style.padding = '5px';
                         deleteButton.style.cursor = 'pointer';
 
-                        // Append the image and the delete button to the wrapper
+                        deleteButton.addEventListener('click', function() {
+                            allFiles.splice(index, 1); // Remove from the array
+                            renderPreview();
+                            updateFileList();
+                        });
+
                         imageWrapper.appendChild(img);
                         imageWrapper.appendChild(deleteButton);
-
-                        // Append the image wrapper to the preview container
                         previewContainer.appendChild(imageWrapper);
-
-                        // Add delete functionality
-                        deleteButton.addEventListener('click', function() {
-                            // Remove the image from the preview container
-                            previewContainer.removeChild(imageWrapper);
-
-                            // Remove the file from the allFiles array
-                            allFiles = allFiles.filter((f, index) => index !== i);
-
-                            // Update the file input with the remaining files
-                            const dataTransfer = new DataTransfer();
-                            allFiles.forEach(file => {
-                                dataTransfer.items.add(file);
-                            });
-                            imageInput.files = dataTransfer.files;
-                        });
                     };
 
                     reader.readAsDataURL(file);
-                }
+                });
             }
 
-            // Listen for changes in the file input
             imageInput.addEventListener('change', previewImages);
         });
-        document.addEventListener('DOMContentLoaded', () => {
-            const countrySelect = document.querySelector('#country');
-
-            [...countrySelect.options].forEach(option => {
-                option.title = option.textContent;
-            });
-        });
-
-
 
 
         // إضافة رمز الدولة تلقائيًا عند اختيار الدولة
