@@ -204,7 +204,16 @@
                             <span class="view-all">View all</span>
                         </a>
                     </div>
+                    <div class="wg-filter">
+                        <form method="GET" action="{{ route('admin.index') }}">
+                            <select name="sort" onchange="this.form.submit()">
+                                <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Newest First</option>
+                                <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Oldest First</option>
+                            </select>
+                        </form>
+                    </div>
                 </div>
+               
                 <div class="wg-table table-all-user">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered">
@@ -268,7 +277,12 @@
                                     </td>
                                 </tr>
                                 @endforeach
-                            </tbody>
+                            </tbody> 
+                            <div class="export-buttons">
+                                <a href="{{ route('orders.export.excel') }}" class="btn btn-success">Export Orders to Excel</a>
+                                <a href="{{ route('orders.export.pdf') }}" class="btn btn-danger">Export Orders to PDF</a>
+ 
+                            </div> 
                         </table>
                     </div>
                 </div>

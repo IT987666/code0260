@@ -27,8 +27,10 @@ class AdminController extends Controller
 
     public function index()
     {
-        $orders = Order::orderBy('created_at', 'DESC')->get()->take(10);
-
+        $sort = request('sort', 'desc'); // الافتراضي هو الأحدث أولًا
+        $orders = Order::orderBy('created_at', $sort)->get()->take(10);
+        
+         
         $dashboardDatas = DB::select("
         SELECT
             SUM(total) AS TotalAmount,
@@ -289,8 +291,10 @@ class AdminController extends Controller
 
     public function orders()
     {
-        $orders = Order::orderBy('created_at', 'DESC')->paginate(12); // جلب البيانات مع التصفح
+        $sort = request('sort', 'desc'); // الافتراضي هو الأحدث أولًا
+$orders = Order::orderBy('created_at', $sort)->paginate(10);
 
+ 
         return view('admin.orders', compact('orders')); // تمرير المتغير إلى الـ View
     }
 
@@ -395,7 +399,12 @@ class AdminController extends Controller
     // دالة جديدة للحصول على كود نوع المنتج بناءً على الاسم
 
 
-
+    public function exportPdf()
+    {
+        $orders = Order::with('orderItems')->get(); // جلب الطلبات مع المنتجات
+        $pdf = Pdf::loadView('admin.pdf', compact('orders')); // تحميل الـ View
+        return $pdf->download('orders_report.pdf'); // تحميل الـ PDF
+    }
 
 
     /* public function generateOrderPDF($id)
