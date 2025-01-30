@@ -144,7 +144,7 @@
 
     <main class="pt-90">
         <section class="shop-main container">
-           <!-- Product List -->
+<!-- Product List -->
 <div class="product-container">
     <h3>Products</h3>
     <input type="text" id="searchBox" placeholder="Search products..." class="form-control mb-3" />
@@ -152,21 +152,12 @@
         <thead>
             <tr>
                 <th scope="col">Product</th>
-                <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody id="productTable">
             @foreach ($products as $product)
                 <tr>
-                    <td class="product-name">{{ $product->name }}</td>
-                    <td>
-                        <form name="addtocart-form" method="post" action="{{ route('cart.add') }}">
-                            @csrf
-                            <input type="hidden" name="id" value="{{ $product->id }}" />
-                            <input type="hidden" name="quantity" value="1" />
-                            <button type="submit" class="btn btn-primary">Add</button>
-                        </form>
-                    </td>
+                    <td class="product-name" data-id="{{ $product->id }}" style="cursor: pointer; text-decoration: underline;">{{ $product->name }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -181,6 +172,23 @@
         rows.forEach(row => {
             let productName = row.querySelector('.product-name').textContent.toLowerCase();
             row.style.display = productName.includes(query) ? '' : 'none';
+        });
+    });
+
+    document.querySelectorAll('.product-name').forEach(item => {
+        item.addEventListener('click', function () {
+            let productId = this.getAttribute('data-id');
+            
+            fetch("{{ route('cart.add') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ id: productId, quantity: 1 })
+            }).then(() => {
+                location.reload();
+            }).catch(error => console.error('Error:', error));
         });
     });
 </script>
@@ -234,14 +242,14 @@
                                     </td>
                                     <td>
                                         <div class="button-group">
-                                            <form method="POST"
-                                                action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger">Remove</button>
-                                            </form>
+                                          
                                             <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}"
                                                 class="btn btn-primary">Edit Specifications</a>
+                                                <form method="POST" action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-danger" style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
+                                                </form>
                                         </div>
                                     </td>
                                 </tr>
