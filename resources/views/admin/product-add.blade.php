@@ -1,6 +1,5 @@
 @extends('layouts.admin')
 @section('content')
-
     <style>
         .specification-item {
             border: 1px solid #ddd;
@@ -15,7 +14,7 @@
             margin-bottom: 10px;
         }
 
-     
+
 
         #preview-container-$ {
             specificationCounter
@@ -31,71 +30,79 @@
         .specification-content {
             display: block;
         }
-
-
-
-        
     </style>
-<style>
-    .tf-button:hover {
-      color: var(--Main);
-      background-color: #FFF;
-    }
-    .tf-button:hover span {
-      color: #FFF !important;
-    }
-    .tf-button i {
-      font-size: 20px;
-    }
-    .tf-button.style-1 {
-      color: var(--Main);
-      background-color: var(--White);
-    }
-    .tf-button.style-1:hover {
-      color: #FFF;
-      background-color: var(--Main);
-    }
-    .tf-button.style-2 {
-      color: #575864;
-      background-color: #FFF;
-      border-color: var(--Input);
-    }
-    .tf-button.style-2:hover {
-      color: #FFF;
-      background-color: var(--Main);
-    }
-    .tf-button.w208 {
-      width: 208px;
-    }
-    .tf-button.w230 {
-      width: 230px;
-    }
-    .tf-button.w180 {
-      width: 180px;
-    }
-    .tf-button.w128 {
-      width: 128px;
-    }
-    
-    .tf-button-funtion {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: 1px solid var(--Input);
-      border-radius: 12px;
-      padding: 14px 21px;
-      cursor: pointer;
-    }
-    .tf-button-funtion i {
-      color: var(--Body-Text);
-      font-size: 20px;
-    }
-    .tf-button-funtion div {
-      color: var(--Body-Text);
-    }
+    <style>
+        .tf-button:hover {
+            color: var(--Main);
+            background-color: #FFF;
+        }
+
+        .tf-button:hover span {
+            color: #FFF !important;
+        }
+
+        .tf-button i {
+            font-size: 20px;
+        }
+
+        .tf-button.style-1 {
+            color: var(--Main);
+            background-color: var(--White);
+        }
+
+        .tf-button.style-1:hover {
+            color: #FFF;
+            background-color: var(--Main);
+        }
+
+        .tf-button.style-2 {
+            color: #575864;
+            background-color: #FFF;
+            border-color: var(--Input);
+        }
+
+        .tf-button.style-2:hover {
+            color: #FFF;
+            background-color: var(--Main);
+        }
+
+        .tf-button.w208 {
+            width: 208px;
+        }
+
+        .tf-button.w230 {
+            width: 230px;
+        }
+
+        .tf-button.w180 {
+            width: 180px;
+        }
+
+        .tf-button.w128 {
+            width: 128px;
+        }
+
+        .tf-button-funtion {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid var(--Input);
+            border-radius: 12px;
+            padding: 14px 21px;
+            cursor: pointer;
+        }
+
+        .tf-button-funtion i {
+            color: var(--Body-Text);
+            font-size: 20px;
+        }
+
+        .tf-button-funtion div {
+            color: var(--Body-Text);
+        }
     </style>
-    
+
     <div class="main-content-inner">
         <div class="main-content-wrap">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
@@ -124,70 +131,72 @@
             </div>
             <!-- form-add-product -->
             <form class="tf-section-2 form-add-product" method="POST" enctype="multipart/form-data"
-            action="{{ route('admin.product.store') }}">
-      
-          @csrf
-          <div class="wg-box">
-              <fieldset class="name">
-                  <div class="body-title mb-10">Product name <span class="tf-color-1">*</span></div>
-                  <input class="mb-10" type="text" placeholder="Enter product name" name="name" tabindex="0"
-                         value="{{ old('name') }}" aria-required="true" required="">
-                  <div class="text-tiny">Do not exceed 100 characters when entering the product name.</div>
-              </fieldset>
-              @error('name')
-              <span class="alert alert-danger text-center">{{ $message }}</span>
-              @enderror
-      
-              <fieldset class="name">
-                <div class="body-title mb-10">Company’s responsibilities <span class="tf-color-1">*</span></div>
-                <textarea id="companies-responsibilities-editor" name="companies_responsibilities"></textarea>
-            </fieldset>
-            
-            <fieldset class="name">
-                <div class="body-title mb-10">Customer’s responsibilities <span class="tf-color-1">*</span></div>
-                <textarea id="customers-responsibilities-editor" name="customers_responsibilities"></textarea>
-            </fieldset>
-            
-              <fieldset>
-                  <label for="code">Code:</label>
-                  <input type="text" name="code" maxlength="3" value="{{ old('code') }}" required>
-                  @error('code') <span class="text-danger">{{ $message }}</span> @enderror
-              </fieldset>
-      
-              <div class="cols gap22">
-                  <fieldset class="name">
-                      <div class="body-title mb-10">Status</div>
-                      <div class="select mb-10">
-                          <select class="" name="stock_status">
-                              <option value="active">Active</option>
-                              <option value="inactive">Inactive</option>
-                          </select>
-                      </div>
-                  </fieldset>
-                  @error('stock_status')
-                  <span class="alert alert-danger text-center">{{ $message }}</span>
-                  @enderror
-              </div>
-      
-             
-      
-              <div class="cols gap10">
-                  <button class="tf-button w-full" type="submit">Add Product</button>
-              </div>
-          </div>
-          <div class="wg-box">
-            <fieldset class="specifications">
-                <div class="body-title mb-10">Technical Specifications <span class="tf-color-1">*</span></div>
-                <div id="specifications-container">
-                    <!-- Dynamic specifications will be added here -->
+                action="{{ route('admin.product.store') }}">
+
+                @csrf
+                <div class="wg-box">
+                    <fieldset class="name">
+                        <div class="body-title mb-10">Product name <span class="tf-color-1">*</span></div>
+                        <input class="mb-10" type="text" placeholder="Enter product name" name="name" tabindex="0"
+                            value="{{ old('name') }}" aria-required="true" required="">
+                        <div class="text-tiny">Do not exceed 100 characters when entering the product name.</div>
+                    </fieldset>
+                    @error('name')
+                        <span class="alert alert-danger text-center">{{ $message }}</span>
+                    @enderror
+
+                    <fieldset class="name">
+                        <div class="body-title mb-10">Company’s responsibilities <span class="tf-color-1">*</span></div>
+                        <textarea id="companies-responsibilities-editor" name="companies_responsibilities"></textarea>
+                    </fieldset>
+
+                    <fieldset class="name">
+                        <div class="body-title mb-10">Customer’s responsibilities <span class="tf-color-1">*</span></div>
+                        <textarea id="customers-responsibilities-editor" name="customers_responsibilities"></textarea>
+                    </fieldset>
+
+                    <fieldset>
+                        <label for="code">Code:</label>
+                        <input type="text" name="code" maxlength="3" value="{{ old('code') }}" required>
+                        @error('code')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </fieldset>
+
+                    <div class="cols gap22">
+                        <fieldset class="name">
+                            <div class="body-title mb-10">Status</div>
+                            <div class="select mb-10">
+                                <select class="" name="stock_status">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </fieldset>
+                        @error('stock_status')
+                            <span class="alert alert-danger text-center">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+
+
+                    <div class="cols gap10">
+                        <button class="tf-button w-full" type="submit">Add Product</button>
+                    </div>
                 </div>
-            </fieldset>
-            <button type="button" id="add-specification-btn" class="tf-button w-full" data-bs-toggle="modal"
-                    data-bs-target="#addSpecificationModal" style="margin-top: 20px;">Add Specification
-            </button>
-        </div>
-      </form>
-          
+                <div class="wg-box">
+                    <fieldset class="specifications">
+                        <div class="body-title mb-10">Technical Specifications <span class="tf-color-1">*</span></div>
+                        <div id="specifications-container">
+                            <!-- Dynamic specifications will be added here -->
+                        </div>
+                    </fieldset>
+                    <button type="button" id="add-specification-btn" class="tf-button w-full" data-bs-toggle="modal"
+                        data-bs-target="#addSpecificationModal" style="margin-top: 20px;">Add Specification
+                    </button>
+                </div>
+            </form>
+
             <!-- /form-add-product -->
         </div>
         <!-- /main-content-wrap -->
@@ -195,7 +204,7 @@
     <!-- /main-content-wrap -->
 @endsection
 @push('scripts')
-  <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -207,8 +216,8 @@
                     if (!$(this).data('ckeditor-initialized')) {
                         CKEDITOR.replace(this);
 
-                         var content = $(this).val(); // الحصول على المحتوى
-                      
+                        var content = $(this).val(); // الحصول على المحتوى
+
                         // تعيين المحتوى المعدل داخل الـ CKEditor
                         CKEDITOR.instances[$(this).attr('id')].setData(content);
 
@@ -218,16 +227,16 @@
             };
             $(document).ready(function() {
                 $(".ckeditor").each(function() {
-                     var content = $(this).val();  
-                   
+                    var content = $(this).val();
+
                     ClassicEditor
                         .create(this)
                         .then(editor => {
                             editor.setData(content);
 
-                             editor.model.document.on('change:data', () => {
+                            editor.model.document.on('change:data', () => {
                                 let data = editor.getData();
-                               
+
                                 console.log(data); // طباعة النص المعدل
                             });
                         })
@@ -235,8 +244,8 @@
                             console.error(error);
                         });
                 });
-            }); 
-             
+            });
+
             // إضافة قسم مواصفات جديد
             $('#add-specification-btn').on('click', function() {
                 specificationCounter++;
@@ -250,15 +259,6 @@
                         <label for="spec-name-${specificationCounter}">Specification Name:</label>
                         <input type="text" name="specifications[${specificationCounter}][name]" id="spec-name-${specificationCounter}" placeholder="Enter specification name" required>
                     </div>
-                         
-
-
-
-
-
-
-
-                    
                     <div class="specification-paragraphs">
                         <label for="spec-paragraphs-${specificationCounter}">Specification Paragraphs:</label>
                         <textarea name="specifications[${specificationCounter}][paragraphs]" id="spec-paragraphs-${specificationCounter}" placeholder="Enter paragraphs"></textarea>
@@ -280,9 +280,9 @@
 
                     <button type="button" class="remove-specification-btn" data-spec-id="${specificationCounter}">Remove</button>
                 </div>
-<button type="button" id="save-specification-btn" class="tf-button w-full toggle-specification-btn" data-spec-id="${specificationCounter}" style="margin: 0 auto; display: block;">SAVE</button>
+                    <button type="button" id="save-specification-btn" class="tf-button w-full toggle-specification-btn" data-spec-id="${specificationCounter}" style="margin: 0 auto; display: block;">SAVE</button>
 
-            </div>`; 
+                     </div>`;
 
                 $('#specifications-container').append(newSpecification);
                 initializeTextEditor(`#spec-paragraphs-${specificationCounter}`);
@@ -299,62 +299,102 @@
 
             // إظهار/إخفاء قسم المواصفات
             $(document).on('click', '.toggle-specification-btn', function() {
-    const specId = $(this).data('spec-id');
-    const specContent = $(`#specification-${specId} .specification-content`);
-    const button = $(this);
-    const specName = $(`#spec-name-${specId}`).val() || `Specification ${specId}`;
+                const specId = $(this).data('spec-id');
+                const specContent = $(`#specification-${specId} .specification-content`);
+                const button = $(this);
+                const specName = $(`#spec-name-${specId}`).val() || `Specification ${specId}`;
 
-    // إضافة الكلاس tf-button للتأكد من أن الزر يتبع التنسيق الصحيح
-    button.addClass('tf-button');
-    
-    // توسيط الزر عند النقر
-    button.css({
-        'margin': '0 auto',
-        'display': 'block'
-    });
+                // إضافة الكلاس tf-button للتأكد من أن الزر يتبع التنسيق الصحيح
+                button.addClass('tf-button');
 
-    if (specContent.is(':visible')) {
-        specContent.slideUp();
-        button.text(`Show ${specName}`);
-    } else {
-        specContent.slideDown();
-button.text(`SAVE ${specName}`);
-    }
-});
+                // توسيط الزر عند النقر
+                button.css({
+                    'margin': '0 auto',
+                    'display': 'block'
+                });
 
+                if (specContent.is(':visible')) {
+                    specContent.slideUp();
+                    button.text(`Show ${specName}`);
+                } else {
+                    specContent.slideDown();
+                    button.text(`SAVE ${specName}`);
+                }
+            });
 
-            // معاينة الصور
-            // معاينة الصور
+            // Store selected files
+            let selectedFiles = {};
+
             $(document).on('change', 'input[type="file"]', function(event) {
+                console.log(event.target.files); // Debugging
+
                 if (event.target && event.target.id.startsWith('gFile-')) {
                     const fileInput = event.target;
                     const previewContainerId = fileInput.id.replace('gFile-', 'preview-container-');
                     const previewContainer = document.getElementById(previewContainerId);
-                    const files = fileInput.files;
+                    const files = Array.from(fileInput.files); // Convert FileList to Array
 
-                    previewContainer.innerHTML = ''; // Clear existing previews
-                    if (files && files.length > 0) {
-                        Array.from(files).forEach(file => {
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                const gItem = document.createElement('div');
-                                gItem.className = 'gitems';
-                                gItem.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview Image" style="max-width: 100px; max-height: 100px; object-fit: cover;">
-                     
-                    `;
-                               
-                                previewContainer.appendChild(gItem);
-                            };
-                            reader.readAsDataURL(file);
+                    if (!selectedFiles[previewContainerId]) {
+                        selectedFiles[previewContainerId] = [];
+                    }
+
+                    let dataTransfer = new DataTransfer();
+
+                    if (files.length > 0) {
+                        files.forEach(file => {
+                            if (!selectedFiles[previewContainerId].some(f => f.name === file
+                                    .name)) {
+                                selectedFiles[previewContainerId].push(file);
+
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    const gItem = document.createElement('div');
+                                    gItem.className = 'gitems';
+                                    gItem.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview Image" style="max-width: 100px; max-height: 100px; object-fit: cover;">
+                            <button type="button" class="delete-image-btn" data-preview-container="${previewContainerId}" data-file-name="${file.name}">x</button>
+                        `;
+                                    previewContainer.appendChild(gItem);
+                                };
+                                reader.readAsDataURL(file);
+                            }
                         });
+
+                        // Add all selected files to DataTransfer
+                        selectedFiles[previewContainerId].forEach(file => dataTransfer.items.add(file));
+                        fileInput.files = dataTransfer.files; // Update input files
                     } else {
                         previewContainer.innerHTML = '<p>No images selected</p>';
                     }
                 }
             });
 
-           
+            // Handle image deletion
+            $(document).on('click', '.delete-image-btn', function() {
+                const previewContainerId = $(this).data('preview-container');
+                const fileName = $(this).data('file-name');
+
+                // Remove from the preview
+                $(this).parent().remove();
+
+                // Remove from the selectedFiles array
+                selectedFiles[previewContainerId] = selectedFiles[previewContainerId].filter(file => file
+                    .name !== fileName);
+
+                // Update the input field's files
+                const fileInput = document.getElementById(previewContainerId.replace('preview-container-',
+                    'gFile-'));
+                let dataTransfer = new DataTransfer();
+                selectedFiles[previewContainerId].forEach(file => dataTransfer.items.add(file));
+
+                fileInput.files = dataTransfer.files; // Update input field
+
+                // If no files left, clear input
+                if (selectedFiles[previewContainerId].length === 0) {
+                    fileInput.value = ''; // Reset input
+                }
+            });
+
 
             // إزالة قسم المواصفات
             $(document).on('click', '.remove-specification-btn', function() {
@@ -365,95 +405,16 @@ button.text(`SAVE ${specName}`);
             // تهيئة محرر النصوص للمواصفات
             initializeTextEditor('textarea[name^="specifications"]');
         });
-    document.addEventListener('DOMContentLoaded', function () {
-    // تهيئة CKEditor لحقل Company’s responsibilities
-    ClassicEditor
-        .create(document.querySelector('#companies-responsibilities-editor'))
-        .catch(error => console.error(error));
+        document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة CKEditor لحقل Company’s responsibilities
+            ClassicEditor
+                .create(document.querySelector('#companies-responsibilities-editor'))
+                .catch(error => console.error(error));
 
-    // تهيئة CKEditor لحقل Customer’s responsibilities
-    ClassicEditor
-        .create(document.querySelector('#customers-responsibilities-editor'))
-        .catch(error => console.error(error));
-});
-document.querySelector('form').addEventListener('submit', function () {
-    const companyEditor = ClassicEditor.instances['companies-responsibilities-editor'];
-    const customerEditor = ClassicEditor.instances['customers-responsibilities-editor'];
-
-    // تحديث القيم في الحقول النصية
-    if (companyEditor) {
-        companyEditor.updateSourceElement();
-    }
-    if (customerEditor) {
-        customerEditor.updateSourceElement();
-    }
-});
-
-
-    </script>
-    
-@endpush
-@push('scripts')
-    <script>
-        $(document).ready(function () {
-            let specificationCounter = 0;
-
-            // Save specification
-            $('#save-specification').on('click', function () {
-                specificationCounter++;
-                const specName = $('#spec-name').val();
-                const specParagraphs = $('#spec-paragraphs').val();
-                const specImages = $('#spec-images')[0].files;
-
-                let imagePreview = '';
-                if (specImages.length > 0) {
-                    Array.from(specImages).forEach(file => {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            imagePreview += `
-                                <div class="gitems">
-                                    <img src="${e.target.result}" alt="Preview Image"
-                                         style="max-width: 100px; max-height: 100px; object-fit: cover;">
-                                </div>`;
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                }
-
-                const newSpecification = `
-                    <div class="specification-item" id="specification-${specificationCounter}">
-                        <div class="spec-header">
-                            <span>Specification ${specificationCounter}: ${specName}</span>
-                        </div>
-                        <div class="specification-content">
-                            <p>${specParagraphs}</p>
-                            <div class="gallery-preview">${imagePreview}</div>
-                            <button type="button" class="remove-specification-btn btn btn-danger btn-sm"
-                                    data-spec-id="${specificationCounter}">Remove</button>
-                        </div>
-                    </div>`;
-                $('#specifications-container').append(newSpecification);
-
-                // Close modal and reset form
-                $('#addSpecificationModal').modal('hide');
-                $('#specification-form')[0].reset();
-            });
-            $('#addSpecificationModal').on('shown.bs.modal', function () {
-    if (!CKEDITOR.instances['spec-paragraphs']) {
-        CKEDITOR.replace('spec-paragraphs');
-    }
-});
-$('#addSpecificationModal').on('hidden.bs.modal', function () {
-    if (CKEDITOR.instances['spec-paragraphs']) {
-        CKEDITOR.instances['spec-paragraphs'].destroy(true);
-    }
-});
-
-            // Remove specification
-            $(document).on('click', '.remove-specification-btn', function () {
-                const specId = $(this).data('spec-id');
-                $(`#specification-${specId}`).remove();
-            });
+            // تهيئة CKEditor لحقل Customer’s responsibilities
+            ClassicEditor
+                .create(document.querySelector('#customers-responsibilities-editor'))
+                .catch(error => console.error(error));
         });
     </script>
 @endpush
