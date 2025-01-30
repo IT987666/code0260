@@ -212,7 +212,7 @@
 
                 @if ($items->count() > 0)
                     <table>
-                        <thead>
+                        <thead> 
                             <tr>
                                 <th>Product</th>
                                 <th>Price</th>
