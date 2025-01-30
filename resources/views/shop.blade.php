@@ -35,9 +35,19 @@
         }
 
         .shop-main.container {
-            display: flex;
+    display: flex;
+    align-items: flex-start; /* يضمن توازن الجدولين على نفس المستوى */
+    gap: 20px;
+}
 
-        }
+.product-container {
+    flex: 0.5; /* يحدد الحجم بناءً على المساحة المتاحة */
+}
+
+.cart-container {
+    flex: 1; /* يضمن توازن الجدولين */
+}
+
 
         /* Table Styles */
         table {
@@ -197,6 +207,9 @@
             <!-- Cart Table -->
             <div class="cart-container">
                 <h3>Selected Products</h3>
+                <span style="display: block; height: 20px;"></span>
+                <div style="height: 70px;"></div>
+
                 @if ($items->count() > 0)
                     <table>
                         <thead>
