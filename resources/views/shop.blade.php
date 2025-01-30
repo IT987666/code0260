@@ -244,7 +244,7 @@
                                                 min="1" />
                                         </form>
                                     </td>
-                                    <td>${{ $item->subTotal() }}</td>
+                                    <td class="total-price">${{ $item->subTotal() }}</td>
                                     <td>
                                         <form method="POST"
                                             action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}">
@@ -342,4 +342,62 @@
             });
         })
     </script>
+    <script>
+        $(document).ready(function () {
+            $("input[name='price']").on("input", function () {
+                var row = $(this).closest("tr"); // Get the closest table row
+                var priceInput = $(this); // The input field
+                var price = parseFloat(priceInput.val()) || 0;
+                var quantity = parseInt(row.find("input[name='qty']").val()) || 1;
+                var total = (price * quantity).toFixed(2); // Calculate total
+    
+                row.find(".total-price").text("$" + total); // Update total in UI
+    
+                // Send AJAX request to update the price in the database
+                $.ajax({
+                    url: priceInput.closest("form").attr("action"),
+                    method: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: "PUT",
+                        price: price
+                    },
+                    success: function (response) {
+                        console.log("Price updated successfully");
+                    },
+                    error: function (error) {
+                        console.log("Error updating price", error);
+                    }
+                });
+            });
+    
+            $("input[name='qty']").on("input", function () {
+                var row = $(this).closest("tr"); // Get the closest table row
+                var quantityInput = $(this);
+                var price = parseFloat(row.find("input[name='price']").val()) || 0;
+                var quantity = parseInt(quantityInput.val()) || 1;
+                var total = (price * quantity).toFixed(2); // Calculate total
+    
+                row.find(".total-price").text("$" + total); // Update total in UI
+    
+                // Send AJAX request to update the quantity
+                $.ajax({
+                    url: quantityInput.closest("form").attr("action"),
+                    method: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: "PUT",
+                        qty: quantity
+                    },
+                    success: function (response) {
+                        console.log("Quantity updated successfully");
+                    },
+                    error: function (error) {
+                        console.log("Error updating quantity", error);
+                    }
+                });
+            });
+        });
+    </script>
+    
 @endpush
