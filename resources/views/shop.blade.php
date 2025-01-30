@@ -144,36 +144,47 @@
 
     <main class="pt-90">
         <section class="shop-main container">
-            <!-- Product List -->
-            <div class="product-container">
-                <h3>Products</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Product</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($products as $product)
-                            <tr>
-                                  <td class="product-name">
-                             {{$product->name}}
-                        </a>
-                    </td> 
-                                <td>
-                                    <form name="addtocart-form" method="post" action="{{ route('cart.add') }}">
-                                        @csrf
-                                        <input type="hidden" name="id" value="{{ $product->id }}" />
-                                        <input type="hidden" name="quantity" value="1" />
-                                        <button type="submit" class="btn btn-primary">Add</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+           <!-- Product List -->
+<div class="product-container">
+    <h3>Products</h3>
+    <input type="text" id="searchBox" placeholder="Search products..." class="form-control mb-3" />
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="productTable">
+            @foreach ($products as $product)
+                <tr>
+                    <td class="product-name">{{ $product->name }}</td>
+                    <td>
+                        <form name="addtocart-form" method="post" action="{{ route('cart.add') }}">
+                            @csrf
+                            <input type="hidden" name="id" value="{{ $product->id }}" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('searchBox').addEventListener('keyup', function () {
+        let query = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#productTable tr');
+
+        rows.forEach(row => {
+            let productName = row.querySelector('.product-name').textContent.toLowerCase();
+            row.style.display = productName.includes(query) ? '' : 'none';
+        });
+    });
+</script>
+
 
             <!-- Cart Table -->
             <div class="cart-container">
