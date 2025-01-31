@@ -35,18 +35,21 @@
         }
 
         .shop-main.container {
-    display: flex;
-    align-items: flex-start; /* يضمن توازن الجدولين على نفس المستوى */
-    gap: 20px;
-}
+            display: flex;
+            align-items: flex-start;
+            /* يضمن توازن الجدولين على نفس المستوى */
+            gap: 20px;
+        }
 
-.product-container {
-    flex: 0.5; /* يحدد الحجم بناءً على المساحة المتاحة */
-}
+        .product-container {
+            flex: 0.5;
+            /* يحدد الحجم بناءً على المساحة المتاحة */
+        }
 
-.cart-container {
-    flex: 1; /* يضمن توازن الجدولين */
-}
+        .cart-container {
+            flex: 1;
+            /* يضمن توازن الجدولين */
+        }
 
 
         /* Table Styles */
@@ -154,54 +157,58 @@
 
     <main class="pt-90">
         <section class="shop-main container">
-<!-- Product List -->
-<div class="product-container">
-    <h3>Products</h3>
-    <input type="text" id="searchBox" placeholder="Search products..." class="form-control mb-3" />
-    <table>
-        <thead>
-            <tr>
-                <th scope="col">Product</th>
-            </tr>
-        </thead>
-        <tbody id="productTable">
-            @foreach ($products as $product)
-                <tr>
-                    <td class="product-name" data-id="{{ $product->id }}" style="cursor: pointer; text-decoration: underline;">{{ $product->name }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
+            <!-- Product List -->
+            <div class="product-container">
+                <h3>Products</h3>
+                <input type="text" id="searchBox" placeholder="Search products..." class="form-control mb-3" />
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTable">
+                        @foreach ($products as $product)
+                            <tr>
+                                <td class="product-name" data-id="{{ $product->id }}"
+                                    style="cursor: pointer; text-decoration: underline;">{{ $product->name }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-<script>
-    document.getElementById('searchBox').addEventListener('keyup', function () {
-        let query = this.value.toLowerCase();
-        let rows = document.querySelectorAll('#productTable tr');
+            <script>
+                document.getElementById('searchBox').addEventListener('keyup', function() {
+                    let query = this.value.toLowerCase();
+                    let rows = document.querySelectorAll('#productTable tr');
 
-        rows.forEach(row => {
-            let productName = row.querySelector('.product-name').textContent.toLowerCase();
-            row.style.display = productName.includes(query) ? '' : 'none';
-        });
-    });
+                    rows.forEach(row => {
+                        let productName = row.querySelector('.product-name').textContent.toLowerCase();
+                        row.style.display = productName.includes(query) ? '' : 'none';
+                    });
+                });
 
-    document.querySelectorAll('.product-name').forEach(item => {
-        item.addEventListener('click', function () {
-            let productId = this.getAttribute('data-id');
+                document.querySelectorAll('.product-name').forEach(item => {
+                    item.addEventListener('click', function() {
+                        let productId = this.getAttribute('data-id');
 
-            fetch("{{ route('cart.add') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ id: productId, quantity: 1 })
-            }).then(() => {
-                location.reload();
-            }).catch(error => console.error('Error:', error));
-        });
-    });
-</script>
+                        fetch("{{ route('cart.add') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({
+                                id: productId,
+                                quantity: 1
+                            })
+                        }).then(() => {
+                            location.reload();
+                        }).catch(error => console.error('Error:', error));
+                    });
+                });
+            </script>
 
 
             <!-- Cart Table -->
@@ -247,10 +254,11 @@
                                     <td class="total-price">${{ $item->subTotal() }}</td>
                                     <td>
                                         <form method="POST"
-                                            action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}">
+                                            action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}"
+                                            class="description-form">
                                             @csrf
                                             @method('PUT')
-                                            <textarea name="description">{{ $item->description }}</textarea>
+                                            <textarea name="description" class="description-input" data-row-id="{{ $item->rowId }}">{{ $item->options['description'] }}</textarea>
                                         </form>
                                     </td>
                                     <td>
@@ -258,11 +266,13 @@
 
                                             <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}"
                                                 class="btn btn-primary">Edit Specifications</a>
-                                                <form method="POST" action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="btn btn-danger" style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
-                                                </form>
+                                            <form method="POST"
+                                                action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-danger"
+                                                    style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -286,6 +296,14 @@
 
 @push('scripts')
     <script>
+        document.querySelectorAll('.description-input').forEach(textarea => {
+            textarea.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    this.closest('.description-form').submit();
+                }
+            });
+        });
         document.getElementById('orderby').addEventListener('change', function() {
             this.form.submit();
         });
@@ -343,8 +361,8 @@
         })
     </script>
     <script>
-        $(document).ready(function () {
-            $("input[name='price']").on("input", function () {
+        $(document).ready(function() {
+            $("input[name='price']").on("input", function() {
                 var row = $(this).closest("tr"); // Get the closest table row
                 var priceInput = $(this); // The input field
                 var price = parseFloat(priceInput.val()) || 0;
@@ -362,16 +380,16 @@
                         _method: "PUT",
                         price: price
                     },
-                    success: function (response) {
+                    success: function(response) {
                         console.log("Price updated successfully");
                     },
-                    error: function (error) {
+                    error: function(error) {
                         console.log("Error updating price", error);
                     }
                 });
             });
 
-            $("input[name='qty']").on("input", function () {
+            $("input[name='qty']").on("input", function() {
                 var row = $(this).closest("tr"); // Get the closest table row
                 var quantityInput = $(this);
                 var price = parseFloat(row.find("input[name='price']").val()) || 0;
@@ -389,15 +407,14 @@
                         _method: "PUT",
                         qty: quantity
                     },
-                    success: function (response) {
+                    success: function(response) {
                         console.log("Quantity updated successfully");
                     },
-                    error: function (error) {
+                    error: function(error) {
                         console.log("Error updating quantity", error);
                     }
                 });
             });
         });
     </script>
-
 @endpush
