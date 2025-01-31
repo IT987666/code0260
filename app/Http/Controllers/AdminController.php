@@ -171,7 +171,6 @@ class AdminController extends Controller
     }
     public function product_update(Request $request)
     {
-        dd($request);
         $request->validate([
             'name' => 'required|string|max:255',
             'stock_status' => 'required|in:active,inactive',
