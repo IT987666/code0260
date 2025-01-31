@@ -207,49 +207,44 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script>
 
     <script>
-        $(document).ready(function() {
-            let specificationCounter = 0;
+      $(document).ready(function() {
+    let specificationCounter = 0;
 
-            // تهيئة محرر النصوص
-            const initializeTextEditor = (selector) => {
-                $(selector).each(function() {
-                    if (!$(this).data('ckeditor-initialized')) {
-                        CKEDITOR.replace(this);
-
-                        var content = $(this).val(); // الحصول على المحتوى
-
-                        // تعيين المحتوى المعدل داخل الـ CKEditor
-                        CKEDITOR.instances[$(this).attr('id')].setData(content);
-
-                        $(this).data('ckeditor-initialized', true);
-                    }
-                });
-            };
-            $(document).ready(function() {
-                $(".ckeditor").each(function() {
-                    var content = $(this).val();
-
-                    ClassicEditor
-                        .create(this)
-                        .then(editor => {
-                            editor.setData(content);
-
-                            editor.model.document.on('change:data', () => {
-                                let data = editor.getData();
-
-                                console.log(data); // طباعة النص المعدل
-                            });
-                        })
-                        .catch(error => {
-                            console.error(error);
+    // تهيئة محرر النصوص CKEditor 5
+    const initializeTextEditor = (selector) => {
+        $(selector).each(function() {
+            if (!$(this).data('ckeditor-initialized')) {
+                ClassicEditor.create(this)
+                    .then(editor => {
+                        editor.setData($(this).val());
+                        editor.model.document.on('change:data', () => {
+                            $(this).val(editor.getData());
                         });
-                });
-            });
+                        $(this).data('ckeditor-initialized', true);
+                    })
+                    .catch(error => console.error(error));
+            }
+        });
+    };
 
-            // إضافة قسم مواصفات جديد
-            $('#add-specification-btn').on('click', function() {
-                specificationCounter++;
-                const newSpecification = `
+    $(document).ready(function() {
+        $(".ckeditor").each(function() {
+            var content = $(this).val();
+            ClassicEditor.create(this)
+                .then(editor => {
+                    editor.setData(content);
+                    editor.model.document.on('change:data', () => {
+                        console.log(editor.getData());
+                    });
+                })
+                .catch(error => console.error(error));
+        });
+    });
+
+    // إضافة قسم جديد للمواصفات
+    $('#add-specification-btn').on('click', function() {
+        specificationCounter++;
+        const newSpecification = `
             <div class="specification-item" id="specification-${specificationCounter}">
                 <div class="spec-header">
                     <span id="specification-label-${specificationCounter}">Specification ${specificationCounter}</span>
@@ -261,10 +256,10 @@
                     </div>
                     <div class="specification-paragraphs">
                         <label for="spec-paragraphs-${specificationCounter}">Specification Paragraphs:</label>
-                        <textarea name="specifications[${specificationCounter}][paragraphs]" id="spec-paragraphs-${specificationCounter}" placeholder="Enter paragraphs"></textarea>
+                        <textarea name="specifications[${specificationCounter}][paragraphs]" id="spec-paragraphs-${specificationCounter}" class="ckeditor"></textarea>
                     </div>
-                  <div class="specification-gallery">
-                                <fieldset>
+                    <div class="specification-gallery">
+                        <fieldset>
                                     <label for="specifications[${specificationCounter}][images]">Images</label>
                                     <div class="gallery-preview" id="preview-container-${specificationCounter}">
                                         <!-- سيتم عرض الصور الحالية هنا -->
@@ -276,26 +271,20 @@
                                     </div>
                                     <input type="file" name="specifications[${specificationCounter}][images][]" id="gFile-${specificationCounter}" class="form-control modern-input" accept="image/*" multiple>
                                 </fieldset>
-                            </div>
-
+                    </div>
                     <button type="button" class="remove-specification-btn" data-spec-id="${specificationCounter}">Remove</button>
                 </div>
                     <button type="button" id="save-specification-btn" class="tf-button w-full toggle-specification-btn" data-spec-id="${specificationCounter}" style="margin: 0 auto; display: block;">SAVE</button>
+            </div>`;
 
-                     </div>`;
+        $('#specifications-container').append(newSpecification);
+        initializeTextEditor(`#spec-paragraphs-${specificationCounter}`);
 
-                $('#specifications-container').append(newSpecification);
-                initializeTextEditor(`#spec-paragraphs-${specificationCounter}`);
-
-                // تحديث النص الظاهر بناءً على إدخال اسم المواصفات
-                $(`#spec-name-${specificationCounter}`).on('input', function() {
-                    const name = $(this).val() || `Specification ${specificationCounter}`;
-                    $(`#specification-label-${specificationCounter}`).text(name);
-                });
-                // تهيئة CKEditor للسبيسفكيشن الجديد
-                ClassicEditor.create($(
-                    `textarea[name='specifications[new_${specificationCounter}][paragraphs]']`)[0]);
-            });
+        $(`#spec-name-${specificationCounter}`).on('input', function() {
+            const name = $(this).val() || `Specification ${specificationCounter}`;
+            $(`#specification-label-${specificationCounter}`).text(name);
+        });
+    });
 
             // إظهار/إخفاء قسم المواصفات
             $(document).on('click', '.toggle-specification-btn', function() {
@@ -402,9 +391,9 @@
                 $(`#specification-${specId}`).remove();
             });
 
-            // تهيئة محرر النصوص للمواصفات
-            initializeTextEditor('textarea[name^="specifications"]');
-        });
+    initializeTextEditor('textarea[name^="specifications"]');
+});
+
         document.addEventListener('DOMContentLoaded', function() {
             // تهيئة CKEditor لحقل Company’s responsibilities
             ClassicEditor
