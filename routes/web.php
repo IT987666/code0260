@@ -43,13 +43,14 @@ Route::prefix('task-list')->group(function () {
 
 Route::get('/order/{orderId}/download-pdf', [CartController::class, 'downloadPdf'])->name('order.downloadPdf');
 
- Route::put('/task-list/description/update/{rowId}', [CartController::class, 'updateDescription'])->name('cart.description.update');
+Route::put('/task-list/description/update/{rowId}', [CartController::class, 'updateDescription'])->name('cart.description.update');
 
 
 
 Route::get('/submit-tasks', [CartController::class, 'checkout'])->name('cart.checkout');
 Route::post('/place-a-request', [CartController::class, 'place_an_order'])->name('cart.place.an.order');
 Route::get('/request-confirmation', [CartController::class, 'order_confirmation'])->name('cart.order.confirmation');
+Route::get('/order', [CartController::class, 'order'])->name('cart.order');
 
 Route::get('/search', [HomeController::class, 'search'])->name('home.search');
 
@@ -79,7 +80,7 @@ Route::middleware(['auth', AuthAdmin::class])->group(function () {
     Route::post('/admin/generate-reference-code', [AdminController::class, 'generateReferenceCodeAjax'])->name('admin.generate.reference.code');
 
 
- 
+
 
     Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
     Route::get('/admin/product/add', [AdminController::class, 'product_add'])->name('admin.product.add');
@@ -100,13 +101,13 @@ Route::middleware(['auth', AuthAdmin::class])->group(function () {
 
 
 
- 
+
     Route::get('/orders/export/pdf', [AdminController::class, 'exportPdf'])->name('orders.export.pdf');
 
-    
+
     Route::get('/admin/search', [AdminController::class, 'search'])->name('admin.search');
     Route::get('/admin/orders/search', action: [AdminController::class, 'search_order'])->name('admin.orders.search');
-     Route::get('/orders/export/excel', [UserController::class, 'exportExcel'])->name('orders.export.excel');
+    Route::get('/orders/export/excel', [UserController::class, 'exportExcel'])->name('orders.export.excel');
 
     Route::get('/admin/order/{id}/generate-pdf', [AdminController::class, 'generateOrderPDF'])->name('admin.order.generate.pdf');
 });

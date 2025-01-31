@@ -181,8 +181,8 @@ class CartController extends Controller
         $request->validate([
             'name' => 'required|max:100',
             'phone' => 'required|string',
-             'email' => 'nullable|email',
-             'extra' => 'required',
+            'email' => 'nullable|email',
+            'extra' => 'required',
             'billing_info' => 'required',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpg,jpeg,png|max:2048',
@@ -201,34 +201,116 @@ class CartController extends Controller
         $address->name = $request->name;
         $address->phone = $request->phone;
         $address->email = $request->email;
-       
+
         $address->country = $request->country;
         $address->user_id = $user_id;
         $address->isdefault = false;
         $address->save();
 
         // Set the checkout amount
-        $this->setAmountforCheckout();
 
         // Save the order
         $order = new Order();
         $order->user_id = $user_id;
 
-        $order->reference_code= $this->generateReferenceCode($request);
-        $order->subtotal = (float)str_replace(',', '', Session::get('checkout')['subtotal']);
-        $order->total = (float)str_replace(',', '', Session::get('checkout')['total']);
-        $order->discount = Session::get('checkout')['discount'];
-        $order->tax = Session::get('checkout')['tax'];
+        $order->subtotal = 1;
+        $order->total = 1;
         $order->name = $address->name;
         $order->phone = $address->phone;
         $order->email = $address->email;
 
-          $order->country = $address->country;
+        $order->country = $address->country;
         $order->extra = $request->extra;
         $order->billing_info = $request->billing_info;
-         $order->images = $uploadedImages ? json_encode($uploadedImages) : null;
+        $order->images = $uploadedImages ? json_encode($uploadedImages) : null;
         $order->save();
 
+
+
+        // Add the transaction
+        Transaction::create([
+            'user_id' => $user_id,
+            'order_id' => $order->id,
+            'mode' => $request->mode ?? 'cod',
+            'status' => 'pending',
+        ]);
+
+        // Clear the cart and session
+        // Cart::instance('cart')->destroy();
+        Session::put('order_id', $order->id);
+
+        return redirect()->route('shop.index');
+    }
+
+    public function setAmountforCheckout()
+    {
+        if (!Cart::instance('cart')->content()->count() > 0) {
+            Session::forget('checkout');
+            return;
+        }
+
+        // Reset checkout session values
+        if (Session::has('coupon')) {
+            Session::put('checkout', [
+                'discount' => number_format(floatval(Session::get('discounts')['discount']), 2, '.', ''),
+                'subtotal' => number_format(floatval(Session::get('discounts')['subtotal']), 2, '.', ''),
+                'tax' => 0, // Reset taxes to 0
+                'total' => number_format(floatval(Session::get('discounts')['total']), 2, '.', '')
+            ]);
+        } else {
+            // If no coupon is applied, calculate without discounts
+            Session::put('checkout', [
+                'discount' => 0,
+                'subtotal' => number_format(floatval(Cart::instance('cart')->subtotal()), 2, '.', ''),
+                'tax' => 0, // Reset taxes to 0
+                'total' => number_format(floatval(Cart::instance('cart')->total()), 2, '.', '')
+            ]);
+        }
+    }
+
+
+    private function generateReferenceCode()
+    {
+        // الحصول على تاريخ اليوم
+        $date = Carbon::now()->format('ymd');
+
+        // تحديد كود نوع المنتج بناءً على الاسم أو معايير أخرى
+        //$productType = $this->getProductCodeByName($request->name);
+
+        // الحصول على كود الفئة من قاعدة البيانات بناءً على الـ category_id
+        // الحصول على الكود من المنتج
+        foreach (Cart::instance('cart')->content() as $item) {
+            $product = Product::find($item->id);
+
+
+            $categoryCode = $product->code;
+        }
+        // الحصول على رقم الموظف
+        $employeeId = str_pad(Auth::user()->id, 3, '0', STR_PAD_LEFT);
+
+        // تحديد الرقم التسلسلي
+        $sequence = Order::whereDate('created_at', Carbon::today())->count() + 1;
+        $sequenceFormatted = str_pad($sequence, 3, '0', STR_PAD_LEFT);
+
+        // صياغة الريفرنس كود الأساسي ليشمل كود الفئة
+        $baseReferenceCode = "{$date}-{$categoryCode}-{$employeeId}-{$sequenceFormatted}";
+        $referenceCode = $baseReferenceCode;
+
+        $counter = 1;
+
+        // التأكد من أن الكود فريد
+        while (Order::where('reference_code', $referenceCode)->exists()) {
+            $referenceCode = "{$baseReferenceCode}-{$counter}";
+            $counter++;
+        }
+
+        return $referenceCode;
+    }
+
+
+    public function order(Request $request)
+    {
+        $order = Order::query()->findOrFail(Session::get('order_id'));
         // Add order items
         foreach (Cart::instance('cart')->content() as $item) {
             $product = Product::find($item->id);
@@ -257,84 +339,16 @@ class CartController extends Controller
             }
         }
 
-        // Add the transaction
-        Transaction::create([
-            'user_id' => $user_id,
-            'order_id' => $order->id,
-            'mode' => $request->mode ?? 'cod',
-            'status' => 'pending',
-        ]);
+        $this->setAmountforCheckout();
 
-        // Clear the cart and session
-        // Cart::instance('cart')->destroy();
-        Session::put('order_id', $order->id);
+        $order->reference_code = $this->generateReferenceCode();
+        $order->subtotal = (float)str_replace(',', '', Session::get('checkout')['subtotal']);
+        $order->total = (float)str_replace(',', '', Session::get('checkout')['total']);
+        $order->discount = Session::get('checkout')['discount'];
+        $order->tax = Session::get('checkout')['tax'];
+        $order->save();
 
         return redirect()->route('cart.order.confirmation');
-    }
-  
-    public function setAmountforCheckout()
-    {
-        if (!Cart::instance('cart')->content()->count() > 0) {
-            Session::forget('checkout');
-            return;
-        }
-
-        // Reset checkout session values
-        if (Session::has('coupon')) {
-            Session::put('checkout', [
-                'discount' => number_format(floatval(Session::get('discounts')['discount']), 2, '.', ''),
-                'subtotal' => number_format(floatval(Session::get('discounts')['subtotal']), 2, '.', ''),
-                'tax' => 0, // Reset taxes to 0
-                'total' => number_format(floatval(Session::get('discounts')['total']), 2, '.', '')
-            ]);
-        } else {
-            // If no coupon is applied, calculate without discounts
-            Session::put('checkout', [
-                'discount' => 0,
-                'subtotal' => number_format(floatval(Cart::instance('cart')->subtotal()), 2, '.', ''),
-                'tax' => 0, // Reset taxes to 0
-                'total' => number_format(floatval(Cart::instance('cart')->total()), 2, '.', '')
-            ]);
-        }
-    }
-
-
-    private function generateReferenceCode(Request $request)
-    {
-        // الحصول على تاريخ اليوم
-        $date = Carbon::now()->format('ymd');
-
-        // تحديد كود نوع المنتج بناءً على الاسم أو معايير أخرى
-        //$productType = $this->getProductCodeByName($request->name);
-
-        // الحصول على كود الفئة من قاعدة البيانات بناءً على الـ category_id
-// الحصول على الكود من المنتج
-foreach (Cart::instance('cart')->content() as $item) {
-    $product = Product::find($item->id);
-
-
- $categoryCode = $product->code;
-}
-        // الحصول على رقم الموظف
-        $employeeId = str_pad(Auth::user()->id, 3, '0', STR_PAD_LEFT);
-
-        // تحديد الرقم التسلسلي
-        $sequence = Order::whereDate('created_at', Carbon::today())->count() + 1;
-        $sequenceFormatted = str_pad($sequence, 3, '0', STR_PAD_LEFT);
-
-        // صياغة الريفرنس كود الأساسي ليشمل كود الفئة
-        $baseReferenceCode = "{$date}-{$categoryCode}-{$employeeId}-{$sequenceFormatted}";
-        $referenceCode = $baseReferenceCode;
-
-        $counter = 1;
-
-        // التأكد من أن الكود فريد
-        while (Order::where('reference_code', $referenceCode)->exists()) {
-            $referenceCode = "{$baseReferenceCode}-{$counter}";
-            $counter++;
-        }
-
-        return $referenceCode;
     }
 
 
@@ -547,7 +561,7 @@ foreach (Cart::instance('cart')->content() as $item) {
 
         // Fetch order items with product details
         $orderItems = OrderItem::with(['product' => function ($query) {
-            $query->select('id', 'name', );
+            $query->select('id', 'name',);
         }])->where('order_id', $order->id)->get();
 
         // Attach specifications to order items

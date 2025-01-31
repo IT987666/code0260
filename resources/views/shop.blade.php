@@ -188,7 +188,7 @@
     document.querySelectorAll('.product-name').forEach(item => {
         item.addEventListener('click', function () {
             let productId = this.getAttribute('data-id');
-            
+
             fetch("{{ route('cart.add') }}", {
                 method: "POST",
                 headers: {
@@ -212,7 +212,7 @@
 
                 @if ($items->count() > 0)
                     <table>
-                        <thead> 
+                        <thead>
                             <tr>
                                 <th>Product</th>
                                 <th>Price</th>
@@ -255,7 +255,7 @@
                                     </td>
                                     <td>
                                         <div class="button-group">
-                                          
+
                                             <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}"
                                                 class="btn btn-primary">Edit Specifications</a>
                                                 <form method="POST" action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
@@ -270,7 +270,7 @@
                         </tbody>
                     </table>
                     <div style="text-align: center; margin-top: 20px;">
-                        <a href="{{ route('cart.checkout') }}" class="btn btn-primary"
+                        <a href="{{ route('cart.order') }}" class="btn btn-primary"
                             style="font-size: 16px; padding: 10px 20px;">
                             Proceed to order
                         </a>
@@ -350,9 +350,9 @@
                 var price = parseFloat(priceInput.val()) || 0;
                 var quantity = parseInt(row.find("input[name='qty']").val()) || 1;
                 var total = (price * quantity).toFixed(2); // Calculate total
-    
+
                 row.find(".total-price").text("$" + total); // Update total in UI
-    
+
                 // Send AJAX request to update the price in the database
                 $.ajax({
                     url: priceInput.closest("form").attr("action"),
@@ -370,16 +370,16 @@
                     }
                 });
             });
-    
+
             $("input[name='qty']").on("input", function () {
                 var row = $(this).closest("tr"); // Get the closest table row
                 var quantityInput = $(this);
                 var price = parseFloat(row.find("input[name='price']").val()) || 0;
                 var quantity = parseInt(quantityInput.val()) || 1;
                 var total = (price * quantity).toFixed(2); // Calculate total
-    
+
                 row.find(".total-price").text("$" + total); // Update total in UI
-    
+
                 // Send AJAX request to update the quantity
                 $.ajax({
                     url: quantityInput.closest("form").attr("action"),
@@ -399,5 +399,5 @@
             });
         });
     </script>
-    
+
 @endpush
