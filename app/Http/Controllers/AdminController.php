@@ -29,8 +29,8 @@ class AdminController extends Controller
     {
         $sort = request('sort', 'desc'); // الافتراضي هو الأحدث أولًا
         $orders = Order::orderBy('created_at', $sort)->get()->take(10);
-        
-         
+
+
         $dashboardDatas = DB::select("
         SELECT
             SUM(total) AS TotalAmount,
@@ -171,6 +171,7 @@ class AdminController extends Controller
     }
     public function product_update(Request $request)
     {
+        dd($request);
         $request->validate([
             'name' => 'required|string|max:255',
             'stock_status' => 'required|in:active,inactive',
@@ -292,9 +293,9 @@ class AdminController extends Controller
     public function orders()
     {
         $sort = request('sort', 'desc'); // الافتراضي هو الأحدث أولًا
-$orders = Order::orderBy('created_at', $sort)->paginate(10);
+        $orders = Order::orderBy('created_at', $sort)->paginate(10);
 
- 
+
         return view('admin.orders', compact('orders')); // تمرير المتغير إلى الـ View
     }
 

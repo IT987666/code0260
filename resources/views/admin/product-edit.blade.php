@@ -175,7 +175,7 @@
                                                     Paragraphs</label>
                                                 <textarea name="specifications[{{ $specification->id }}][paragraphs]" id="spec-paragraphs-{{ $specification->id }}"
                                                     class="ckeditor" placeholder="Enter paragraphs">
-                                                   {!! htmlspecialchars_decode(stripslashes($specification['paragraphs'])) !!}
+                                                   {!! $specification['paragraphs'] !!}
                                                 </textarea>
                                                 <label for="spec-image-{{ $specification->id }}">Specification
                                                     Images</label>
@@ -248,7 +248,7 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script>
+    {{-- <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script> --}}
 
     <script>
         $(document).ready(function() {
@@ -332,6 +332,8 @@
     </script>
 @endpush
 @push('scripts')
+    <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script>
+
     <script>
         $(document).ready(function() {
             let specificationCounter = 0;
@@ -340,15 +342,15 @@
             const initializeTextEditor = (selector) => {
                 $(selector).each(function() {
                     if (!$(this).data('ckeditor-initialized')) {
-                        CKEDITOR.replace(this);
-
-                        // بعد تهيئة الـ CKEditor، نزيل التاغات أو الدبل كوتيشن إذا كانت موجودة
-                        var content = $(this).val(); // الحصول على المحتوى
-
-                        // تعيين المحتوى المعدل داخل الـ CKEditor
-                        CKEDITOR.instances[$(this).attr('id')].setData(content);
-
-                        $(this).data('ckeditor-initialized', true);
+                        ClassicEditor.create(this)
+                            .then(editor => {
+                                editor.setData($(this).val());
+                                editor.model.document.on('change:data', () => {
+                                    $(this).val(editor.getData());
+                                });
+                                $(this).data('ckeditor-initialized', true);
+                            })
+                            .catch(error => console.error(error));
                     }
                 });
             };
@@ -410,8 +412,8 @@
                     $(`#specification-label-${specificationCounter}`).text(name);
                 });
                 // تهيئة CKEditor للسبيسفكيشن الجديد
-                ClassicEditor.create($(
-                    `textarea[name='specifications[new_${specificationCounter}][paragraphs]']`)[0]);
+                // ClassicEditor.create($(
+                //     `textarea[name='specifications[new_${specificationCounter}][paragraphs]']`)[0]);
             });
 
             // إظهار/إخفاء قسم المواصفات
@@ -487,6 +489,18 @@
 
             // تهيئة محرر النصوص للمواصفات
             initializeTextEditor('textarea[name^="specifications"]');
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة CKEditor لحقل Company’s responsibilities
+            ClassicEditor
+                .create(document.querySelector('#companies_responsibilities'))
+                .catch(error => console.error(error));
+
+            // تهيئة CKEditor لحقل Customer’s responsibilities
+            ClassicEditor
+                .create(document.querySelector('#customers_responsibilities'))
+                .catch(error => console.error(error));
         });
     </script>
 @endpush

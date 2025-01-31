@@ -19,22 +19,22 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('font/fonts.css') }}">
     <link rel="stylesheet" href="{{ asset('icon/style.css') }}">
-    <link rel="shortcut icon" href="{{ asset('images/logo/logo.png') }}"> 
+    <link rel="shortcut icon" href="{{ asset('images/logo/logo.png') }}">
     <link rel="apple-touch-icon-precomposed" href="{{ asset('images/logo/logo.png') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
 
     <!-- Include Font Awesome once -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.ckeditor.com/4.20.0/standard/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<!-- CSS for Bootstrap -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CSS for Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- JavaScript for Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <!-- JavaScript for Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
 
 
@@ -134,8 +134,8 @@
                                         </li>
                                     </ul>
                                 </li>
- 
-                               
+
+
                             </ul>
                         </div>
                     </div>
@@ -150,13 +150,13 @@
                                         src="images/logo/logo.png" data-light="images/logo/logo.png"
                                         data-dark="images/logo/logo.png" data-width="154px" data-height="52px"
                                         data-retina="images/logo/logo.png">
-                                            </a>
-                                            <div class="button-show-hide">
-                                                <i class="icon-menu-left"></i>
-                                            </div>
+                                </a>
+                                <div class="button-show-hide">
+                                    <i class="icon-menu-left"></i>
+                                </div>
 
 
-                               
+
 
                             </div>
 
@@ -168,13 +168,13 @@
 
                             <div class="header-grid">
 
-     
+
                                 <div class="popup-wrap user type-header">
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                             id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="header-user wg-user">
-                                               
+
                                                 <span class="flex flex-column">
                                                     <span class="body-title mb-2">{{ Auth::user()->name }}</span>
                                                     <span class="text-tiny">Admin</span>
@@ -191,21 +191,23 @@
                                                     <div class="body-title-2">Users</div>
                                                 </a>
                                             </li>
-                                            
-                                            
+
+
                                             <li>
-                                                <a href="#" class="user-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                <a href="#" class="user-item"
+                                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                                     <div class="icon">
                                                         <i class="icon-log-out"></i>
                                                     </div>
                                                     <div class="body-title-2">Log out</div>
                                                 </a>
-                                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                    style="display: none;">
                                                     @csrf
                                                 </form>
                                             </li>
-                                            
-                                            
+
+
                                         </ul>
                                     </div>
                                 </div>
@@ -235,7 +237,7 @@
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
-  
+
 
     @stack('scripts')
 
