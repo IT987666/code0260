@@ -145,15 +145,16 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-floating my-3">
-                                    <input type="text" class="form-control" id="phone" name="phone" required="">
-                                    <label for="phone">Phone Number *</label>
-                                    @error('phone')
+                                    <input type="email" class="form-control" name="email" required="">
+                                    <label for="email">Email *</label>
+                                    @error('email')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
+                           
                             <div class="col-md-4">
                                 <div class="form-floating my-3">
                                     <select class="form-select" id="country" name="country" required="">
@@ -167,16 +168,16 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            
+                            <div class="col-md-6">
                                 <div class="form-floating my-3">
-                                    <input type="email" class="form-control" name="email" required="">
-                                    <label for="email">Email *</label>
-                                    @error('email')
+                                    <input type="text" class="form-control" id="phone" name="phone" required="">
+                                    <label for="phone">Phone Number *</label>
+                                    @error('phone')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
-
 
 
                             <div class="col-md-12">
