@@ -123,7 +123,7 @@
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
-                                            <a href="{{ route('shop.index') }}" class="">
+                                            <a href="{{ route('cart.checkout') }}" class="">
                                                 <div class="text">New Orde</div>
                                             </a>
                                         </li>

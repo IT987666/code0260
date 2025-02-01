@@ -149,14 +149,15 @@
                         <div class="body-title mb-10">Company’s responsibilities <span class="tf-color-1">*</span></div>
                         <textarea id="companies-responsibilities-editor" name="companies_responsibilities"></textarea>
                     </fieldset>
-
+ 
                     <fieldset class="name">
                         <div class="body-title mb-10">Customer’s responsibilities <span class="tf-color-1">*</span></div>
                         <textarea id="customers-responsibilities-editor" name="customers_responsibilities"></textarea>
                     </fieldset>
 
                     <fieldset>
-                        <label for="code">Code:</label>
+                         <div class="body-title mb-10">Code <span class="tf-color-1">*</span></div>
+
                         <input type="text" name="code" maxlength="3" value="{{ old('code') }}" required>
                         @error('code')
                             <span class="text-danger">{{ $message }}</span>
@@ -178,25 +179,25 @@
                         @enderror
                     </div>
 
-
+                    <div class="wg-box">
+                        <fieldset class="specifications">
+                            <div class="body-title mb-10">Technical Specifications <span class="tf-color-1">*</span></div>
+                            <div id="specifications-container">
+                                <!-- Dynamic specifications will be added here -->
+                            </div>
+                        </fieldset>
+                        <button type="button" id="add-specification-btn" class="tf-button w-full" data-bs-toggle="modal"
+                            data-bs-target="#addSpecificationModal" style="margin-top: 20px;">Add Specification
+                        </button>
+                    </div>
 
                     <div class="cols gap10">
                         <button class="tf-button w-full" type="submit">Add Product</button>
                     </div>
                 </div>
-                <div class="wg-box">
-                    <fieldset class="specifications">
-                        <div class="body-title mb-10">Technical Specifications <span class="tf-color-1">*</span></div>
-                        <div id="specifications-container">
-                            <!-- Dynamic specifications will be added here -->
-                        </div>
-                    </fieldset>
-                    <button type="button" id="add-specification-btn" class="tf-button w-full" data-bs-toggle="modal"
-                        data-bs-target="#addSpecificationModal" style="margin-top: 20px;">Add Specification
-                    </button>
-                </div>
+             
             </form>
-
+      
             <!-- /form-add-product -->
         </div>
         <!-- /main-content-wrap -->
