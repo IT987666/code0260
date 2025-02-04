@@ -140,7 +140,7 @@
                                                                 @foreach ($spec['images'] as $image)
                                                                     <img src="{{ asset('storage/' . $image) }}"
                                                                         alt="spec image" width="100" height="100"
-                                                                        style="margin-right: 10px;">
+                                                                         style="margin-right: 10px;">
                                                                 @endforeach
                                                             </div>
                                                         @endif
