@@ -10,13 +10,14 @@
     <tbody>
         @foreach ($orderItems as $cartItem)
             <tr>
-                <td>{{ $cartItem->options->description ?? 'No description available' }}</td>
-                <td>{{ $cartItem->qty }}</td>
+
+                <td>{{ $cartItem->description ?? 'No description available' }}</td>
+                <td>{{ $cartItem->quantity }}</td>
                 <td>{{ $cartItem->price }}</td>
-                <td>{{ $cartItem->subtotal }}</td>
+                <td>{{ $cartItem->quantity * $cartItem->price }}</td>
             </tr>
         @endforeach
-    </tbody> 
+    </tbody>
 </table>
 
 <!-- سيتم استبدال النص الثابت بقيمة billing_info -->
