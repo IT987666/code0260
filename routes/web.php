@@ -51,6 +51,7 @@ Route::get('/submit-tasks', [CartController::class, 'checkout'])->name('cart.che
 Route::post('/place-a-request', [CartController::class, 'place_an_order'])->name('cart.place.an.order');
 Route::get('/request-confirmation', [CartController::class, 'order_confirmation'])->name('cart.order.confirmation');
 Route::get('/order', [CartController::class, 'order'])->name('cart.order');
+Route::post('/submit-order', [CartController::class, 'submitOrder'])->name('cart.place-order');
 
 Route::get('/search', [HomeController::class, 'search'])->name('home.search');
 

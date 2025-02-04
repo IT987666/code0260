@@ -182,19 +182,10 @@ class CartController extends Controller
             'name' => 'required|max:100',
             'phone' => 'required|string',
             'email' => 'nullable|email',
-            'extra' => 'required',
-            'billing_info' => 'required',
-            'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpg,jpeg,png|max:2048',
+            'country' => 'required',
         ]);
 
-        $uploadedImages = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('orders/images', 'public');
-                $uploadedImages[] = $path;
-            }
-        }
+
 
         // Save the address
         $address = new Address();
@@ -206,38 +197,6 @@ class CartController extends Controller
         $address->user_id = $user_id;
         $address->isdefault = false;
         $address->save();
-
-        // Set the checkout amount
-
-        // Save the order
-        $order = new Order();
-        $order->user_id = $user_id;
-
-        $order->subtotal = 1;
-        $order->total = 1;
-        $order->name = $address->name;
-        $order->phone = $address->phone;
-        $order->email = $address->email;
-
-        $order->country = $address->country;
-        $order->extra = $request->extra;
-        $order->billing_info = $request->billing_info;
-        $order->images = $uploadedImages ? json_encode($uploadedImages) : null;
-        $order->save();
-
-
-
-        // Add the transaction
-        Transaction::create([
-            'user_id' => $user_id,
-            'order_id' => $order->id,
-            'mode' => $request->mode ?? 'cod',
-            'status' => 'pending',
-        ]);
-
-        // Clear the cart and session
-        // Cart::instance('cart')->destroy();
-        Session::put('order_id', $order->id);
 
         return redirect()->route('shop.index');
     }
@@ -310,9 +269,61 @@ class CartController extends Controller
 
     public function order(Request $request)
     {
-        $order = Order::query()->findOrFail(Session::get('order_id'));
+
+
+        return view('order');
+    }
+
+
+    public function submitOrder(Request $request)
+    {
+        $user_id = Auth::user()->id;
+
+        $address = Address::query()->where('user_id', $user_id)->latest()->first();
+        $request->validate([
+            'extra' => 'required',
+            'billing_info' => 'required',
+            // 'images' => 'nullable|array',
+            // 'images.*' => 'image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $uploadedImages = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('orders/images', 'public');
+                $uploadedImages[] = $path;
+            }
+        }
+
+        // Save the order
+        $order = new Order();
+        $order->user_id = $user_id;
+
+        $order->subtotal = 1;
+        $order->total = 1;
+        $order->name = $address->name;
+        $order->phone = $address->phone;
+        $order->email = $address->email;
+
+        $order->country = $address->country;
+        $order->extra = $request->extra;
+        $order->billing_info = $request->billing_info;
+        $order->images = $uploadedImages ? json_encode($uploadedImages) : null;
+        $order->save();
+
+
+
+        // Add the transaction
+        Transaction::create([
+            'user_id' => $user_id,
+            'order_id' => $order->id,
+            'mode' => $request->mode ?? 'cod',
+            'status' => 'pending',
+        ]);
+
         // Add order items
         foreach (Cart::instance('cart')->content() as $item) {
+
             $product = Product::find($item->id);
 
             // Save the order item
@@ -322,8 +333,13 @@ class CartController extends Controller
                 'price' => $item->price,
                 'product_name' => $product->name,
                 'quantity' => $item->qty,
+                'description' => $item->options['description'] ?? null,
+
                 'custom_specifications' => json_encode($item->options['specifications']), // Serialize the array
             ]);
+
+            $orderItem->save();
+
 
             // Save product specifications for the current order item
             foreach ($item->options['specifications'] as $spec) {
@@ -332,7 +348,6 @@ class CartController extends Controller
                     'title' => $spec['title'] ?? null,
                     'paragraphs' => $spec['paragraphs'] ?? null,
                     'images' => isset($spec['images']) ? json_encode($spec['images']) : null,
-                    'description' => $spec['description'] ?? null,
                     'order_item_id' => $orderItem->id,
                     'product_id' => $item->id,
                 ]);
@@ -348,8 +363,11 @@ class CartController extends Controller
         $order->tax = Session::get('checkout')['tax'];
         $order->save();
 
+        Session::put('order_id', $order->id);
+
         return redirect()->route('cart.order.confirmation');
     }
+
 
 
 

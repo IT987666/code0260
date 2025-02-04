@@ -127,7 +127,7 @@
                                                 @foreach ($item->specifications as $spec)
                                                     <div class="specification">
                                                         <strong>{{ $spec['name'] ?? 'Specification' }}:</strong>
-                                                        <p>{{ $spec['title']  }}</p>
+                                                        <p>{{ $spec['title'] }}</p>
 
                                                         <!-- Display paragraphs -->
                                                         @if (!empty($spec['paragraphs']))
