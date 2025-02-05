@@ -227,6 +227,48 @@
             transform: none;
             /* إيقاف التأثير عند تحريك الفأرة */
         }
+
+
+        /* تصغير حجم الحقول */
+.modern-input, 
+.modern-textarea {
+    font-size: 14px; /* تصغير حجم الخط */
+    padding: 8px 12px; /* تقليل التباعد الداخلي */
+    height: 36px; /* تحديد ارتفاع مناسب */
+}
+
+/* تصغير الأزرار */
+.btn, .modern-btn, .toggle-specification {
+    font-size: 14px; /* تصغير حجم الخط */
+    padding: 8px 15px; /* تقليل التباعد */
+    width: auto; /* ضبط العرض حسب المحتوى */
+    min-width: 120px; /* تجنب أن يصبح الزر صغير جدًا */
+}
+
+/* تصغير حقول الـ textarea */
+.modern-textarea {
+    min-height: 80px; /* تقليل الارتفاع الافتراضي */
+    max-height: 150px; /* منع التمدد المفرط */
+}
+
+/* تصغير حجم الصور في المعاينة */
+.gitems img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+/* تصغير زر إزالة الصورة */
+.remove-old-image-btn {
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+}
+
+/* تصغير عناوين الحقول */
+.form-group label {
+    font-size: 14px;
+}
+
     </style>
 @endpush
 @push('scripts')
