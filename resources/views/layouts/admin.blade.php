@@ -124,7 +124,7 @@
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
                                             <a href="{{ route('cart.checkout') }}" class="">
-                                                <div class="text">New Orde</div>
+                                                <div class="text">New Order</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">

@@ -182,18 +182,19 @@
 
 
                         </div>
-                    </div>
-
-                    <div class="checkout__totals-wrapper">
+                        <div class="checkout__totals-wrapper">
 
 
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary"
-                                style="background-color: #20bec6; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; transition: transform 0.3s ease, background-color 0.3s ease;">
-                                Substantiation
-                            </button>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary"
+                                    style="background-color: #20bec6; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; transition: transform 0.3s ease, background-color 0.3s ease;">
+                                    Next
+                                </button>
+                            </div>
                         </div>
                     </div>
+
+                   
 
             </form>
         </section>

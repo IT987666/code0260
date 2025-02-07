@@ -160,30 +160,31 @@
 
 
                         </div>
-                    </div>
-
-                    <div class="checkout__totals-wrapper">
-                        <fieldset>
-                            <div class="body-title mb-10">Upload Technical Drawings or Images</div>
-                            <div class="upload-image mb-16">
-                                <label class="uploadfile" for="images">
-                                    <span class="icon"><i class="icon-upload-cloud"></i></span>
-                                    <input type="file" id="images" name="images[]" accept="image/*" multiple>
-                                </label>
-                                <div id="preview-container" class="preview-container"></div>
+                        <div class="checkout__totals-wrapper">
+                            <fieldset>
+                                <div class="body-title mb-10">Upload Technical Drawings or Images</div>
+                                <div class="upload-image mb-16">
+                                    <label class="uploadfile" for="images">
+                                        <span class="icon"><i class="icon-upload-cloud"></i></span>
+                                        <input type="file" id="images" name="images[]" accept="image/*" multiple>
+                                    </label>
+                                    <div id="preview-container" class="preview-container"></div>
+                                </div>
+                            </fieldset>
+    
+                            <!-- Preview of selected images as a grid -->
+                            <div id="image-preview" class="my-3"></div>
+    
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary"
+                                    style="background-color: #20bec6; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; transition: transform 0.3s ease, background-color 0.3s ease;">
+                                    Proceed To Order
+                                </button>
                             </div>
-                        </fieldset>
-
-                        <!-- Preview of selected images as a grid -->
-                        <div id="image-preview" class="my-3"></div>
-
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary"
-                                style="background-color: #20bec6; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; transition: transform 0.3s ease, background-color 0.3s ease;">
-                                Proceed To Order
-                            </button>
                         </div>
                     </div>
+
+                 
 
             </form>
         </section>

@@ -7,6 +7,7 @@
         <form action="{{ route('cart.update', ['rowId' => $item->rowId]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+            <div class="flex items-center flex-wrap justify-between gap20 mb-27">
 
             <!-- Name field - غير قابل للتعديل -->
             <div class="form-group">
@@ -49,26 +50,31 @@
                 <input type="text" name="description" id="description" class="form-control modern-input"
                     value="{{ $item->options['description'] }}">
             </div>
+            
             <div class="form-group">
-
-                <label for="companies_responsibilities">Companies responsibility</label>
-                <textarea name="companies_responsibilities" class="ckeditor form-control modern-textarea" rows="3">
-            {{ is_array($item->options['companies_responsibilities']) ? implode(', ', $item->options['companies_responsibilities']) : $item->options['companies_responsibilities'] }}
-           </textarea>
+                <div class="modern-input">
+                    <label for="companies_responsibilities">Companies responsibility</label>
+                    <textarea name="companies_responsibilities" class="ckeditor form-control modern-textarea" rows="3">
+                        {{ is_array($item->options['companies_responsibilities']) ? implode(', ', $item->options['companies_responsibilities']) : $item->options['companies_responsibilities'] }}
+                    </textarea>
+                </div>
             </div>
-
+            
             <div class="form-group">
-
-                <label for="customers_responsibilities">Customers responsibility</label>
-                <textarea name="customers_responsibilities" class="ckeditor form-control modern-textarea" rows="3">
-            {{ is_array($item->options['customers_responsibilities']) ? implode(', ', $item->options['customers_responsibilities']) : $item->options['customers_responsibilities'] }}
-           </textarea>
+                <div class="modern-input">
+                    <label for="customers_responsibilities">Customers responsibility</label>
+                    <textarea name="customers_responsibilities" class="ckeditor form-control modern-textarea" rows="3">
+                        {{ is_array($item->options['customers_responsibilities']) ? implode(', ', $item->options['customers_responsibilities']) : $item->options['customers_responsibilities'] }}
+                    </textarea>
+                </div>
             </div>
-
+            
             <label for="specifications"><strong>Specifications</strong></label>
 
             <!-- Specifications - قابل للتعديل فقط إذا رغبت -->
             <div class="form-group">
+                <div class="modern-input">
+
                 <div id="specifications-container">
                     @foreach ($item->options['specifications'] as $index => $specification)
                         <div class="specification-item mb-3" data-index="{{ $index }}">
@@ -83,11 +89,7 @@
                                 <input type="text" name="specifications[{{ $index }}][name]"
                                     id="spec-name-{{ $index }}" class="form-control modern-input"
                                     value="{{ $specification['name'] }}">
-
-                                <label for="specifications[{{ $index }}][title]">Title</label>
-                                <input type="text" name="specifications[{{ $index }}][title]"
-                                    class="form-control modern-input" value="{{ $specification['title'] }}">
-
+ 
                                 <label for="specifications[{{ $index }}][paragraphs]">Paragraphs</label>
                                 <textarea name="specifications[{{ $index }}][paragraphs]" class="ckeditor form-control modern-textarea"
                                     rows="3">
@@ -113,9 +115,16 @@
                 </div>
             </div>
 
+            </div>
+
             <!-- زر في النص -->
             <div class="form-group text-center">
-                <button type="submit" class="btn btn-primary modern-btn">Save Changes</button>
+                <div class="modern-input">
+                    <button type="submit" class="btn btn-primary custom-btn">Save Changes</button>
+                </div>
+            </div>
+            
+
             </div>
         </form>
     </div>
@@ -128,173 +137,157 @@
 
 @push('styles')
     <style>
-        /* تحديث الأزرار */
+/* تحديث الأزرار */
+.custom-btn {
+    background-color: #20bec6;
+    border-color: #20bec6;
+    color: white;  /* To make the text stand out */
+    padding: 10px 20px;  /* Adjust padding if needed */
+    font-size: 16px;  /* Adjust text size if needed */
+    border-radius: 5px;  /* Optional: Make the corners rounded */
+}
+
+.custom-btn:hover {
+    background-color: #1a9eab;
+    border-color: #1a9eab;
+}
+
+/* تقليص عرض الحقول */
+.modern-input, .modern-textarea {
+    width: 50%; /* اجعل العرض 100% ليتناسب مع الحاوية */
+    padding: 12px 16px; /* إضافة بعض المسافة الداخلية لزيادة الراحة */
+    margin: 8px 0; /* إضافة مسافة بين الحقول */
+    border: 1px solid #ddd; /* حدود ناعمة بلون خفيف */
+    border-radius: 8px; /* حواف مدورة لإضفاء لمسة أنيقة */
+    box-sizing: border-box; /* التأكد من أن الحشو لا يؤثر على العرض */
+    font-size: 16px; /* حجم خط مناسب للقراءة */
+    background-color: #f9f9f9; /* خلفية فاتحة لإضفاء لمسة أنيقة */
+    color: #333; /* لون الخط */
+    transition: all 0.3s ease; /* تأثير عند التفاعل مع الحقول */
+}
+
+.modern-input:focus, .modern-textarea:focus {
+    border-color: #5cb85c; /* تغيير لون الحدود عند التركيز */
+    outline: none; /* إزالة الحدود الافتراضية للمتصفح */
+    box-shadow: 0 0 8px rgba(92, 184, 92, 0.5); /* تأثير ظل عند التركيز */
+}
+
+textarea.modern-textarea {
+    resize: vertical; /* السماح بتغيير حجم الحقل عموديًا */
+}
 
 
-        /* زر إزالة الصورة */
-        .remove-old-image-btn {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background-color: red;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
-            cursor: pointer;
-        }
+/* زر إزالة الصورة */
+.remove-old-image-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+}
 
-        /* توسيط باستخدام Flexbox */
+/* توسيط باستخدام Flexbox */
 
+/* تحسين النصوص */
+.form-group label {
+    font-weight: bold;
+    color: #333;
+}
 
-        /* تحسين النصوص */
-        .form-group label {
-            font-weight: bold;
-            color: #333;
-        }
+/* معرض الصور */
+.gallery-preview {
+    margin-bottom: 10px;
+}
 
-        /* معرض الصور */
-        .gallery-preview {
-            margin-bottom: 10px;
-        }
+.gitems {
+    display: inline-block;
+    margin-right: 10px;
+    position: relative;
+}
 
-        .gitems {
-            display: inline-block;
-            margin-right: 10px;
-            position: relative;
-        }
+.gitems img {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 5px;
+}
 
-        .gitems img {
-            max-width: 150px;
-            max-height: 150px;
-            border-radius: 5px;
-        }
+/* تفاصيل المواصفات */
+.specification-details {
+    margin-top: 15px;
+}
 
-        /* تفاصيل المواصفات */
-        .specification-details {
-            margin-top: 15px;
-        }
+.toggle-specification {
+    margin-bottom: 10px;
+}
 
-        .toggle-specification {
-            margin-bottom: 10px;
-        }
+.modern-btn {
+    background-color: #000000;
+    /* اللون الأسود */
+    color: white;
+    /* النص باللون الأبيض */
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    display: inline-block;
+    margin-top: 15px;
+    text-align: center;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    width: 200px;
+    box-sizing: border-box;
+}
 
-        .modern-btn {
-            background-color: #000000;
-            /* اللون الأسود */
-            color: white;
-            /* النص باللون الأبيض */
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            display: inline-block;
-            margin-top: 15px;
-            text-align: center;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-            width: 200px;
-            box-sizing: border-box;
-        }
+/* عند تحريك الفأرة فوق الزر */
+.modern-btn:hover {
+    background-color: #333333;
+    /* لون أغمق عند التحويم */
+    transform: scale(1.05);
+}
 
-        /* عند تحريك الفأرة فوق الزر */
-        .modern-btn:hover {
-            background-color: #333333;
-            /* لون أغمق عند التحويم */
-            transform: scale(1.05);
-        }
+/* تحديث الحقول */
+.modern-input,
+.modern-textarea {
+    border-radius: 8px;
+    border: 1px solid #120202;
+    padding: 12px 16px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
 
-        /* تحديث الحقول */
-        .modern-input,
-        .modern-textarea {
-            border-radius: 8px;
-            border: 1px solid #120202;
-            padding: 12px 16px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
+/* إزالة تأثير hover على زر Show */
+.toggle-specification {
+    background-color: #20bec6;
+    /* اللون الأساسي */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-block;
+    margin-top: 10px;
+    width: 100%;
+    /* ضمان أن يكون الأزرار بعرض 100% */
+    text-align: center;
+    transition: none;
+    /* إيقاف تأثيرات التغيير عند التحويم */
+}
 
-        /* إزالة تأثير hover على زر Show */
-        /* إزالة تأثير hover على زر Show */
-        .toggle-specification {
-            background-color: #20bec6;
-            /* اللون الأساسي */
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            display: inline-block;
-            margin-top: 10px;
-            width: 100%;
-            /* ضمان أن يكون الأزرار بعرض 100% */
-            text-align: center;
-            transition: none;
-            /* إيقاف تأثيرات التغيير عند التحويم */
-        }
+/* عند تحريك الفأرة فوق الزر، لا تغير اللون أو الحجم */
+.toggle-specification:hover {
+    background-color: #20bec6;
+    /* نفس اللون كما هو في الحالة العادية */
+    transform: none;
+    /* إيقاف التأثير عند تحريك الفأرة */
+}
 
-        /* عند تحريك الفأرة فوق الزر، لا تغير اللون أو الحجم */
-        .toggle-specification:hover {
-            background-color: #20bec6;
-            /* نفس اللون كما هو في الحالة العادية */
-            transform: none;
-            /* إيقاف التأثير عند تحريك الفأرة */
-        }
-
-
-        /* تصغير حجم الحقول */
-        .modern-input,
-        .modern-textarea {
-            font-size: 14px;
-            /* تصغير حجم الخط */
-            padding: 8px 12px;
-            /* تقليل التباعد الداخلي */
-            height: 36px;
-            /* تحديد ارتفاع مناسب */
-        }
-
-        /* تصغير الأزرار */
-        .btn,
-        .modern-btn,
-        .toggle-specification {
-            font-size: 14px;
-            /* تصغير حجم الخط */
-            padding: 8px 15px;
-            /* تقليل التباعد */
-            width: auto;
-            /* ضبط العرض حسب المحتوى */
-            min-width: 120px;
-            /* تجنب أن يصبح الزر صغير جدًا */
-        }
-
-        /* تصغير حقول الـ textarea */
-        .modern-textarea {
-            min-height: 80px;
-            /* تقليل الارتفاع الافتراضي */
-            max-height: 150px;
-            /* منع التمدد المفرط */
-        }
-
-        /* تصغير حجم الصور في المعاينة */
-        .gitems img {
-            max-width: 100px;
-            max-height: 100px;
-        }
-
-        /* تصغير زر إزالة الصورة */
-        .remove-old-image-btn {
-            width: 16px;
-            height: 16px;
-            font-size: 10px;
-        }
-
-        /* تصغير عناوين الحقول */
-        .form-group label {
-            font-size: 14px;
-        }
     </style>
 @endpush
 @push('scripts')
@@ -377,10 +370,7 @@
                 <fieldset class="other-info">
                     <label for="spec-name-${specificationCounter}">Specification Name</label>
                     <input type="text" id="spec-name-${specificationCounter}" name="specifications[new_${specificationCounter}][name]" placeholder="Enter specification name" required>
-
-                    <label for="spec-title-${specificationCounter}">Specification Title</label>
-                    <input type="text" name="specifications[new_${specificationCounter}][title]" placeholder="Enter specification title">
-
+ 
                     <label for="spec-paragraphs-${specificationCounter}">Specification Paragraphs</label>
                     <textarea name="specifications[new_${specificationCounter}][paragraphs]" class="ckeditor" placeholder="Enter paragraphs"></textarea>
                 </fieldset>
@@ -405,3 +395,4 @@
         });
     </script>
 @endpush
+

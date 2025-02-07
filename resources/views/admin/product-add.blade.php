@@ -101,6 +101,18 @@
         .tf-button-funtion div {
             color: var(--Body-Text);
         }
+        .add-new-section {
+    border: 2px dashed #ccc; /* خط متقطع لتمييز القسم */
+    padding: 20px;
+    background-color: #f9f9f9; /* خلفية مختلفة */
+    border-radius: 10px;
+}
+
+.wg-box:not(:first-child) {
+    margin-top: 40px; /* تباعد بين الأقسام */
+    padding-top: 20px;
+    border-top: 2px solid #ddd; /* خط فاصل بين الأقسام */
+}
     </style>
 
     <div class="main-content-inner">
@@ -179,16 +191,19 @@
                         @enderror
                     </div>
 
-                    <div class="wg-box">
+                    <div class="wg-box"style="margin-bottom: 50px;">
                         <fieldset class="specifications">
                             <div class="body-title mb-10">Technical Specifications <span class="tf-color-1">*</span></div>
                             <div id="specifications-container">
                                 <!-- Dynamic specifications will be added here -->
                             </div>
                         </fieldset>
-                        <button type="button" id="add-specification-btn" class="tf-button w-full" data-bs-toggle="modal"
-                            data-bs-target="#addSpecificationModal" style="margin-top: 20px;">Add Specification
-                        </button>
+                        <button type="button" id="add-specification-btn" class="tf-button" data-bs-toggle="modal"
+                        data-bs-target="#addSpecificationModal" 
+                        style="margin-top: 20px; display: block; margin-left: auto; margin-right: auto; text-align: center;">
+                        Add Specification
+                    </button>
+                    
                     </div>
 
                     <div class="cols gap10">
@@ -247,9 +262,13 @@
         specificationCounter++;
         const newSpecification = `
             <div class="specification-item" id="specification-${specificationCounter}">
-                <div class="spec-header">
-                    <span id="specification-label-${specificationCounter}">Specification ${specificationCounter}</span>
-                </div>
+             <div class="spec-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <span id="specification-label-${specificationCounter}" style="font-weight: bold;">Specification ${specificationCounter}</span>
+    <button type="button" class="remove-specification-btn" data-spec-id="${specificationCounter}" 
+        style="background: none; color: #40E0D0; border: none; cursor: pointer; font-size: 20px; font-weight: bold;">✖
+    </button>
+</div>
+
                 <div class="specification-content">
                     <div class="specification-name">
                         <label for="spec-name-${specificationCounter}">Specification Name:</label>
@@ -273,8 +292,7 @@
                                     <input type="file" name="specifications[${specificationCounter}][images][]" id="gFile-${specificationCounter}" class="form-control modern-input" accept="image/*" multiple>
                                 </fieldset>
                     </div>
-                    <button type="button" class="remove-specification-btn" data-spec-id="${specificationCounter}">Remove</button>
-                </div>
+                 </div>
                     <button type="button" id="save-specification-btn" class="tf-button w-full toggle-specification-btn" data-spec-id="${specificationCounter}" style="margin: 0 auto; display: block;">SAVE</button>
             </div>`;
 
@@ -284,6 +302,10 @@
         $(`#spec-name-${specificationCounter}`).on('input', function() {
             const name = $(this).val() || `Specification ${specificationCounter}`;
             $(`#specification-label-${specificationCounter}`).text(name);
+        });
+          // حذف المواصفة عند الضغط على زر ✖
+          $(`#specification-${specificationCounter} .remove-specification-btn`).on('click', function() {
+            $(`#specification-${specificationCounter}`).remove();
         });
     });
 

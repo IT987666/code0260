@@ -107,8 +107,8 @@ class AdminController extends Controller
             'name' => 'required',
             'stock_status' => 'required|in:active,inactive',
             'description' => 'nullable',
-            'companies_responsibilities' => 'required',
-            'customers_responsibilities' => 'required',
+            'companies_responsibilities' => 'nullable',
+            'customers_responsibilities' => 'nullable',
             'code' => 'required',
             'featured' => 'nullable|boolean',
         ]);
@@ -258,9 +258,9 @@ class AdminController extends Controller
         ProductSpecification::where('product_id', $product->id)
             ->whereNotIn('id', $updatedSpecIds)
             ->delete();
+            return redirect()->route('admin.products')->with('success', 'Product updated successfully');
 
-        return redirect()->back()->with('success', 'Product updated successfully');
-    }
+     }
 
 
 
@@ -359,9 +359,9 @@ class AdminController extends Controller
                 $transaction->save();
             }
         }
+        return redirect()->route('admin.orders')->with('status', 'Status changed successfully!');
 
-        return back()->with("status", "Status changed successfully!");
-    }
+     }
 
 
 

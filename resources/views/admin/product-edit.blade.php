@@ -16,6 +16,32 @@
             margin-bottom: 10px;
         }
 
+        .remove-icon {
+    font-size: 20px; /* حجم الرمز */
+    color: #1abc9c; /* اللون الفيروزي */
+    font-weight: bold; /* جعله عريضًا */
+    display: inline-block;
+    margin-left: 5px;
+}
+.section-title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.add-new-section {
+    border: 2px dashed #ccc; /* خط متقطع لتمييز القسم */
+    padding: 20px;
+    background-color: #f9f9f9; /* خلفية مختلفة */
+    border-radius: 10px;
+}
+
+.wg-box:not(:first-child) {
+    margin-top: 40px; /* تباعد بين الأقسام */
+    padding-top: 20px;
+    border-top: 2px solid #ddd; /* خط فاصل بين الأقسام */
+}
 
         #preview-container-$ {
             specificationCounter
@@ -140,104 +166,108 @@
                                 <span class="alert alert-danger text-center">{{ $message }}</span>
                             @enderror
                         </div>
-
-                        <div class="cols gap10">
+                        <div class="wg-box">
+                            <div class="body-title mb-10">Edite Technical Specification <span class="tf-color-1">*</span>
+                            </div>
+                            <fieldset class="specifications">
+                                <div id="specifications-container">
+                                    @foreach ($product->specifications as $specification)
+                                        <div class="specification-item" id="specification-{{ $specification->id }}">
+                                            <button type="button" class="toggle-specification-btn tf-button w-full"
+                                                data-spec-id="{{ $specification->id }}">
+                                                Edit {{ $specification->name }}
+                                            </button>
+                                            <div class="specification-content" id="specification-content-{{ $specification->id }}"
+                                                style="display: none;">
+                                                <div class="cols gap10">
+        
+        
+        
+                                                    <fieldset class="other-info">
+                                                        <label for="spec-name-{{ $specification->id }}">Specification Name</label>
+                                                        <input type="text" id="spec-name-{{ $specification->id }}"
+                                                            name="specifications[{{ $specification->id }}][name]"
+                                                            placeholder="Enter specification name"
+                                                            value="{{ old('specifications.' . $specification->id . '.name', $specification->name) }}"
+                                                            required>
+        
+                                                        <label for="spec-paragraphs-{{ $specification->id }}">Specification
+                                                            Paragraphs</label>
+                                                        <textarea name="specifications[{{ $specification->id }}][paragraphs]" id="spec-paragraphs-{{ $specification->id }}"
+                                                            class="ckeditor" placeholder="Enter paragraphs">
+                                                           {!! $specification['paragraphs'] !!}
+                                                        </textarea>
+                                                        <label for="spec-image-{{ $specification->id }}">Specification
+                                                            Images</label>
+                                                        @php
+                                                            $images = json_decode($specification->images, true);
+                                                        @endphp
+                                                        <div class="upload-image mb-16">
+                                                            <div id="gallery-preview-{{ $specification->id }}"
+                                                                class="gallery-preview">
+                                                                @if (is_array($images) && count($images) > 0)
+                                                                    @foreach ($images as $image)
+                                                                        <div class="gitems">
+                                                                            <img src="{{ asset('storage/' . $image) }}"
+                                                                                alt="Specification Image">
+                                                                            <button type="button" class="remove-old-image-btn"
+                                                                                data-image="{{ $image }}">X</button>
+                                                                            <input type="hidden"
+                                                                                name="specifications[{{ $specification->id }}][existing_images][]"
+                                                                                value="{{ $image }}">
+                                                                        </div>
+                                                                    @endforeach
+                                                                @else
+                                                                    <p>No images available</p>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        @isset($image)
+                                                            <input type="hidden"
+                                                                name="specifications[{{ $specification->id }}][deleted_images][]"
+                                                                value="{{ $image }}" class="deleted-image-input">
+                                                        @endisset
+                                                        <input type="file"
+                                                            name="specifications[{{ $specification->id }}][images][]"
+                                                            class="form-control gallery-input"
+                                                            data-preview-id="gallery-preview-{{ $specification->id }}" multiple>
+                                                            <button type="button" class="remove-specification-btn" data-spec-id="{{ $specification->id }}">
+                                                                <span class="remove-icon">×</span> <!-- رمز X فيروزى -->
+                                                            </button>
+                                                            
+        
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+        
+                            </fieldset>
+        
+        
+                            <div class="wg-box">
+        
+                                <fieldset class="specifications">
+        
+                                    <!-- مكان إضافة الحقول الجديدة -->
+                                    <div id="specifications-container">
+                                        <!-- الحقول المضافة ديناميكياً ستظهر هنا -->
+                                    </div>
+                                </fieldset>
+        
+                                <!-- زر إضافة مواصفات بعد الحقول المضافة -->
+                                <button type="button" id="add-specification-btn" class="tf-button" style="margin: 20px auto 50px; display: block;">
+                                    Add Specification
+                                </button>
+                                
+                            </div>
+                        </div>
+                        <div class="cols gap10"> 
                             <button class="tf-button w-full" type="submit">Update Product</button>
                         </div>
                 </div>
 
-                <div class="wg-box">
-                    <div class="body-title mb-10">Edite Technical Specification <span class="tf-color-1">*</span>
-                    </div>
-                    <fieldset class="specifications">
-                        <div id="specifications-container">
-                            @foreach ($product->specifications as $specification)
-                                <div class="specification-item" id="specification-{{ $specification->id }}">
-                                    <button type="button" class="toggle-specification-btn tf-button w-full"
-                                        data-spec-id="{{ $specification->id }}">
-                                        Edit {{ $specification->name }}
-                                    </button>
-                                    <div class="specification-content" id="specification-content-{{ $specification->id }}"
-                                        style="display: none;">
-                                        <div class="cols gap10">
-
-
-
-                                            <fieldset class="other-info">
-                                                <label for="spec-name-{{ $specification->id }}">Specification Name</label>
-                                                <input type="text" id="spec-name-{{ $specification->id }}"
-                                                    name="specifications[{{ $specification->id }}][name]"
-                                                    placeholder="Enter specification name"
-                                                    value="{{ old('specifications.' . $specification->id . '.name', $specification->name) }}"
-                                                    required>
-
-                                                <label for="spec-paragraphs-{{ $specification->id }}">Specification
-                                                    Paragraphs</label>
-                                                <textarea name="specifications[{{ $specification->id }}][paragraphs]" id="spec-paragraphs-{{ $specification->id }}"
-                                                    class="ckeditor" placeholder="Enter paragraphs">
-                                                   {!! $specification['paragraphs'] !!}
-                                                </textarea>
-                                                <label for="spec-image-{{ $specification->id }}">Specification
-                                                    Images</label>
-                                                @php
-                                                    $images = json_decode($specification->images, true);
-                                                @endphp
-                                                <div class="upload-image mb-16">
-                                                    <div id="gallery-preview-{{ $specification->id }}"
-                                                        class="gallery-preview">
-                                                        @if (is_array($images) && count($images) > 0)
-                                                            @foreach ($images as $image)
-                                                                <div class="gitems">
-                                                                    <img src="{{ asset('storage/' . $image) }}"
-                                                                        alt="Specification Image">
-                                                                    <button type="button" class="remove-old-image-btn"
-                                                                        data-image="{{ $image }}">X</button>
-                                                                    <input type="hidden"
-                                                                        name="specifications[{{ $specification->id }}][existing_images][]"
-                                                                        value="{{ $image }}">
-                                                                </div>
-                                                            @endforeach
-                                                        @else
-                                                            <p>No images available</p>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                @isset($image)
-                                                    <input type="hidden"
-                                                        name="specifications[{{ $specification->id }}][deleted_images][]"
-                                                        value="{{ $image }}" class="deleted-image-input">
-                                                @endisset
-                                                <input type="file"
-                                                    name="specifications[{{ $specification->id }}][images][]"
-                                                    class="form-control gallery-input"
-                                                    data-preview-id="gallery-preview-{{ $specification->id }}" multiple>
-                                                <button type="button" class="remove-specification-btn"
-                                                    data-spec-id="{{ $specification->id }}">Remove</button>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-
-                    </fieldset>
-
-
-                    <div class="wg-box">
-
-                        <fieldset class="specifications">
-
-                            <!-- مكان إضافة الحقول الجديدة -->
-                            <div id="specifications-container">
-                                <!-- الحقول المضافة ديناميكياً ستظهر هنا -->
-                            </div>
-                        </fieldset>
-
-                        <!-- زر إضافة مواصفات بعد الحقول المضافة -->
-                        <button type="button" id="add-specification-btn" class="tf-button w-full"
-                            style="margin-top: 20px;">Add Specification</button>
-                    </div>
-                </div>
+         
 
 
 
@@ -358,10 +388,13 @@
             $('#add-specification-btn').on('click', function() {
                 specificationCounter++;
                 const newSpecification = `
-            <div class="specification-item" id="specification-${specificationCounter}">
-                <div class="spec-header">
-                    <span id="specification-label-${specificationCounter}">Specification ${specificationCounter}</span>
-                </div>
+             <div class="specification-item" id="specification-${specificationCounter}">
+             <div class="spec-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <span id="specification-label-${specificationCounter}" style="font-weight: bold;">Specification ${specificationCounter}</span>
+    <button type="button" class="remove-specification-btn" data-spec-id="${specificationCounter}" 
+        style="background: none; color: #40E0D0; border: none; cursor: pointer; font-size: 20px; font-weight: bold;">✖
+    </button>
+</div>
                 <div class="specification-content">
                     <div class="specification-name">
                         <label for="spec-name-${specificationCounter}">Specification Name:</label>
@@ -395,10 +428,9 @@
 
 </fieldset>
 
-</div>
+</div> 
 
-                    <button type="button" class="remove-specification-btn w-full" data-spec-id="${specificationCounter}">Remove</button>
-                </div>
+                 </div>
           <button type="button" class="tf-button w-full toggle-specification-btn1" data-spec-id="${specificationCounter}" style="margin: 0 auto; display: block;">SAVE</button>
 
             </div>`;
@@ -417,11 +449,13 @@
             });
 
             // إظهار/إخفاء قسم المواصفات
+ // حذف المواصفة عند الضغط على زر ✖
+ $(`#specification-${specificationCounter} .remove-specification-btn`).on('click', function() {
+            $(`#specification-${specificationCounter}`).remove();
+        });
 
-
-
-            // معاينة الصور
-            // معاينة الصور
+ 
+             // معاينة الصور
             $(document).on('change', 'input[type="file"]', function(event) {
                 if (event.target && event.target.id.startsWith('gFile-')) {
                     const fileInput = event.target;

@@ -161,6 +161,8 @@
             <div class="product-container">
                 <h3>Products</h3>
                 <input type="text" id="searchBox" placeholder="Search products..." class="form-control mb-3" />
+               
+                
                 <table>
                     <thead>
                         <tr>
@@ -202,9 +204,10 @@
                             body: JSON.stringify({
                                 id: productId,
                                 quantity: 1
-                            })
+                            }),
+                            cache: "no-store"  
                         }).then(() => {
-                            location.reload();
+                            location.reload(true);  
                         }).catch(error => console.error('Error:', error));
                     });
                 });
@@ -213,11 +216,33 @@
 
             <!-- Cart Table -->
             <div class="cart-container">
+                <div style="height: 22px;"></div>
+
                 <h3>Selected Products</h3>
                 <span style="display: block; height: 20px;"></span>
-                <div style="height: 70px;"></div>
+                <div style="height: 50px;"></div>
 
                 @if ($items->count() > 0)
+                <style>
+                     .description-input {
+                        width: 300px; /* زيادة العرض حسب الحاجة */
+                        height: 100px; /* تحديد ارتفاع الحقل */
+                    }
+                
+                    /* جعل حقل الكمية أصغر */
+                    input[name="qty"] {
+                        width: 60px; /* تصغير العرض */
+                    }
+                
+                    /* تحسين مظهر الجدول */
+                    table {
+                        width: 100%; /* جعل الجدول يأخذ العرض الكامل */
+                    }
+                    th, td {
+                        padding: 10px;
+                        text-align: left;
+                    }
+                </style>
                     <table>
                         <thead>
                             <tr>
@@ -279,11 +304,13 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div style="text-align: center; margin-top: 20px;">
-                        <a href="{{ route('cart.order') }}" class="btn btn-primary"
-                            style="font-size: 16px; padding: 10px 20px;">
-                            Proceed to order
-                        </a>
+                    <div style="text-align: center; margin-top: 100px;">
+                        <a href="{{ route('cart.order') }}" class="btn btn-primary" 
+                        id="proceedToOrder"
+                        style="font-size: 16px; padding: 10px 20px;">
+                         Proceed to order
+                     </a>
+                     
                     </div>
                 @else
                     <p>No items selected.</p>
@@ -417,4 +444,34 @@
             });
         });
     </script>
+@endpush
+@push('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // استهداف زر Proceed to Order
+        document.getElementById('proceedToOrder').addEventListener('click', function (event) {
+            event.preventDefault(); // منع الانتقال مباشرة
+            let descriptions = document.querySelectorAll('.description-input');
+            let forms = [];
+
+            descriptions.forEach(textarea => {
+                let form = textarea.closest('.description-form');
+                if (form) {
+                    forms.push(fetch(form.action, {
+                        method: "POST",
+                        body: new FormData(form),
+                        headers: {
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    }));
+                }
+            });
+
+            // إرسال جميع البيانات أولاً ثم الانتقال إلى صفحة الطلب
+            Promise.all(forms).then(() => {
+                window.location.href = "{{ route('cart.order') }}";
+            });
+        });
+    });
+</script>
 @endpush

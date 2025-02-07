@@ -10,8 +10,7 @@
             @foreach ($item->specifications as $spec)
                 <div>
                     <h3>{{ $spec['name'] ?? 'Specification' }}</h3>
-                    <p>{{ $spec['title'] }}</p>
-
+ 
                     <!-- Paragraphs -->
                     @if (!empty($spec['paragraphs']))
                         <div>{!! $spec['paragraphs'] !!}</div>
