@@ -16,6 +16,7 @@ use App\Models\Transaction;
 use App\Models\ProductOrderSpecification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -84,9 +85,11 @@ class CartController extends Controller
                 'featured' => $product->featured,
                 'specifications' => $specifications,
                 'status' => $product->status,
+                'companies_responsibilities' => $product->companies_responsibilities,
+                'customers_responsibilities' => $product->customers_responsibilities,
             ],
         ])->associate('App\Models\Product');
-
+        Log::info(Cart::instance('cart')->content());
         return redirect()->back()->with('success', 'Product added to cart successfully!');
     }
 
@@ -490,6 +493,8 @@ class CartController extends Controller
             'qty' => 'required|integer|min:1',  // التحقق من الكمية
             'price' => 'required|numeric|min:0',  // التحقق من السعر
             'description' => 'nullable|string',  // التحقق من الوصف
+            'companies_responsibilities' => 'nullable|string',  // التحقق من الوصف
+            'customers_responsibilities' => 'nullable|string',  // التحقق من الوصف
         ]);
 
         $specifications = $request->specifications;
@@ -515,6 +520,8 @@ class CartController extends Controller
             'options' => array_merge((array)$item->options, [
                 'specifications' => $specifications,
                 'description' => $validated['description'],
+                'companies_responsibilities' => $validated['companies_responsibilities'],
+                'customers_responsibilities' => $validated['customers_responsibilities'],
             ]),
         ]);
 

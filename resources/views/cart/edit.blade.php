@@ -49,6 +49,22 @@
                 <input type="text" name="description" id="description" class="form-control modern-input"
                     value="{{ $item->options['description'] }}">
             </div>
+            <div class="form-group">
+
+                <label for="companies_responsibilities">Companies responsibility</label>
+                <textarea name="companies_responsibilities" class="ckeditor form-control modern-textarea" rows="3">
+            {{ is_array($item->options['companies_responsibilities']) ? implode(', ', $item->options['companies_responsibilities']) : $item->options['companies_responsibilities'] }}
+           </textarea>
+            </div>
+
+            <div class="form-group">
+
+                <label for="customers_responsibilities">Customers responsibility</label>
+                <textarea name="customers_responsibilities" class="ckeditor form-control modern-textarea" rows="3">
+            {{ is_array($item->options['customers_responsibilities']) ? implode(', ', $item->options['customers_responsibilities']) : $item->options['customers_responsibilities'] }}
+           </textarea>
+            </div>
+
             <label for="specifications"><strong>Specifications</strong></label>
 
             <!-- Specifications - قابل للتعديل فقط إذا رغبت -->
@@ -230,45 +246,55 @@
 
 
         /* تصغير حجم الحقول */
-.modern-input, 
-.modern-textarea {
-    font-size: 14px; /* تصغير حجم الخط */
-    padding: 8px 12px; /* تقليل التباعد الداخلي */
-    height: 36px; /* تحديد ارتفاع مناسب */
-}
+        .modern-input,
+        .modern-textarea {
+            font-size: 14px;
+            /* تصغير حجم الخط */
+            padding: 8px 12px;
+            /* تقليل التباعد الداخلي */
+            height: 36px;
+            /* تحديد ارتفاع مناسب */
+        }
 
-/* تصغير الأزرار */
-.btn, .modern-btn, .toggle-specification {
-    font-size: 14px; /* تصغير حجم الخط */
-    padding: 8px 15px; /* تقليل التباعد */
-    width: auto; /* ضبط العرض حسب المحتوى */
-    min-width: 120px; /* تجنب أن يصبح الزر صغير جدًا */
-}
+        /* تصغير الأزرار */
+        .btn,
+        .modern-btn,
+        .toggle-specification {
+            font-size: 14px;
+            /* تصغير حجم الخط */
+            padding: 8px 15px;
+            /* تقليل التباعد */
+            width: auto;
+            /* ضبط العرض حسب المحتوى */
+            min-width: 120px;
+            /* تجنب أن يصبح الزر صغير جدًا */
+        }
 
-/* تصغير حقول الـ textarea */
-.modern-textarea {
-    min-height: 80px; /* تقليل الارتفاع الافتراضي */
-    max-height: 150px; /* منع التمدد المفرط */
-}
+        /* تصغير حقول الـ textarea */
+        .modern-textarea {
+            min-height: 80px;
+            /* تقليل الارتفاع الافتراضي */
+            max-height: 150px;
+            /* منع التمدد المفرط */
+        }
 
-/* تصغير حجم الصور في المعاينة */
-.gitems img {
-    max-width: 100px;
-    max-height: 100px;
-}
+        /* تصغير حجم الصور في المعاينة */
+        .gitems img {
+            max-width: 100px;
+            max-height: 100px;
+        }
 
-/* تصغير زر إزالة الصورة */
-.remove-old-image-btn {
-    width: 16px;
-    height: 16px;
-    font-size: 10px;
-}
+        /* تصغير زر إزالة الصورة */
+        .remove-old-image-btn {
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+        }
 
-/* تصغير عناوين الحقول */
-.form-group label {
-    font-size: 14px;
-}
-
+        /* تصغير عناوين الحقول */
+        .form-group label {
+            font-size: 14px;
+        }
     </style>
 @endpush
 @push('scripts')
