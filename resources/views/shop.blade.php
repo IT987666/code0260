@@ -35,21 +35,17 @@
         }
 
         .shop-main.container {
-            display: flex;
-            align-items: flex-start;
-            /* يضمن توازن الجدولين على نفس المستوى */
-            gap: 20px;
-        }
+    display: block;
+    text-align: center;
+    width: 60%; /* Adjust width as needed */
+    margin: auto;
+}
 
-        .product-container {
-            flex: 0.5;
-            /* يحدد الحجم بناءً على المساحة المتاحة */
-        }
-
-        .cart-container {
-            flex: 1;
-            /* يضمن توازن الجدولين */
-        }
+.product-container,
+.cart-container {
+    width: 100%;
+    margin-bottom: 30px; /* Adds spacing between product and cart tables */
+}
 
 
         /* Table Styles */

@@ -184,7 +184,8 @@ class CartController extends Controller
     }
 
     // تنظيف القيم وإزالة الفواصل
-    $cartTotal = str_replace(',', '', Cart::instance('cart')->total());
+    $cartTotal = str_replace(',', '', Cart::instance('cart')->subtotal ());
+ 
     $subtotal = floatval($cartTotal);
     $discount = Session::has('discounts') ? floatval(Session::get('discounts')['discount']) : 0;
     $total = $subtotal - $discount; // حساب المجموع النهائي
@@ -572,7 +573,7 @@ class CartController extends Controller
             'base64EncodeImageA' => [$this, 'base64EncodeImageA'], // Pass the image encoding function
         ]);
 
-        Cart::instance('cart')->destroy();
+      //  Cart::instance('cart')->destroy();
 
         return $pdf->download('order_' . $order->id . '.pdf');
     }

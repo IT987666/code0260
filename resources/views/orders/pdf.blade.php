@@ -78,10 +78,20 @@
 @endsection
 
 {{-- ------------------------------------------------------- --}}
-
 @section('technicalSpecification')
-    <h3 style="page-break-before: always;">Attachment-2: Technical Specification</h3>
-    @include('orders.components.products-specification', ['orderItems' => $orderItems]) <!-- Use orderItems -->
+     @php
+        $itemCount = count($orderItems);
+    @endphp
+
+     @if ($itemCount > 3) 
+        <div style="page-break-before: always;">
+            <h3>Attachment-2: Technical Specification</h3>
+        </div>
+    @else
+         <h3>Attachment-2: Technical Specification</h3>
+    @endif
+
+    @include('orders.components.products-specification', ['orderItems' => $orderItems])
 @endsection
 
 {{-- ------------------------------------------------------- --}}
