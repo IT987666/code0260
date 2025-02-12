@@ -92,6 +92,6 @@
 @endsection
    {{-- Footer HTML --}}
    <div class="pdf-footer">
-    <img src="{{ public_path('images\logo\Picture1.png') }}" alt="Footer Image">
+    <img src="{{ public_path('images/logo/Picture1.png') }}" alt="Footer Image">
      <span class="page-number"></span>
 </div>
