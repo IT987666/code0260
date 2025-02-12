@@ -45,16 +45,16 @@
                 </div>
 
                 <div class="order-info">
-
                     <div class="order-info__item">
                         <label>Date</label>
                         <span>{{ $order->created_at }}</span>
                     </div>
                     <div class="order-info__item">
                         <label>Total</label>
-                        <span>${{ $order->subtotal }}</span>
+                        <span>${{ number_format((float)$order->subtotal, 2, '.', ',') }}</span>
                     </div>
                 </div>
+ 
 
                 <div class="checkout__totals-wrapper">
                     <div class="checkout__totals">
@@ -82,7 +82,7 @@
                         <table class="checkout-totals">
                             <tbody>
                                 <tr>
-                                    <th>SUBTOTAL</th>
+                                    <th>TOTAL</th>
                                     <td class="text-right">${{ $order->subtotal }}</td>
                                 </tr>
                             </tbody>

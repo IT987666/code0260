@@ -185,6 +185,13 @@
                 <button type="submit" class="btn btn-primary tf-button w208">Update Status</button>
                 
                 </div>
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-3">
+                    <a href="{{ route('admin.orders') }}" class="btn btn-secondary tf-button w208">Discard Changes</a>
+                </div>
                 
                 </div>
             

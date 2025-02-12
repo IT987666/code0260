@@ -254,8 +254,16 @@ td.text-center a.edit-note:hover {
                                                 <a href="{{ route('user.order.edit', ['order_id' => $order->id]) }}" title="Edit Order">
                                                     <i class="fa fa-edit text-primary" style="font-size: 1.2rem;"></i>
                                                 </a>
+                                                <form action="{{ route('admin.order.delete', ['id' => $order->id]) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <div class="item text-danger delete">
+                                                        <i class="fa fa-times"></i> <!-- أيقونة الإغلاق -->
+                                                    </div>
+                                                </form>
                                             </div>
                                         </td>
+                                         
                                         
                                     </tr>
                                 @endforeach
@@ -413,5 +421,28 @@ td.text-center a.edit-note:hover {
                     });
                 });
             });
+          
         </script>
+    @endpush
+    @push('scripts')
+    <script>
+    $(function() {
+    $('.delete').on('click', function(e){
+    e.preventDefault();
+    var form = $(this).closest('form');
+    swal({
+    title: "Are you sure?",
+    text: "You want to delete this record?", 
+    type: "warning",
+    buttons: ["No", "Yes"],
+    confirmButtonColor: '#dc3545'
+    }).then(function(result) {
+    if (result) {
+    form.submit();
+    }
+    });
+    });
+    });
+       </script>
+     
     @endpush

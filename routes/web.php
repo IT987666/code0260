@@ -80,6 +80,7 @@ Route::middleware(['auth', AuthAdmin::class])->group(function () {
 
     Route::post('/admin/generate-reference-code', [AdminController::class, 'generateReferenceCodeAjax'])->name('admin.generate.reference.code');
 
+    Route::delete('/admin/order/{id}/delete', [AdminController::class, 'order_delete'])->name('admin.order.delete');
 
 
 

@@ -1,9 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\Category;
-
 use Illuminate\Http\Request;
 use Surfsidemedia\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Session;
@@ -26,31 +23,6 @@ class CartController extends Controller
         $items = Cart::instance('cart')->content();
         return view('cart', compact('products', 'items'));
     }
-
-    /* public function add_to_cart(Request $request)
-    {
-        $product = Product::with('specifications')->find($request->id);
-        $price = $request->price ?? 0.00;
-
-        $specifications = $product->specifications->map(function ($spec) {
-            return [
-                'name' => $spec->name,
-                'title' => $spec->title,
-                'paragraphs'  => $spec->paragraphs,
-                'images' => is_string($spec->images) ? json_decode($spec->images, true) : $spec->images,
-            ];
-        })->toArray();
-
-        Cart::instance('cart')->add($request->id, $product->name, $request->quantity, $price, [
-            'description' => $product->description,
-            'stock_status' => $product->stock_status,
-            'featured' => $product->featured,
-            'specifications' => $specifications,
-            'status' => $product->status
-        ])->associate('App\Models\Product');
-
-        return redirect()->back()->with('success', 'Product added to cart successfully!');
-    }*/
     public function add_to_cart(Request $request)
     {
         $product = Product::with('specifications')->find($request->id);
@@ -205,30 +177,32 @@ class CartController extends Controller
     }
 
     public function setAmountforCheckout()
-    {
-        if (!Cart::instance('cart')->content()->count() > 0) {
-            Session::forget('checkout');
-            return;
-        }
-
-        // Reset checkout session values
-        if (Session::has('coupon')) {
-            Session::put('checkout', [
-                'discount' => number_format(floatval(Session::get('discounts')['discount']), 2, '.', ''),
-                'subtotal' => number_format(floatval(Session::get('discounts')['subtotal']), 2, '.', ''),
-                'tax' => 0, // Reset taxes to 0
-                'total' => number_format(floatval(Session::get('discounts')['total']), 2, '.', '')
-            ]);
-        } else {
-            // If no coupon is applied, calculate without discounts
-            Session::put('checkout', [
-                'discount' => 0,
-                'subtotal' => number_format(floatval(Cart::instance('cart')->subtotal()), 2, '.', ''),
-                'tax' => 0, // Reset taxes to 0
-                'total' => number_format(floatval(Cart::instance('cart')->total()), 2, '.', '')
-            ]);
-        }
+{
+    if (!Cart::instance('cart')->content()->count() > 0) {
+        Session::forget('checkout');
+        return;
     }
+
+    // تنظيف القيم وإزالة الفواصل
+    $cartTotal = str_replace(',', '', Cart::instance('cart')->total());
+    $subtotal = floatval($cartTotal);
+    $discount = Session::has('discounts') ? floatval(Session::get('discounts')['discount']) : 0;
+    $total = $subtotal - $discount; // حساب المجموع النهائي
+
+    // طباعة القيم للتأكد
+ 
+
+    // تخزين القيم بعد التحقق
+    Session::put('checkout', [
+        'discount' => $discount,
+        'subtotal' => $subtotal,
+        'tax' => 0,
+        'total' => $total
+    ]);
+}
+
+    
+    
 
 
     private function generateReferenceCode()
@@ -270,12 +244,24 @@ class CartController extends Controller
     }
 
 
+ 
     public function order(Request $request)
     {
-
-
-        return view('order');
+        $user_id = Auth::user()->id;
+        $order = Order::where('user_id', $user_id)->latest()->first(); // جلب آخر طلب
+        $address = Address::query()->where('user_id', $user_id)->latest()->first();
+    
+        // جلب العناصر الموجودة في الكارت
+        $cartItems = Cart::instance('cart')->content(); // جلب محتويات الكارت
+    
+        // الحصول على مسؤوليات العميل والشركة من الكارت
+        $companiesResponsibilities = $cartItems->pluck('options.companies_responsibilities')->unique()->first();
+        $customersResponsibilities = $cartItems->pluck('options.customers_responsibilities')->unique()->first();
+    
+        return view('order', compact('order', 'cartItems', 'address', 'companiesResponsibilities', 'customersResponsibilities'));
     }
+    
+    
 
 
     public function submitOrder(Request $request)
@@ -360,33 +346,18 @@ class CartController extends Controller
         $this->setAmountforCheckout();
 
         $order->reference_code = $this->generateReferenceCode();
-        $order->subtotal = (float)str_replace(',', '', Session::get('checkout')['subtotal']);
-        $order->total = (float)str_replace(',', '', Session::get('checkout')['total']);
+        $order->subtotal = number_format(floatval(Session::get('checkout')['subtotal']), 2, '.', ''); // حفظ الرقم مع تنسيق للأرقام العشرية
+        $order->total = floatval(Session::get('checkout')['total']); // Use float directly
         $order->discount = Session::get('checkout')['discount'];
         $order->tax = Session::get('checkout')['tax'];
         $order->save();
+        
 
         Session::put('order_id', $order->id);
 
-        return redirect()->route('cart.order.confirmation');
+        return redirect()->route('cart.order.confirmation'  );
     }
 
-
-
-
-    /*public function order_confirmation()
-                   {
-                       if (Session::has('order_id')) {
-                           $order = Order::find(Session::get('order_id'));
-
-                           // استرجاع تفاصيل الطلب مع المواصفات المرتبطة بالمنتج
-                           $orderItems = OrderItem::with('product.specifications')->where('order_id', $order->id)->get();
-
-                           return view('order-confirmation', compact('order', 'orderItems'));
-                       }
-
-                       return redirect()->route('cart.index');
-                   }*/
     public function order_confirmation()
     {
         if (Session::has('order_id')) {

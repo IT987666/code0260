@@ -56,7 +56,10 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
-
+        .layout-wrap .section-content-right .main-content .main-content-inner .main-content-wrap {
+  width: 200%;
+  margin: auto;
+}
         .specification-content {
             display: block;
         }

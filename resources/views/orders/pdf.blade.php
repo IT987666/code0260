@@ -1,5 +1,39 @@
 @extends('layouts.offer')
-
+{{-- Add this CSS within a <style> tag --}}
+    <style>
+        @page {
+            margin-bottom: 5px; /* Adjust based on footer height */
+        }
+    
+        .pdf-footer {
+            position: fixed;
+            bottom: 10px; /* Adjust positioning */
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+        }
+    
+        .pdf-footer img {
+            width: 700; /* Adjust size as needed */
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+    
+        .pdf-footer .page-number::after {
+            content: counter(page);
+        }
+    
+        .pdf-footer .total-pages:after {
+            content: counter(pages);
+        }
+    </style>
+    
+   
+    
+    
+  
 @section('title', 'Price Offer for Flatpack Container')
 
 @section('intro')
@@ -46,7 +80,7 @@
 {{-- ------------------------------------------------------- --}}
 
 @section('technicalSpecification')
-    <h3>Attachment-2: Technical Specification</h3>
+    <h3 style="page-break-before: always;">Attachment-2: Technical Specification</h3>
     @include('orders.components.products-specification', ['orderItems' => $orderItems]) <!-- Use orderItems -->
 @endsection
 
@@ -56,3 +90,8 @@
     <h3>Attachment-3: Technical Drawing or Image</h3>
     @include('orders.components.products-technical-drawing', ['order' => $order])
 @endsection
+   {{-- Footer HTML --}}
+   <div class="pdf-footer">
+    <img src="{{ public_path('images\logo\Picture1.png') }}" alt="Footer Image">
+     <span class="page-number"></span>
+</div>

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+ 
 <style>
     .shop-checkout {
         font-family: 'Roboto', sans-serif;
@@ -122,6 +122,7 @@
 
 @section('content')
     <main class="pt-90">
+ 
         <div class="mb-4 pb-4"></div>
         <section class="shop-checkout container">
 
@@ -132,7 +133,7 @@
                         <div class="row mt-5">
 
 
-
+ 
 
 
                             <div class="col-md-12">
@@ -272,25 +273,33 @@
 
 
         document.addEventListener('DOMContentLoaded', function() {
-            ClassicEditor
-                .create(document.querySelector('#extra'))
-                .then(editor => {
-                    editor.setData(`
-Dear -------- ,<br>
-Please find attached the offer for your inquiry along with all sales conditions and technical specifications for <strong>----------</strong>.<br>
-We wish this offer would welcome all of your needs.<br><br>
-Best Regards.
-            `);
+    ClassicEditor
+        .create(document.querySelector('#extra'))
+        .then(editor => {
+            let clientName = "{{ $address->name }}"; // جلب اسم العميل من الـ Controller
+            let productNames = @json($cartItems->pluck('name')); // جلب أسماء المنتجات من الكارت
 
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+            // إذا كانت هناك منتجات، اجمع أسمائها في نص
+            let productNamesText = productNames.length > 0 ? productNames.join(', ') : 'Product Name'; // دمج الأسماء أو وضع اسم افتراضي
+
+            editor.setData(`
+                Dear <strong>${clientName}</strong>,<br>
+                Please find attached the offer for your inquiry along with all sales conditions and technical specifications for <strong>${productNamesText}</strong>.<br>
+                We wish this offer would welcome all of your needs.<br><br>
+                Best Regards.
+            `);
+        })
+        .catch(error => {
+            console.error(error);
         });
+});
+
         document.addEventListener('DOMContentLoaded', function() {
             ClassicEditor
                 .create(document.querySelector('#billing_info'))
-                .then(editor => {
+                .then(editor => { 
+                    let companiesResponsibilities = @json($companiesResponsibilities); // جلب مسؤوليات الشركة من الكارت
+                    let customersResponsibilities = @json($customersResponsibilities); // جلب مسؤوليات العميل من الكارت
                     editor.setData(`
 <p><strong>Validity:</strong> Offer is valid only for Seven days. All conditions will be revised accordingly after the date is expired.</p>
 <p><strong>Pricing:</strong> Given offer is EXW - Istanbul according to Incoterms 2000.</p>
@@ -330,39 +339,17 @@ Best Regards.
             </ul>
         </li>
 
-        <li>
-            <strong>Customer’s Responsibilities</strong>
-            <ul>
-                <li>Heating and cooling systems</li>
-                <li>Water heaters and boilers</li>
-                <li>Outer connections for electricity and plumbing</li>
-                <li>Obtaining all legal permits</li>
-                <li>Customs clearance and taxes in country of destination</li>
-                <li>Transportation from port of destination to site</li>
-                <li>Any electric, plumbing works outside borders of the buildings (including water tanks and main site networks)</li>
-                <li>Concrete slab according to the plan provided by the company</li>
-                <li>Crane, forklift, scaffolding</li>
-                <li>Securing the goods at the site from theft and inside closed area to protect them from weather conditions</li>
-                <li>Earthing and grounding</li>
-                <li>Electricity at the worksite</li>
-                <li>Clear out the assembly area after work is completed</li>
-                <li>Preparation of assembling site before products arrive at the port at the country of destination</li>
-                <li>Any task or item that is not listed under company's responsibilities</li>
-            </ul>
-        </li>
+   <li><strong>Customer’s Responsibilities</strong>
+                            <ul>
+                                <li>${customersResponsibilities ? customersResponsibilities : 'No responsibilities listed.'}</li>
+                            </ul>
+                        </li>
+                        <li><strong>Company’s Responsibilities</strong>
+                            <ul>
+                                <li>${companiesResponsibilities ? companiesResponsibilities : 'No responsibilities listed.'}</li>
+                            </ul>
+                        </li>
 
-        <li>
-            <strong>Company’s Responsibilities</strong>
-            <ul>
-                <li>The building structure including wall panels, metal parts and roof</li>
-                <li>All doors and Windows</li>
-                <li>Plumbing and sanitaryware (inside the building)</li>
-                <li>Electric network and fittings (inside the building)</li>
-                <li>Walls and roof sandwich panel</li>
-                <li>Paint</li>
-                <li>Packaging, loading and transportation</li>
-            </ul>
-        </li>
 
         <li>
             <strong>Other Conditions</strong>

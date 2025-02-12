@@ -109,7 +109,7 @@ class AdminController extends Controller
             'description' => 'nullable',
             'companies_responsibilities' => 'nullable',
             'customers_responsibilities' => 'nullable',
-            'code' => 'required',
+            'code' => 'required|unique:products,code', // ضمان تفرد الكود
             'featured' => 'nullable|boolean',
         ]);
 
@@ -177,7 +177,7 @@ class AdminController extends Controller
             'description' => 'nullable',
             'companies_responsibilities' => 'nullable',
             'customers_responsibilities' => 'nullable',
-            'code' => 'nullable',
+            'code' => 'nullable|unique:products,code', // ضمان تفرد الكود
             'featured' => 'nullable|boolean',
             'specifications.*.id' => 'nullable|integer|exists:product_specifications,id',
             'specifications.*.name' => 'required|string|max:255',
@@ -429,4 +429,18 @@ class AdminController extends Controller
 
         return response()->download($path . $fileName);
     }*/
+    public function order_delete($id)
+    {
+        $order = Order::find($id);
+    
+        if ($order) {
+             
+             $order->delete();
+            return redirect()->route('admin.orders')->with('status', 'Order has been deleted successfully!');
+        }
+    
+        return redirect()->route('admin.orders')->with('error', 'Order not found');
+    }
+    
+
 }

@@ -166,7 +166,11 @@
                 <table>
                     <thead>
                         <tr>
-                            <th scope="col">Product</th>
+                            <th scope="col">
+                                <details>
+                                    <summary style="cursor: pointer; font-weight: bold;">Products</summary>
+                                </details>
+                            </th>
                         </tr>
                     </thead>
                     <tbody id="productTable">
@@ -181,7 +185,16 @@
             </div>
 
             <script>
-                document.getElementById('searchBox').addEventListener('keyup', function() {
+     document.querySelector("summary").addEventListener("click", function () {
+        let tableBody = document.getElementById("productTable");
+
+        if (tableBody.style.display === "none") {
+            tableBody.style.display = "table-row-group"; // إظهار القائمة
+        } else {
+            tableBody.style.display = "none"; // إخفاء القائمة
+        }
+    });
+                 document.getElementById('searchBox').addEventListener('keyup', function() {
                     let query = this.value.toLowerCase();
                     let rows = document.querySelectorAll('#productTable tr');
 

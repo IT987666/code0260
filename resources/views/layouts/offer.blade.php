@@ -154,6 +154,25 @@
             padding: 5px;
         }
     </style>
+    <style>
+        /* Adjusting the logo size and spacing */
+        .logo {
+            width: 150px; /* Increased the width */
+            height: auto;
+            margin-bottom: 40px; /* Added space between the logo and the content */
+        }
+    
+        header {
+            position: fixed;
+            top: -10;
+            left: -10;
+            right: -10;
+            height: 80px; /* Increased height of header to match the logo size */
+            text-align: left;
+            margin-bottom: 40px; /* Added space after header */
+        }
+    </style>
+    
 </head>
 
 <body>

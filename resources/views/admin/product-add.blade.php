@@ -113,6 +113,10 @@
     padding-top: 20px;
     border-top: 2px solid #ddd; /* خط فاصل بين الأقسام */
 }
+.layout-wrap .section-content-right .main-content .main-content-inner .main-content-wrap {
+  width: 200%;
+  margin: auto;
+}
     </style>
 
     <div class="main-content-inner">
