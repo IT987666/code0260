@@ -169,7 +169,8 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody id="productTable">
+                         <tbody id="productTable" style="display: none;">
+
                         @foreach ($products as $product)
                             <tr>
                                 <td class="product-name" data-id="{{ $product->id }}"
@@ -181,15 +182,29 @@
             </div>
 
             <script>
-     document.querySelector("summary").addEventListener("click", function () {
-        let tableBody = document.getElementById("productTable");
+document.addEventListener("DOMContentLoaded", function () {
+    let tableBody = document.getElementById("productTable");
+    let summary = document.querySelector("summary");
 
+    // التحقق من حالة الجدول المخزنة
+    if (localStorage.getItem("productTableOpen") === "true") {
+        tableBody.style.display = "table-row-group";
+    } else {
+        tableBody.style.display = "none";
+    }
+
+    summary.addEventListener("click", function () {
         if (tableBody.style.display === "none") {
             tableBody.style.display = "table-row-group"; // إظهار القائمة
+            localStorage.setItem("productTableOpen", "true"); // حفظ الحالة
         } else {
             tableBody.style.display = "none"; // إخفاء القائمة
+            localStorage.setItem("productTableOpen", "false"); // حفظ الحالة
         }
     });
+});
+
+
                  document.getElementById('searchBox').addEventListener('keyup', function() {
                     let query = this.value.toLowerCase();
                     let rows = document.querySelectorAll('#productTable tr');
