@@ -573,7 +573,7 @@ class CartController extends Controller
             'base64EncodeImageA' => [$this, 'base64EncodeImageA'], // Pass the image encoding function
         ]);
 
-      //  Cart::instance('cart')->destroy();
+         Cart::instance('cart')->destroy();
 
         return $pdf->download('order_' . $order->id . '.pdf');
     }

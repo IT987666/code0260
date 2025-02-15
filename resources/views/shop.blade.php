@@ -169,7 +169,7 @@
                             </th>
                         </tr>
                     </thead>
-                         <tbody id="productTable" style="display: none;">
+                    <tbody id="productTable" style="display: none;">
 
                         @foreach ($products as $product)
                             <tr>
@@ -182,7 +182,7 @@
             </div>
 
             <script>
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
     let tableBody = document.getElementById("productTable");
     let summary = document.querySelector("summary");
 
@@ -215,26 +215,30 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 });
 
-                document.querySelectorAll('.product-name').forEach(item => {
-                    item.addEventListener('click', function() {
-                        let productId = this.getAttribute('data-id');
+                document.addEventListener('click', async function(event) {
+    let item = event.target.closest('.product-name');  
+    if (!item) return;  
 
-                        fetch("{{ route('cart.add') }}", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                            },
-                            body: JSON.stringify({
-                                id: productId,
-                                quantity: 1
-                            }),
-                            cache: "no-store"  
-                        }).then(() => {
-                            location.reload(true);  
-                        }).catch(error => console.error('Error:', error));
-                    });
-                });
+    let productId = item.getAttribute('data-id');
+
+    try {
+        fetch("{{ route('cart.add') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({
+                id: productId,
+                quantity: 1
+            })
+        }).then(() => window.location.replace(window.location.href)); 
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+
             </script>
 
 
@@ -264,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     th, td {
                         padding: 10px;
-                        text-align: left;
+                        text-align: center;
                     }
                 </style>
                     <table>
