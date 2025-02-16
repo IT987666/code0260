@@ -28,6 +28,22 @@
         .pdf-footer .total-pages:after {
             content: counter(pages);
         }
+        table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black !important;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2 !important;
+    font-weight: bold;
+}
+
     </style>
     
    

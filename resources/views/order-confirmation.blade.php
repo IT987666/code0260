@@ -29,6 +29,21 @@
             background-color: #20bec6;
             transform: scale(1.05);
         }
+        table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid rgb(126, 126, 126);
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
     </style>
 
     </style>
