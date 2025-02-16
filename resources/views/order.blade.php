@@ -118,7 +118,80 @@
         box-shadow: 0 0 5px rgba(16, 159, 175, 0.5);
         border-radius: 3px;
     }
-</style>
+    
+         .preview-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preview-container img {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        /* Style the phone input field with country code dropdown */
+        .iti {
+            width: 100%;
+        }
+
+        .iti .iti__selected-flag {
+            border-radius: 8px 0 0 8px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .iti .iti__input {
+            border-radius: 0 8px 8px 0;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            width: calc(100% - 40px);
+            transition: all 0.3s ease;
+        }
+
+        .iti .iti__input:focus {
+            border-color: #20bec6;
+            box-shadow: 0 0 5px rgba(32, 190, 198, 0.5);
+        }
+
+
+
+
+        .form-floating .form-select {
+            width: 100%;
+            height: calc(3.5rem + 2px);
+            font-size: 16px;
+            line-height: 1.5;
+            padding: 0.75rem 1.25rem;
+        }
+
+        .form-select option {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .form-select:hover,
+        .form-select:focus {
+            border-color: #20bec6;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .select-dropdown {
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 5px;
+        }
+        .bg-turquoise {
+    background-color: #20bec6 !important; /* كود اللون الفيروزي */
+    color: white !important; /* لون النص أبيض للتباين */
+}
+
+ </style>
 
 @section('content')
     <main class="pt-90">
@@ -145,8 +218,48 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
+
+
+
                             </div>
 
+
+
+
+                            <div class="col-md-12 mt-4">
+                                @foreach($cartItems as $item)
+                                    <div class="card mb-4 shadow-sm">
+                                        <div class="card-header bg-turquoise text-white fw-bold">
+                                            {{ $item->name }} <!-- اسم المنتج -->
+                                        </div>
+                                        
+                                        <div class="card-body">
+                                            <div class="form-group my-3">
+                                                <label for="customer_responsibilities_{{ $item->id }}">Customer's Responsibilities *</label>
+                                                <textarea class="form-control ckeditor" name="customer_responsibilities[{{ $item->id }}]" id="customer_responsibilities_{{ $item->id }}">
+                                                    {{ old("customer_responsibilities.$item->id", $customer_responsibilities[$item->id] ?? 'No responsibilities listed.') }}
+                                                </textarea>
+                                                @error("customer_responsibilities.$item->id")
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                            
+                                            <div class="form-group my-3">
+                                                <label for="company_responsibilities_{{ $item->id }}">Company's Responsibilities *</label>
+                                                <textarea class="form-control ckeditor" name="company_responsibilities[{{ $item->id }}]" id="company_responsibilities_{{ $item->id }}">
+                                                    {{ old("company_responsibilities.$item->id", $company_responsibilities[$item->id] ?? 'No responsibilities listed.') }}
+                                                </textarea>
+                                                @error("company_responsibilities.$item->id")
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            
+                            
+                            
                             <!-- New Billing Info Section -->
                             <div class="col-md-12 mt-4">
                                 <div class="form-group my-3">
@@ -383,75 +496,41 @@
                     console.error(error);
                 });
         });
+        document.addEventListener('DOMContentLoaded', function() {
+            let productNames = @json($cartItems->pluck('name')->toArray()); // جلب أسماء المنتجات من السلة
+
+            @foreach($cartItems as $item)
+                ClassicEditor.create(document.querySelector('#customer_responsibilities_{{ $item->id }}'))
+                    .then(editor => {
+                        let customersResponsibilities = @json($item->options['customers_responsibilities'] ?? 'No responsibilities listed.');
+                        let formattedData = `
+                            <ul>
+                                     <ul>
+                                        <li>${customersResponsibilities}</li>
+                                    </ul>
+                                
+                            </ul>
+                        `;
+                        editor.setData(formattedData);
+                    })
+                    .catch(error => console.error(error));
+
+                ClassicEditor.create(document.querySelector('#company_responsibilities_{{ $item->id }}'))
+                    .then(editor => {
+                        let companiesResponsibilities = @json($item->options['companies_responsibilities'] ?? 'No responsibilities listed.');
+                        let formattedData = `
+                            <ul>
+                                     <ul>
+                                        <li>${companiesResponsibilities}</li>
+                                    </ul>
+                                 
+                            </ul>
+                        `;
+                        editor.setData(formattedData);
+                    })
+                    .catch(error => console.error(error));
+            @endforeach
+        });
     </script>
 
-    <style>
-        .preview-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .preview-container img {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-        }
-
-        /* Style the phone input field with country code dropdown */
-        .iti {
-            width: 100%;
-        }
-
-        .iti .iti__selected-flag {
-            border-radius: 8px 0 0 8px;
-            padding: 10px;
-            background-color: #f9f9f9;
-        }
-
-        .iti .iti__input {
-            border-radius: 0 8px 8px 0;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            width: calc(100% - 40px);
-            transition: all 0.3s ease;
-        }
-
-        .iti .iti__input:focus {
-            border-color: #20bec6;
-            box-shadow: 0 0 5px rgba(32, 190, 198, 0.5);
-        }
-
-
-
-
-        .form-floating .form-select {
-            width: 100%;
-            height: calc(3.5rem + 2px);
-            font-size: 16px;
-            line-height: 1.5;
-            padding: 0.75rem 1.25rem;
-        }
-
-        .form-select option {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .form-select:hover,
-        .form-select:focus {
-            border-color: #20bec6;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-
-        .select-dropdown {
-            max-height: 300px;
-            overflow-y: auto;
-            border-radius: 5px;
-        }
-    </style>
 @endpush
