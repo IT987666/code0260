@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Surfsidemedia\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Session;
@@ -177,33 +178,33 @@ class CartController extends Controller
     }
 
     public function setAmountforCheckout()
-{
-    if (!Cart::instance('cart')->content()->count() > 0) {
-        Session::forget('checkout');
-        return;
+    {
+        if (!Cart::instance('cart')->content()->count() > 0) {
+            Session::forget('checkout');
+            return;
+        }
+
+        // تنظيف القيم وإزالة الفواصل
+        $cartTotal = str_replace(',', '', Cart::instance('cart')->subtotal());
+
+        $subtotal = floatval($cartTotal);
+        $discount = Session::has('discounts') ? floatval(Session::get('discounts')['discount']) : 0;
+        $total = $subtotal - $discount; // حساب المجموع النهائي
+
+        // طباعة القيم للتأكد
+
+
+        // تخزين القيم بعد التحقق
+        Session::put('checkout', [
+            'discount' => $discount,
+            'subtotal' => $subtotal,
+            'tax' => 0,
+            'total' => $total
+        ]);
     }
 
-    // تنظيف القيم وإزالة الفواصل
-    $cartTotal = str_replace(',', '', Cart::instance('cart')->subtotal ());
- 
-    $subtotal = floatval($cartTotal);
-    $discount = Session::has('discounts') ? floatval(Session::get('discounts')['discount']) : 0;
-    $total = $subtotal - $discount; // حساب المجموع النهائي
 
-    // طباعة القيم للتأكد
- 
 
-    // تخزين القيم بعد التحقق
-    Session::put('checkout', [
-        'discount' => $discount,
-        'subtotal' => $subtotal,
-        'tax' => 0,
-        'total' => $total
-    ]);
-}
-
-    
-    
 
 
     private function generateReferenceCode()
@@ -245,24 +246,24 @@ class CartController extends Controller
     }
 
 
- 
+
     public function order(Request $request)
     {
         $user_id = Auth::user()->id;
         $order = Order::where('user_id', $user_id)->latest()->first(); // جلب آخر طلب
         $address = Address::query()->where('user_id', $user_id)->latest()->first();
-    
+
         // جلب العناصر الموجودة في الكارت
         $cartItems = Cart::instance('cart')->content(); // جلب محتويات الكارت
-    
+
         // الحصول على مسؤوليات العميل والشركة من الكارت
         $companiesResponsibilities = $cartItems->pluck('options.companies_responsibilities')->unique()->first();
         $customersResponsibilities = $cartItems->pluck('options.customers_responsibilities')->unique()->first();
-    
+
         return view('order', compact('order', 'cartItems', 'address', 'companiesResponsibilities', 'customersResponsibilities'));
     }
-    
-    
+
+
 
 
     public function submitOrder(Request $request)
@@ -311,8 +312,15 @@ class CartController extends Controller
             'status' => 'pending',
         ]);
 
+        // Extract responsibilities from request
+        $customerResponsibilities = $request->input('customer_responsibilities', []);
+        $companyResponsibilities = $request->input('company_responsibilities', []);
+
+
+
         // Add order items
         foreach (Cart::instance('cart')->content() as $item) {
+
 
             $product = Product::find($item->id);
 
@@ -324,8 +332,9 @@ class CartController extends Controller
                 'product_name' => $product->name,
                 'quantity' => $item->qty,
                 'description' => $item->options['description'] ?? null,
-
                 'custom_specifications' => json_encode($item->options['specifications']), // Serialize the array
+                'customers_responsibilities' => $customerResponsibilities[$item->id] ?? null,
+                'companies_responsibilities' => $companyResponsibilities[$item->id] ?? null,
             ]);
 
             $orderItem->save();
@@ -352,11 +361,11 @@ class CartController extends Controller
         $order->discount = Session::get('checkout')['discount'];
         $order->tax = Session::get('checkout')['tax'];
         $order->save();
-        
+
 
         Session::put('order_id', $order->id);
 
-        return redirect()->route('cart.order.confirmation'  );
+        return redirect()->route('cart.order.confirmation');
     }
 
     public function order_confirmation()
@@ -573,7 +582,7 @@ class CartController extends Controller
             'base64EncodeImageA' => [$this, 'base64EncodeImageA'], // Pass the image encoding function
         ]);
 
-         Cart::instance('cart')->destroy();
+        Cart::instance('cart')->destroy();
 
         return $pdf->download('order_' . $order->id . '.pdf');
     }

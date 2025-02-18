@@ -20,7 +20,9 @@ class OrderItem extends Model
         'additional_notes',
         'options',
         'rstatus',
-        'description'
+        'description',
+        'customers_responsibilities',
+        'companies_responsibilities',
     ];
 
     /**
