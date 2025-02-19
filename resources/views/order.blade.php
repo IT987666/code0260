@@ -1,5 +1,5 @@
 @extends('layouts.app')
- 
+
 <style>
     .shop-checkout {
         font-family: 'Roboto', sans-serif;
@@ -118,84 +118,86 @@
         box-shadow: 0 0 5px rgba(16, 159, 175, 0.5);
         border-radius: 3px;
     }
-    
-         .preview-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
 
-        .preview-container img {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-        }
+    .preview-container {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
 
-        /* Style the phone input field with country code dropdown */
-        .iti {
-            width: 100%;
-        }
+    .preview-container img {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
 
-        .iti .iti__selected-flag {
-            border-radius: 8px 0 0 8px;
-            padding: 10px;
-            background-color: #f9f9f9;
-        }
+    /* Style the phone input field with country code dropdown */
+    .iti {
+        width: 100%;
+    }
 
-        .iti .iti__input {
-            border-radius: 0 8px 8px 0;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            width: calc(100% - 40px);
-            transition: all 0.3s ease;
-        }
+    .iti .iti__selected-flag {
+        border-radius: 8px 0 0 8px;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
 
-        .iti .iti__input:focus {
-            border-color: #20bec6;
-            box-shadow: 0 0 5px rgba(32, 190, 198, 0.5);
-        }
+    .iti .iti__input {
+        border-radius: 0 8px 8px 0;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        width: calc(100% - 40px);
+        transition: all 0.3s ease;
+    }
 
-
+    .iti .iti__input:focus {
+        border-color: #20bec6;
+        box-shadow: 0 0 5px rgba(32, 190, 198, 0.5);
+    }
 
 
-        .form-floating .form-select {
-            width: 100%;
-            height: calc(3.5rem + 2px);
-            font-size: 16px;
-            line-height: 1.5;
-            padding: 0.75rem 1.25rem;
-        }
 
-        .form-select option {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
 
-        .form-select:hover,
-        .form-select:focus {
-            border-color: #20bec6;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
+    .form-floating .form-select {
+        width: 100%;
+        height: calc(3.5rem + 2px);
+        font-size: 16px;
+        line-height: 1.5;
+        padding: 0.75rem 1.25rem;
+    }
 
-        .select-dropdown {
-            max-height: 300px;
-            overflow-y: auto;
-            border-radius: 5px;
-        }
-        .bg-turquoise {
-    background-color: #20bec6 !important; /* كود اللون الفيروزي */
-    color: white !important; /* لون النص أبيض للتباين */
-}
+    .form-select option {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
- </style>
+    .form-select:hover,
+    .form-select:focus {
+        border-color: #20bec6;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    .select-dropdown {
+        max-height: 300px;
+        overflow-y: auto;
+        border-radius: 5px;
+    }
+
+    .bg-turquoise {
+        background-color: #20bec6 !important;
+        /* كود اللون الفيروزي */
+        color: white !important;
+        /* لون النص أبيض للتباين */
+    }
+</style>
 
 @section('content')
     <main class="pt-90">
- 
+
         <div class="mb-4 pb-4"></div>
         <section class="shop-checkout container">
 
@@ -206,7 +208,7 @@
                         <div class="row mt-5">
 
 
- 
+
 
 
                             <div class="col-md-12">
@@ -227,27 +229,31 @@
 
 
                             <div class="col-md-12 mt-4">
-                                @foreach($cartItems as $item)
+                                @foreach ($cartItems as $item)
                                     <div class="card mb-4 shadow-sm">
                                         <div class="card-header bg-turquoise text-white fw-bold">
                                             {{ $item->name }} <!-- اسم المنتج -->
                                         </div>
-                                        
+
                                         <div class="card-body">
                                             <div class="form-group my-3">
-                                                <label for="customer_responsibilities_{{ $item->id }}">Customer's Responsibilities *</label>
-                                                <textarea class="form-control ckeditor" name="customer_responsibilities[{{ $item->id }}]" id="customer_responsibilities_{{ $item->id }}">
-                                                    {{ old("customer_responsibilities.$item->id", $customer_responsibilities[$item->id] ?? 'No responsibilities listed.') }}
+                                                <label for="customer_responsibilities_{{ $item->id }}">Customer's
+                                                    Responsibilities *</label>
+                                                <textarea class="form-control ckeditor" name="customer_responsibilities[{{ $item->id }}]"
+                                                    id="customer_responsibilities_{{ $item->id }}">
+                                                    {{ $item->options->customers_responsibilities }}
                                                 </textarea>
                                                 @error("customer_responsibilities.$item->id")
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
-                            
+
                                             <div class="form-group my-3">
-                                                <label for="company_responsibilities_{{ $item->id }}">Company's Responsibilities *</label>
-                                                <textarea class="form-control ckeditor" name="company_responsibilities[{{ $item->id }}]" id="company_responsibilities_{{ $item->id }}">
-                                                    {{ old("company_responsibilities.$item->id", $company_responsibilities[$item->id] ?? 'No responsibilities listed.') }}
+                                                <label for="company_responsibilities_{{ $item->id }}">Company's
+                                                    Responsibilities *</label>
+                                                <textarea class="form-control ckeditor" name="company_responsibilities[{{ $item->id }}]"
+                                                    id="company_responsibilities_{{ $item->id }}">
+                                                    {{ $item->options->companies_responsibilities }}
                                                 </textarea>
                                                 @error("company_responsibilities.$item->id")
                                                     <span class="text-danger">{{ $message }}</span>
@@ -257,9 +263,9 @@
                                     </div>
                                 @endforeach
                             </div>
-                            
-                            
-                            
+
+
+
                             <!-- New Billing Info Section -->
                             <div class="col-md-12 mt-4">
                                 <div class="form-group my-3">
@@ -285,10 +291,10 @@
                                     <div id="preview-container" class="preview-container"></div>
                                 </div>
                             </fieldset>
-    
+
                             <!-- Preview of selected images as a grid -->
                             <div id="image-preview" class="my-3"></div>
-    
+
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary"
                                     style="background-color: #20bec6; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; transition: transform 0.3s ease, background-color 0.3s ease;">
@@ -298,7 +304,7 @@
                         </div>
                     </div>
 
-                 
+
 
             </form>
         </section>
@@ -386,151 +392,172 @@
 
 
         document.addEventListener('DOMContentLoaded', function() {
-    ClassicEditor
-        .create(document.querySelector('#extra'))
-        .then(editor => {
-            let clientName = "{{ $address->name }}"; // جلب اسم العميل من الـ Controller
-            let productNames = @json($cartItems->pluck('name')); // جلب أسماء المنتجات من الكارت
+            ClassicEditor
+                .create(document.querySelector('#extra'))
+                .then(editor => {
+                    let clientName = "{{ $address->name }}"; // جلب اسم العميل من الـ Controller
+                    let productNames = @json($cartItems->pluck('name')); // جلب أسماء المنتجات من الكارت
 
-            // إذا كانت هناك منتجات، اجمع أسمائها في نص
-            let productNamesText = productNames.length > 0 ? productNames.join(', ') : 'Product Name'; // دمج الأسماء أو وضع اسم افتراضي
+                    // إذا كانت هناك منتجات، اجمع أسمائها في نص
+                    let productNamesText = productNames.length > 0 ? productNames.join(', ') :
+                        'Product Name'; // دمج الأسماء أو وضع اسم افتراضي
 
-            editor.setData(`
+                    editor.setData(`
                 Dear <strong>${clientName}</strong>,<br>
                 Please find attached the offer for your inquiry along with all sales conditions and technical specifications for <strong>${productNamesText}</strong>.<br>
                 We wish this offer would welcome all of your needs.<br><br>
                 Best Regards.
-            `);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-});
-
-        document.addEventListener('DOMContentLoaded', function() {
-            ClassicEditor
-                .create(document.querySelector('#billing_info'))
-                .then(editor => { 
-                    let companiesResponsibilities = @json($companiesResponsibilities); // جلب مسؤوليات الشركة من الكارت
-                    let customersResponsibilities = @json($customersResponsibilities); // جلب مسؤوليات العميل من الكارت
-                    editor.setData(`
-<p><strong>Validity:</strong> Offer is valid only for Seven days. All conditions will be revised accordingly after the date is expired.</p>
-<p><strong>Pricing:</strong> Given offer is EXW - Istanbul according to Incoterms 2000.</p>
-<p><strong>Account holder:</strong> PREFABEX YAPI TEKNOLOJILERI INS SAN VE TIC LTD STI</p>
-<p><strong>Bank Name:</strong> ALBARAKA TURK</p>
-<p><strong>USD IBAN:</strong> TR72 0020 3000 0370 7695 0000 02</p>
-<p><strong>SWIFT CODE:</strong> BTFHTRISXXX</p>
-
-<h3>General Contract Conditions</h3>
-<div class="attachment-1-list">
-    <ol>
-        <li>
-            <strong>Payment</strong>
-            <ul>
-                <li>50% advanced payment, 50% before loading.</li>
-            </ul>
-        </li>
-
-        <li>
-            <strong>Production</strong>
-            <ul>
-                <li>Production will be completed within 1/3/1900 Month/s since receiving the down payment and order confirmation.</li>
-                <li>Production starting date is considered as of the date that the COMPANY receives the advance payment from the CUSTOMER.</li>
-                <li>The order becomes definite with the payment done by the CUSTOMER to the COMPANY.</li>
-                <li>Delays caused by force majeure such as earthquake, flood, fire and other natural disasters, mobilization, strikes, lockouts, accident or theft during transportation or installation, delays caused by suppliers of raw materials will be added to the deadline.</li>
-            </ul>
-        </li>
-
-        <li>
-            <strong>Assembling</strong>
-            <ul>
-                <li>Assembling is not included in our price offer.</li>
-                <li>Upon customer request, Prefabex can send a few technicians.</li>
-                <li>Upon customer request, Prefabex can send a few semi-skilled workers to help the assembling team.</li>
-                <li>Customer will pay for technicians/workers flight tickets, accommodation food, transportation and daily fees of 200 USD per technician per day.</li>
-                <li>Assembling is expected to be completed within 0 ###.</li>
-            </ul>
-        </li>
-
-   <li><strong>Customer’s Responsibilities</strong>
-                            <ul>
-                                <li>${customersResponsibilities ? customersResponsibilities : 'No responsibilities listed.'}</li>
-                            </ul>
-                        </li>
-                        <li><strong>Company’s Responsibilities</strong>
-                            <ul>
-                                <li>${companiesResponsibilities ? companiesResponsibilities : 'No responsibilities listed.'}</li>
-                            </ul>
-                        </li>
-
-
-        <li>
-            <strong>Other Conditions</strong>
-            <ul>
-                <li>CUSTOMER cannot make changes on approved projects or on technical specifications after production begins.</li>
-            </ul>
-        </li>
-
-        <li>
-            <strong>Warranty Coverage</strong>
-            <ul>
-                <li>The order subject of this offer, will be under warranty of the COMPANY for one (1) year against defects of production. Warranty period will start after the invoice date. In order to get warranty coverage, the CUSTOMER is required to present the invoice. Damage and defects that are related to the customer are not covered in the warranty.</li>
-                <li>The COMPANY is not responsible for the problems that may happen because of adding extra works or parts on the product interior and exterior.</li>
-                <li>The COMPANY is not responsible for problems that may occur due to relocating the product to another location.</li>
-                <li>Stated values for wind resistance are valid on the condition that the product is fixed to the ground. Fixing process is responsibility of the customer.</li>
-            </ul>
-        </li>
-
-        <li>
-            <strong>Disagreement</strong>
-            <ul>
-                <li>In case of a disagreement, both sides will try their best to solve the issue in an amicable settlement. If the disagreement is not solved within thirty (30) business days, courts of Istanbul are authorized to solve the dispute.</li>
-            </ul>
-        </li>
-
-    </ol>
-</div>
             `);
                 })
                 .catch(error => {
                     console.error(error);
                 });
         });
-        document.addEventListener('DOMContentLoaded', function() {
-            let productNames = @json($cartItems->pluck('name')->toArray()); // جلب أسماء المنتجات من السلة
 
-            @foreach($cartItems as $item)
+        document.addEventListener('DOMContentLoaded', function() {
+
+            let billingEditorInstance;
+            let customerEditors = {};
+            let companyEditors = {};
+
+
+
+            // Initialize CKEditor for Billing Info
+            ClassicEditor.create(document.querySelector('#billing_info'))
+                .then(editor => {
+                    billingEditorInstance = editor;
+                    updateBillingInfo(); // Ensure initial data is set
+                })
+                .catch(error => console.error(error));
+
+
+            @foreach ($cartItems as $item)
                 ClassicEditor.create(document.querySelector('#customer_responsibilities_{{ $item->id }}'))
                     .then(editor => {
-                        let customersResponsibilities = @json($item->options['customers_responsibilities'] ?? 'No responsibilities listed.');
-                        let formattedData = `
-                            <ul>
-                                     <ul>
-                                        <li>${customersResponsibilities}</li>
-                                    </ul>
-                                
-                            </ul>
-                        `;
-                        editor.setData(formattedData);
+                        customerEditors[{{ $item->id }}] = editor;
+
+                        editor.model.document.on('change:data', () => {
+                            updateBillingInfo();
+                        });
                     })
                     .catch(error => console.error(error));
 
                 ClassicEditor.create(document.querySelector('#company_responsibilities_{{ $item->id }}'))
                     .then(editor => {
-                        let companiesResponsibilities = @json($item->options['companies_responsibilities'] ?? 'No responsibilities listed.');
-                        let formattedData = `
-                            <ul>
-                                     <ul>
-                                        <li>${companiesResponsibilities}</li>
-                                    </ul>
-                                 
-                            </ul>
-                        `;
-                        editor.setData(formattedData);
+                        companyEditors[{{ $item->id }}] = editor;
+
+                        editor.model.document.on('change:data', () => {
+                            updateBillingInfo();
+                        });
                     })
                     .catch(error => console.error(error));
             @endforeach
+
+            function updateBillingInfo() {
+                if (!billingEditorInstance) return;
+
+                let responsibilitiesTable = `
+            <table border="1" cellpadding="5" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Customer Responsibilities</th>
+                        <th>Company Responsibilities</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+                @foreach ($cartItems as $item)
+                    customerRes = customerEditors[{{ $item->id }}] ? customerEditors[{{ $item->id }}]
+                        .getData() : 'No responsibilities listed.';
+                    companyRes = companyEditors[{{ $item->id }}] ? companyEditors[{{ $item->id }}]
+                        .getData() : 'No responsibilities listed.';
+                    responsibilitiesTable += `
+                <tr>
+                    <td>{{ $item->name }}</td>
+                    <td>${customerRes}</td>
+                    <td>${companyRes}</td>
+                </tr>
+            `;
+                @endforeach
+
+                responsibilitiesTable += `
+                </tbody>
+            </table>
+        `;
+
+                // Update Billing Info content dynamically
+                billingEditorInstance.setData(`
+            <p><strong>Validity:</strong> Offer is valid only for Seven days. All conditions will be revised accordingly after the date is expired.</p>
+            <p><strong>Pricing:</strong> Given offer is EXW - Istanbul according to Incoterms 2000.</p>
+            <p><strong>Account holder:</strong> PREFABEX YAPI TEKNOLOJILERI INS SAN VE TIC LTD STI</p>
+            <p><strong>Bank Name:</strong> ALBARAKA TURK</p>
+            <p><strong>USD IBAN:</strong> TR72 0020 3000 0370 7695 0000 02</p>
+            <p><strong>SWIFT CODE:</strong> BTFHTRISXXX</p>
+
+            <h3>General Contract Conditions</h3>
+            <div class="attachment-1-list">
+                <ol>
+                    <li>
+                        <strong>Payment</strong>
+                        <ul>
+                            <li>50% advanced payment, 50% before loading.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Production</strong>
+                        <ul>
+                            <li>Production will be completed within 1/3/1900 Month/s since receiving the down payment and order confirmation.</li>
+                            <li>Production starting date is considered as of the date that the COMPANY receives the advance payment from the CUSTOMER.</li>
+                            <li>The order becomes definite with the payment done by the CUSTOMER to the COMPANY.</li>
+                            <li>Delays caused by force majeure such as earthquake, flood, fire and other natural disasters, mobilization, strikes, lockouts, accident or theft during transportation or installation, delays caused by suppliers of raw materials will be added to the deadline.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Assembling</strong>
+                        <ul>
+                            <li>Assembling is not included in our price offer.</li>
+                            <li>Upon customer request, Prefabex can send a few technicians.</li>
+                            <li>Upon customer request, Prefabex can send a few semi-skilled workers to help the assembling team.</li>
+                            <li>Customer will pay for technicians/workers flight tickets, accommodation food, transportation and daily fees of 200 USD per technician per day.</li>
+                            <li>Assembling is expected to be completed within 0 ###.</li>
+                        </ul>
+                    </li>
+
+                    <li><strong>Responsibilities</strong>${responsibilitiesTable}</li>
+
+                    <li>
+                        <strong>Other Conditions</strong>
+                        <ul>
+                            <li>CUSTOMER cannot make changes on approved projects or on technical specifications after production begins.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Warranty Coverage</strong>
+                        <ul>
+                            <li>The order subject of this offer, will be under warranty of the COMPANY for one (1) year against defects of production. Warranty period will start after the invoice date. In order to get warranty coverage, the CUSTOMER is required to present the invoice. Damage and defects that are related to the customer are not covered in the warranty.</li>
+                            <li>The COMPANY is not responsible for the problems that may happen because of adding extra works or parts on the product interior and exterior.</li>
+                            <li>The COMPANY is not responsible for problems that may occur due to relocating the product to another location.</li>
+                            <li>Stated values for wind resistance are valid on the condition that the product is fixed to the ground. Fixing process is responsibility of the customer.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Disagreement</strong>
+                        <ul>
+                            <li>In case of a disagreement, both sides will try their best to solve the issue in an amicable settlement. If the disagreement is not solved within thirty (30) business days, courts of Istanbul are authorized to solve the dispute.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        `);
+            }
+
+
         });
     </script>
-
 @endpush
