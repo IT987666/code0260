@@ -263,6 +263,11 @@
 
     // إضافة قسم جديد للمواصفات
     $('#add-specification-btn').on('click', function() {
+        $('.specification-content').slideUp(); 
+
+$('.toggle-specification-btn').text(function() {
+    return "Show " + ($(this).data('spec-name') || "Specification");
+});
         specificationCounter++;
         const newSpecification = `
             <div class="specification-item" id="specification-${specificationCounter}">
@@ -297,16 +302,22 @@
                                 </fieldset>
                     </div>
                  </div>
-                    <button type="button" id="save-specification-btn" class="tf-button w-full toggle-specification-btn" data-spec-id="${specificationCounter}" style="margin: 0 auto; display: block;">SAVE</button>
+<button type="button" id="save-specification-btn" class="tf-button w-full toggle-specification-btn" data-spec-id="${specificationCounter}" data-spec-name="" style="margin: 0 auto; display: block;">SAVE</button>
             </div>`;
 
         $('#specifications-container').append(newSpecification);
         initializeTextEditor(`#spec-paragraphs-${specificationCounter}`);
 
-        $(`#spec-name-${specificationCounter}`).on('input', function() {
+       /* $(`#spec-name-${specificationCounter}`).on('input', function() {
             const name = $(this).val() || `Specification ${specificationCounter}`;
             $(`#specification-label-${specificationCounter}`).text(name);
-        });
+        });*/
+        $(`#spec-name-${specificationCounter}`).on('input', function() {
+    const name = $(this).val() || `Specification ${specificationCounter}`;
+    $(`#specification-label-${specificationCounter}`).text(name);
+    $(`#save-specification-btn[data-spec-id="${specificationCounter}"]`).data('spec-name', name);
+});
+
           // حذف المواصفة عند الضغط على زر ✖
           $(`#specification-${specificationCounter} .remove-specification-btn`).on('click', function() {
             $(`#specification-${specificationCounter}`).remove();
@@ -314,7 +325,7 @@
     });
 
             // إظهار/إخفاء قسم المواصفات
-            $(document).on('click', '.toggle-specification-btn', function() {
+           /* $(document).on('click', '.toggle-specification-btn', function() {
                 const specId = $(this).data('spec-id');
                 const specContent = $(`#specification-${specId} .specification-content`);
                 const button = $(this);
@@ -336,7 +347,25 @@
                     specContent.slideDown();
                     button.text(`SAVE ${specName}`);
                 }
-            });
+            });*/ 
+            $(document).on('click', '.toggle-specification-btn', function() {
+    const specId = $(this).data('spec-id');
+    const specContent = $(`#specification-${specId} .specification-content`);
+    const button = $(this);
+    const specName = button.data('spec-name') || `Specification ${specId}`;
+
+    button.addClass('tf-button');
+    button.css({ 'margin': '0 auto', 'display': 'block' });
+
+    if (specContent.is(':visible')) {
+        specContent.slideUp();
+        button.text(`Show ${specName}`);
+    } else {
+        specContent.slideDown();
+        button.text(`SAVE ${specName}`);
+    }
+});
+
 
             // Store selected files
             let selectedFiles = {};

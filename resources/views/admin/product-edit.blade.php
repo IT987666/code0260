@@ -388,7 +388,7 @@
                 });
             };
             // إضافة قسم مواصفات جديد
-            $('#add-specification-btn').on('click', function() {
+          /*  $('#add-specification-btn').on('click', function() {
                 specificationCounter++;
                 const newSpecification = `
              <div class="specification-item" id="specification-${specificationCounter}">
@@ -449,7 +449,63 @@
                 // تهيئة CKEditor للسبيسفكيشن الجديد
                 // ClassicEditor.create($(
                 //     `textarea[name='specifications[new_${specificationCounter}][paragraphs]']`)[0]);
-            });
+            });*/
+            // إضافة قسم مواصفات جديد
+          
+
+    // إضافة قسم مواصفات جديد
+    $('#add-specification-btn').on('click', function() {
+        specificationCounter++;
+
+      // إغلاق جميع المواصفات المفتوحة وتحديث الأزرار
+    $('.specification-content').slideUp();
+    $('.toggle-specification-btn1').each(function() {
+        const specId = $(this).data('spec-id');
+        const specName = $(`#spec-name-${specId}`).val() || `Specification ${specId}`;
+        $(this).text(`Show ${specName}`);
+    });
+
+        const newSpecification = `
+            <div class="specification-item" id="specification-${specificationCounter}">
+                <div class="spec-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span id="specification-label-${specificationCounter}" style="font-weight: bold;">Specification ${specificationCounter}</span>
+                    <button type="button" class="remove-specification-btn" data-spec-id="${specificationCounter}" 
+                        style="background: none; color: #40E0D0; border: none; cursor: pointer; font-size: 20px; font-weight: bold;">✖
+                    </button>
+                </div>
+                <div class="specification-content" style="display: none;">
+                    <div class="specification-name">
+                        <label for="spec-name-${specificationCounter}">Specification Name:</label>
+                        <input type="text" name="specifications[${specificationCounter}][name]" id="spec-name-${specificationCounter}" placeholder="Enter specification name" required>
+                    </div>
+                    <div class="specification-paragraphs">
+                        <label for="spec-paragraphs-${specificationCounter}">Specification Paragraphs:</label>
+                        <textarea name="specifications[${specificationCounter}][paragraphs]" id="spec-paragraphs-${specificationCounter}" placeholder="Enter paragraphs"></textarea>
+                    </div>
+                    <div class="specification-gallery">
+                        <fieldset>
+                            <label for="specifications[${specificationCounter}][images]">Images</label>
+                            <div class="gallery-preview" id="preview-container-${specificationCounter}"></div>
+                            <input type="file" name="specifications[${specificationCounter}][images][]" id="gFile-${specificationCounter}" class="form-control modern-input" accept="image/*" multiple>
+                        </fieldset>
+                    </div>
+                </div>
+                <button type="button" class="tf-button w-full toggle-specification-btn1" data-spec-id="${specificationCounter}" style="margin: 0 auto; display: block;">Show Specification ${specificationCounter}</button>
+            </div>`;
+
+        $('#specifications-container').append(newSpecification);
+        initializeTextEditor(`#spec-paragraphs-${specificationCounter}`);
+
+        // تحديث النص الظاهر بناءً على إدخال اسم المواصفات
+        $(`#spec-name-${specificationCounter}`).on('input', function() {
+            const name = $(this).val() || `Specification ${specificationCounter}`;
+            $(`#specification-label-${specificationCounter}`).text(name);
+            $(`.toggle-specification-btn1[data-spec-id='${specificationCounter}']`).text(`SAVE ${name}`);
+        });
+          // اجعل المواصفة الجديدة مفتوحة مباشرةً
+    const newSpecContent = $(`#specification-${specificationCounter} .specification-content`);
+    newSpecContent.slideDown();
+    });
 
             // إظهار/إخفاء قسم المواصفات
  // حذف المواصفة عند الضغط على زر ✖
@@ -490,7 +546,7 @@
             });
 
             // إظهار/إخفاء قسم المواصفات
-            $(document).on('click', '.toggle-specification-btn1', function() { //////////
+            /*$(document).on('click', '.toggle-specification-btn1', function() { //////////
                 const specId = $(this).data('spec-id');
                 const specContent = $(`#specification-${specId} .specification-content`);
                 const button = $(this);
@@ -507,8 +563,31 @@
                     specContent.slideDown();
                     button.text(`SAVE ${specName}`); // عرض اسم السبيسفكيشن في الزر
                 }
-            });
+            });*/
+// إظهار/إخفاء قسم المواصفات عند الضغط على زر Show/Save
+$(document).on('click', '.toggle-specification-btn1', function() {
+    const specId = $(this).data('spec-id');
+    const specContent = $(`#specification-${specId} .specification-content`);
+    const button = $(this);
+    const specName = $(`#spec-name-${specId}`).val() || `Specification ${specId}`;
 
+    // إغلاق كل المواصفات الأخرى
+    $('.specification-content').not(specContent).slideUp();
+    $('.toggle-specification-btn1').not(button).each(function() {
+        const otherSpecId = $(this).data('spec-id');
+        const otherSpecName = $(`#spec-name-${otherSpecId}`).val() || `Specification ${otherSpecId}`;
+        $(this).text(`Show ${otherSpecName}`);
+    });
+
+    // فتح أو إغلاق المواصفة المختارة
+    if (specContent.is(':visible')) {
+        specContent.slideUp();
+        button.text(`Show ${specName}`);
+    } else {
+        specContent.slideDown();
+        button.text(`SAVE ${specName}`);
+    }
+});
 
             // إزالة قسم المواصفات
             $(document).on('click', '.remove-old-image-btn', function() {

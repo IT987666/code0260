@@ -211,7 +211,7 @@ th {
         </section>
     </main>
 @endsection
-{{-- @push('scripts')
+  @push('scripts')
     <script>
         function disableButton(event) {
             const button = event.currentTarget;
@@ -222,4 +222,4 @@ th {
              button.innerHTML = 'Processing...';
         }
     </script>
-@endpush --}}
+@endpush 
