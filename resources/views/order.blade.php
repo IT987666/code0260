@@ -439,6 +439,12 @@
                         editor.model.document.on('change:data', () => {
                             updateBillingInfo();
                         });
+                           // إجبار التحديث فور تحميل الصفحة
+            setTimeout(() => {
+                editor.setData(editor.getData());
+                updateBillingInfo();
+            }, 1000);
+
                     })
                     .catch(error => console.error(error));
 
@@ -449,6 +455,11 @@
                         editor.model.document.on('change:data', () => {
                             updateBillingInfo();
                         });
+                           // إجبار التحديث فور تحميل الصفحة
+            setTimeout(() => {
+                editor.setData(editor.getData());
+                updateBillingInfo();
+            }, 1000);
                     })
                     .catch(error => console.error(error));
             @endforeach
