@@ -284,24 +284,35 @@
     {{-- <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script> --}}
 
     <script>
-        $(document).ready(function() {
-            // زر إظهار/إخفاء السبيسفكيشنات الفردية
-            $(document).on('click', '.toggle-specification-btn ', function() {
-                const specId = $(this).data('spec-id');
-                const specContent = $(`#specification-content-${specId}`);
-                const button = $(this);
+     $(document).ready(function() {
+    // زر إظهار/إخفاء السبيسفكيشنات الفردية
+    $(document).on('click', '.toggle-specification-btn', function() {
+        const specId = $(this).data('spec-id');
+        const specContent = $(`#specification-content-${specId}`);
+        const button = $(this);
 
-                // جلب اسم السبيسفكيشن من الحقل الموجود داخل الـ HTML
-                const specName = $(`#spec-name-${specId}`).val();
+        // جلب اسم السبيسفكيشن من الحقل الموجود داخل الـ HTML
+        const specName = $(`#spec-name-${specId}`).val();
 
-                if (specContent.is(':visible')) {
-                    specContent.slideUp();
-                    button.text(`Show ${specName}`); // عرض اسم السبيسفكيشن في الزر
-                } else {
-                    specContent.slideDown();
-                    button.text(`SAVE ${specName}`); // عرض اسم السبيسفكيشن في الزر
-                }
-            });
+        // إغلاق جميع المواصفات الأخرى قبل فتح المواصفة الجديدة
+        $('.specification-content').not(specContent).slideUp();
+        $('.toggle-specification-btn').not(button).each(function() {
+            const otherSpecId = $(this).data('spec-id');
+            const otherSpecName = $(`#spec-name-${otherSpecId}`).val();
+            $(this).text(`Show ${otherSpecName}`); // إعادة النص إلى Show لكل الأزرار
+        });
+
+        // فتح أو إغلاق المواصفة المحددة
+        if (specContent.is(':visible')) {
+            specContent.slideUp();
+            button.text(`Show ${specName}`); // عرض اسم السبيسفكيشن في الزر
+        } else {
+            specContent.slideDown();
+            button.text(`SAVE ${specName}`); // عرض اسم السبيسفكيشن في الزر
+        }
+    });
+ 
+
             $(document).ready(function() {
                 let specificationCounter = 0;
                 // حذف الصور القديمة والجديدة
@@ -565,6 +576,29 @@
                 }
             });*/
 // إظهار/إخفاء قسم المواصفات عند الضغط على زر Show/Save
+/*$(document).on('click', '.toggle-specification-btn1', function() {
+    const specId = $(this).data('spec-id');
+    const specContent = $(`#specification-${specId} .specification-content`);
+    const button = $(this);
+    const specName = $(`#spec-name-${specId}`).val() || `Specification ${specId}`;
+
+    // إغلاق كل المواصفات الأخرى
+    $('.specification-content').not(specContent).slideUp();
+    $('.toggle-specification-btn1').not(button).each(function() {
+        const otherSpecId = $(this).data('spec-id');
+        const otherSpecName = $(`#spec-name-${otherSpecId}`).val() || `Specification ${otherSpecId}`;
+        $(this).text(`Show ${otherSpecName}`);
+    });
+
+    // فتح أو إغلاق المواصفة المختارة
+    if (specContent.is(':visible')) {
+        specContent.slideUp();
+        button.text(`Show ${specName}`);
+    } else {
+        specContent.slideDown();
+        button.text(`SAVE ${specName}`);
+    }
+});*/
 $(document).on('click', '.toggle-specification-btn1', function() {
     const specId = $(this).data('spec-id');
     const specContent = $(`#specification-${specId} .specification-content`);
@@ -588,6 +622,8 @@ $(document).on('click', '.toggle-specification-btn1', function() {
         button.text(`SAVE ${specName}`);
     }
 });
+
+
 
             // إزالة قسم المواصفات
             $(document).on('click', '.remove-old-image-btn', function() {

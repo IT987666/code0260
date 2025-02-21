@@ -348,7 +348,7 @@ $('.toggle-specification-btn').text(function() {
                     button.text(`SAVE ${specName}`);
                 }
             });*/ 
-            $(document).on('click', '.toggle-specification-btn', function() {
+           /* $(document).on('click', '.toggle-specification-btn', function() {
     const specId = $(this).data('spec-id');
     const specContent = $(`#specification-${specId} .specification-content`);
     const button = $(this);
@@ -364,7 +364,29 @@ $('.toggle-specification-btn').text(function() {
         specContent.slideDown();
         button.text(`SAVE ${specName}`);
     }
+});*/
+$(document).on('click', '.toggle-specification-btn', function() {
+    const specId = $(this).data('spec-id');
+    const specContent = $(`#specification-${specId} .specification-content`);
+    const button = $(this);
+    const specName = button.data('spec-name') || `Specification ${specId}`;
+
+    // إغلاق جميع المواصفات الأخرى
+    $('.specification-content').slideUp();
+    $('.toggle-specification-btn').text(function() {
+        return "Show " + ($(this).data('spec-name') || "Specification");
+    });
+
+    // إذا كانت المواصفة نفسها مفتوحة، تسكرها، غير هيك تفتحها
+    if (specContent.is(':visible')) {
+        specContent.slideUp();
+        button.text(`Show ${specName}`);
+    } else {
+        specContent.slideDown();
+        button.text(`SAVE ${specName}`);
+    }
 });
+
 
 
             // Store selected files
