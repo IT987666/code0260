@@ -176,10 +176,12 @@
                                 <div id="specifications-container">
                                     @foreach ($product->specifications as $specification)
                                         <div class="specification-item" id="specification-{{ $specification->id }}">
-                                            <button type="button" class="toggle-specification-btn tf-button w-full"
-                                                data-spec-id="{{ $specification->id }}">
-                                                Edit {{ $specification->name }}
-                                            </button>
+                                            <button type="button" class="toggle-specification-btn tf-button w-full" 
+                                            data-spec-id="{{ $specification->id }}" 
+                                            style="margin: 0 auto; display: block; width: 600px !important;">
+                                            Edit {{ $specification->name }}
+                                        </button>
+                                        
                                             <div class="specification-content" id="specification-content-{{ $specification->id }}"
                                                 style="display: none;">
                                                 <div class="cols gap10">
@@ -501,7 +503,7 @@
                         </fieldset>
                     </div>
                 </div>
-                <button type="button" class="tf-button w-full toggle-specification-btn1" data-spec-id="${specificationCounter}" style="margin: 0 auto; display: block;">Show Specification ${specificationCounter}</button>
+                <button type="button" class="tf-button w-full toggle-specification-btn1" data-spec-id="${specificationCounter}" style="margin: 0 auto; display: block;width: 600px !important;">Show Specification ${specificationCounter}</button>
             </div>`;
 
         $('#specifications-container').append(newSpecification);

@@ -302,7 +302,7 @@ $('.toggle-specification-btn').text(function() {
                                 </fieldset>
                     </div>
                  </div>
-<button type="button" id="save-specification-btn" class="tf-button w-full toggle-specification-btn" data-spec-id="${specificationCounter}" data-spec-name="" style="margin: 0 auto; display: block;">SAVE</button>
+<button type="button" id="save-specification-btn" class="tf-button w-full toggle-specification-btn" data-spec-id="${specificationCounter}" data-spec-name="" style="margin: 0 auto; display: block; width: 600px !important;">SAVE</button>
             </div>`;
 
         $('#specifications-container').append(newSpecification);

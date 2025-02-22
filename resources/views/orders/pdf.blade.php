@@ -99,7 +99,7 @@ th {
         $itemCount = count($orderItems);
     @endphp
 
-     @if ($itemCount > 3) 
+     @if ($itemCount > 15) 
         <div style="page-break-before: always;">
             <h3>Attachment-2: Technical Specification</h3>
         </div>
