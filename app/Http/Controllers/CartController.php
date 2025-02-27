@@ -603,7 +603,6 @@ class CartController extends Controller
 
 
 
-
     public function updateDescription($rowId, Request $request)
     {
         // التحقق من صحة المدخلات
@@ -614,15 +613,17 @@ class CartController extends Controller
         // الحصول على المنتج في السلة
         $product = Cart::instance('cart')->get($rowId);
 
-        // الاحتفاظ بالمواصفات الحالية في حالة عدم تعديلها
-        $currentSpecifications = $product->options['specifications'] ?? [];
+        if (!$product) {
+            return redirect()->back()->with('error', 'Product not found in cart.');
+        }
 
-        // تحديث الوصف مع الاحتفاظ بالمواصفات
+        // الاحتفاظ بالقيم الحالية مع تحديث الوصف فقط
+        $updatedOptions = $product->options->toArray();
+        $updatedOptions['description'] = $request->description;
+
+        // تحديث المنتج في السلة
         Cart::instance('cart')->update($rowId, [
-            'options' => [
-                'description' => $request->description,
-                'specifications' => $currentSpecifications,  // الحفاظ على المواصفات كما هي
-            ],
+            'options' => $updatedOptions,  // الاحتفاظ بالقيم القديمة مع تحديث الوصف فقط
             'qty' => $product->qty  // الحفاظ على الكمية كما هي
         ]);
 
