@@ -254,11 +254,21 @@ class CartController extends Controller
         $address = Address::query()->where('user_id', $user_id)->latest()->first();
 
         // جلب العناصر الموجودة في الكارت
-        $cartItems = Cart::instance('cart')->content(); // جلب محتويات الكارت
+        $cartItems = Cart::instance('cart')->content();
 
-        // الحصول على مسؤوليات العميل والشركة من الكارت
-        $companiesResponsibilities = $cartItems->pluck('options.companies_responsibilities')->unique()->first();
-        $customersResponsibilities = $cartItems->pluck('options.customers_responsibilities')->unique()->first();
+        $companiesResponsibilities = [];
+        $customersResponsibilities = [];
+
+        foreach ($cartItems as $item) {
+            $product = Product::query()->find($item->id);
+
+            if ($product) {
+                $companiesResponsibilities[] = $product->companies_responsibilities;
+                $customersResponsibilities[] = $product->customers_responsibilities;
+            }
+        }
+
+
 
         return view('order', compact('order', 'cartItems', 'address', 'companiesResponsibilities', 'customersResponsibilities'));
     }
@@ -455,7 +465,6 @@ class CartController extends Controller
         if (!$item) {
             return redirect()->route('shop.index')->with('error', 'Item not found in the cart');
         }
-
         // عرض نموذج التعديل
         return view('cart.edit', compact('item'));
     }
@@ -494,20 +503,24 @@ class CartController extends Controller
             }
         }
 
+        // احتفظ بالقيم القديمة إذا لم يتم إرسالها في الطلب
+        $updatedOptions = array_merge((array)$item->options, [
+            'specifications' => $specifications ?? $item->options['specifications'],
+            'description' => $validated['description'] ?? $item->options['description'],
+            'companies_responsibilities' => $validated['companies_responsibilities'] ?? $item->options['companies_responsibilities'],
+            'customers_responsibilities' => $validated['customers_responsibilities'] ?? $item->options['customers_responsibilities'],
+        ]);
+
         Cart::instance('cart')->update($rowId, [
             'qty' => $validated['qty'],
             'rowId' => $rowId,
             'price' => $validated['price'],
-            'options' => array_merge((array)$item->options, [
-                'specifications' => $specifications,
-                'description' => $validated['description'],
-                'companies_responsibilities' => $validated['companies_responsibilities'],
-                'customers_responsibilities' => $validated['customers_responsibilities'],
-            ]),
+            'options' => $updatedOptions,
         ]);
 
         return redirect()->route('shop.index')->with('success', 'Cart item updated successfully!');
     }
+
 
 
     private function encodeImages($images)
