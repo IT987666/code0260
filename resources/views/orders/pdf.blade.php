@@ -139,7 +139,7 @@ th {
     <span class="page-number"></span>
     <div class="contact-info">
         <p>
-            Yeşilbağlar Mh. Selvili Sk. Helis Beyaz Ofis B Blok No:2/2/22-23 Pendik/İstanbul/Turkey<br>
+            Yesilbaglar Mh. Selvili Sk. Helis Beyaz Ofis B Blok No:2/2/22-23 Pendik/Istanbul/Turkey<br>
             <span style="color: #20bec6;">Tel.: +90 216 306 7374</span> / 
             <span style="color: #20bec6;">E-Mail: info@prefabex.com</span><br>
             <a href="http://www.prefabex.com" target="_blank" style="color: #20bec6;">www.prefabex.com</a>
