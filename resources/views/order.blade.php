@@ -228,7 +228,7 @@
 
 
 
-                            <div class="col-md-12 mt-4">
+                            <div class="col-md-12 mt-4"style="display: none;">
                                 @foreach ($cartItems as $item)
                                     <div class="card mb-4 shadow-sm">
                                         <div class="card-header bg-turquoise text-white fw-bold">

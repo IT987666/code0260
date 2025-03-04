@@ -153,75 +153,114 @@
 
     <main class="pt-90">
         <section class="shop-main container">
-            <!-- Product List -->
-            <div class="product-container">
-                <h3>Products</h3>
-                <input type="text" id="searchBox" placeholder="Search products..." class="form-control mb-3" />
-               
-                
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">
-                                <details>
-                                    <summary style="cursor: pointer; font-weight: bold;">Products</summary>
-                                </details>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="productTable" style="display: none;">
+    <!-- Product List -->
+<div class="product-container">
+    <h3>Products</h3>
+    <input type="text" id="searchBox" placeholder="Search products..." class="custom-input"  />
 
-                        @foreach ($products as $product)
-                            <tr>
-                                <td class="product-name" data-id="{{ $product->id }}"
-                                    style="cursor: pointer; text-decoration: underline;">{{ $product->name }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    let tableBody = document.getElementById("productTable");
-    let summary = document.querySelector("summary");
-
-    // التحقق من حالة الجدول المخزنة
-    if (localStorage.getItem("productTableOpen") === "true") {
-        tableBody.style.display = "table-row-group";
-    } else {
-        tableBody.style.display = "none";
+    <select id="productDropdown"   class="custom-select">
+        <option value="">Select a product</option>
+        @foreach ($products as $product)
+            <option value="{{ $product->id }}">{{ $product->name }}</option>
+        @endforeach
+    </select>
+</div>
+<style>
+    .product-container {
+        width: 100%;
+        max-width: 400px; /* تحديد عرض مناسب */
+        margin: 0 auto;
+        text-align: center;
     }
 
-    summary.addEventListener("click", function () {
-        if (tableBody.style.display === "none") {
-            tableBody.style.display = "table-row-group"; // إظهار القائمة
-            localStorage.setItem("productTableOpen", "true"); // حفظ الحالة
-        } else {
-            tableBody.style.display = "none"; // إخفاء القائمة
-            localStorage.setItem("productTableOpen", "false"); // حفظ الحالة
-        }
+    .product-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .custom-input, .custom-select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+        outline: none;
+        transition: 0.3s;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-input:focus, .custom-select:focus {
+        border-color: #007bff;
+        box-shadow: 2px 2px 15px rgba(0, 123, 255, 0.3);
+    }
+
+    .custom-select {
+        cursor: pointer;
+        background: white;
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let dropdown = document.getElementById("productDropdown");
+        let searchBox = document.getElementById("searchBox");
+    
+        // عند الكتابة في مربع البحث
+        searchBox.addEventListener("keyup", function() {
+            let query = this.value.toLowerCase();
+            let hasResults = false;
+    
+            for (let option of dropdown.options) {
+                if (option.value === "") continue; // تخطي الخيار الأول (Select a product)
+                let match = option.text.toLowerCase().includes(query);
+                option.style.display = match ? "" : "none"; // إخفاء الخيارات غير المطابقة
+                if (match) hasResults = true;
+            }
+    
+            // فتح القائمة إذا كان هناك نتائج، وإغلاقها إذا لم يكن هناك شيء
+            if (hasResults && query !== "") {
+                dropdown.size = dropdown.options.length; // إظهار الخيارات المتاحة
+                dropdown.style.display = "block"; // تأكد من إظهاره
+            } else {
+                dropdown.size = 1;
+                dropdown.style.display = "none"; // إخفاء القائمة إذا لم تكن هناك نتائج
+            }
+        });
+    
+        // عند فقدان التركيز، يتم إغلاق القائمة
+        searchBox.addEventListener("blur", function () {
+            setTimeout(() => {
+                dropdown.size = 1;
+                dropdown.style.display = "block"; // إبقاؤه طبيعيًا
+            }, 200);
+        });
+    
+        // عند تحديد عنصر من القائمة
+        dropdown.addEventListener("change", function () {
+            searchBox.value = dropdown.options[dropdown.selectedIndex].text; // إدخال الاسم في البحث
+            dropdown.size = 1; // إعادة الحجم الطبيعي
+        });
     });
-});
+    </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let dropdown = document.getElementById("productDropdown");
+    let searchBox = document.getElementById("searchBox");
 
+    // تحميل آخر منتج تم تحديده من localStorage
+    let savedProduct = localStorage.getItem("selectedProduct");
+    if (savedProduct) {
+        dropdown.value = savedProduct;
+    }
 
-                 document.getElementById('searchBox').addEventListener('keyup', function() {
-                    let query = this.value.toLowerCase();
-                    let rows = document.querySelectorAll('#productTable tr');
+    // عند تغيير المنتج المختار
+    dropdown.addEventListener("change", function () {
+        let productId = this.value;
+        if (!productId) return; // تجنب تنفيذ الطلب إذا لم يتم اختيار منتج
 
-                    rows.forEach(row => {
-                        let productName = row.querySelector('.product-name').textContent.toLowerCase();
-                        row.style.display = productName.includes(query) ? '' : 'none';
-                    });
-                });
+        localStorage.setItem("selectedProduct", productId); // حفظ المنتج المختار
 
-                document.addEventListener('click', async function(event) {
-    let item = event.target.closest('.product-name');  
-    if (!item) return;  
-
-    let productId = item.getAttribute('data-id');
-
-    try {
         fetch("{{ route('cart.add') }}", {
             method: "POST",
             headers: {
@@ -232,14 +271,20 @@
                 id: productId,
                 quantity: 1
             })
-        }).then(() => window.location.replace(window.location.href)); 
-    } catch (error) {
-        console.error('Error:', error);
-    }
+        }).then(() => window.location.replace(window.location.href));
+    });
+
+    // فلترة المنتجات بناءً على البحث
+    searchBox.addEventListener("keyup", function() {
+        let query = this.value.toLowerCase();
+        for (let option of dropdown.options) {
+            if (option.value === "") continue; // تجاوز الخيار الافتراضي
+            option.style.display = option.text.toLowerCase().includes(query) ? "" : "none";
+        }
+    });
 });
+</script>
 
-
-            </script>
 
 
             <!-- Cart Table -->

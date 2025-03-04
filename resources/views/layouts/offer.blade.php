@@ -157,7 +157,7 @@
     <style>
         /* Adjusting the logo size and spacing */
         .logo {
-            width: 150px; /* Increased the width */
+            width: 170px; /* Increased the width */
             height: auto;
             margin-bottom: 40px; /* Added space between the logo and the content */
         }

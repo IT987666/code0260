@@ -2,18 +2,23 @@
 {{-- Add this CSS within a <style> tag --}}
     <style>
         @page {
-            margin-bottom: 5px; /* Adjust based on footer height */
+            margin-bottom: 3px; /* Adjust based on footer height */
         }
-    
+        .contact-info {
+    margin-top: 5px; /* يضيف مسافة بين الصورة والنص */
+}
+
+       
         .pdf-footer {
-            position: fixed;
-            bottom: 10px; /* Adjust positioning */
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 10px;
-        }
-    
+    position: fixed;
+    bottom: -40px; /* تقليل المسافة بين الفوتر والحافة السفلية */
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 9px; /* تقليل حجم النص */
+    line-height: 1.2; /* تصغير المسافات بين الأسطر */
+    padding: 5px 0; /* تقليل الحشو داخل الفوتر */
+}
         .pdf-footer img {
             width: 700; /* Adjust size as needed */
             height: auto;
@@ -43,7 +48,27 @@ th {
     background-color: #f2f2f2 !important;
     font-weight: bold;
 }
+.intro-container {
+    font-size: 14px;
+    line-height: 1.6;
+}
 
+.intro-container p {
+    margin: 5px 0;
+    display: flex;
+    align-items: baseline; /* يجعل النصوص بنفس الخط */
+}
+
+.intro-container strong {
+    font-weight: bold;
+    display: inline-block;
+    width: 120px; /* ضبط عرض العناوين */
+}
+.price-offer-table th {
+    background-color: #20bec6 !important;
+    color: black !important;
+    text-align: center;
+}
     </style>
     
    
@@ -53,20 +78,12 @@ th {
 @section('title', 'Price Offer for Flatpack Container')
 
 @section('intro')
-    <table class="intro-table">
-        <tr>
-            <th>SUBJECT:</th>
-            <td>Price offer for Flatpack Container</td>
-        </tr>
-        <tr>
-            <th>REF:</th>
-            <td>{{ $orderItems->first()->order->reference_code }}</td>
-        </tr>
-        <tr>
-            <th>Date:</th>
-            <td>{{ $order->created_at->format('d/m/Y') }}</td>
-        </tr>
-    </table>
+<div class="intro-container">
+    <p><strong>SUBJECT:</strong> Price offer for Flatpack Container</p>
+    <p><strong>REF:</strong> {{ $orderItems->first()->order->reference_code }}</p>
+    <p><strong>Date:</strong> {{ $order->created_at->format('d/m/Y') }}</p>
+</div>
+
 
     <div class="extra">
         @if (!empty($order->extra))
@@ -116,8 +133,16 @@ th {
     <h3>Attachment-3: Technical Drawing or Image</h3>
     @include('orders.components.products-technical-drawing', ['order' => $order])
 @endsection
-   {{-- Footer HTML --}}
-   <div class="pdf-footer">
+ {{-- Footer HTML --}}
+<div class="pdf-footer">
     <img src="{{ public_path('images/logo/Picture1.png') }}" alt="Footer Image">
-     <span class="page-number"></span>
+    <span class="page-number"></span>
+    <div class="contact-info">
+        <p>
+            Yeşilbağlar Mh. Selvili Sk. Helis Beyaz Ofis B Blok No:2/2/22-23 Pendik/İstanbul/Turkey<br>
+            <span style="color: #20bec6;">Tel.: +90 216 306 7374</span> / 
+            <span style="color: #20bec6;">E-Mail: info@prefabex.com</span><br>
+            <a href="http://www.prefabex.com" target="_blank" style="color: #20bec6;">www.prefabex.com</a>
+        </p>
+    </div>
 </div>

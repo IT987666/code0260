@@ -18,9 +18,10 @@
         @endforeach
         <!-- صف الإجمالي -->
         <tr style="background-color: #f8f9fa; font-weight: bold;">
-            <td style="text-align: left;">Total:</td> <!-- تم التعديل هنا -->
-            <td colspan="2"></td> <!-- خلايا فارغة لتنسيق الجدول -->
-            <td>${{ number_format($order->subtotal, 2, '.', ',') }}</td>
+            <td style="text-align: center;">Total:</td> <!-- جعل النص في المنتصف -->
+            <td></td> <!-- عمود الكمية -->
+            <td></td> <!-- عمود السعر -->
+                        <td>${{ number_format($order->subtotal, 2, '.', ',') }}</td>
         </tr>
     </tbody>
 </table>
