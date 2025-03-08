@@ -45,6 +45,8 @@ Route::get('/order/{orderId}/download-pdf', [CartController::class, 'downloadPdf
 
 Route::put('/task-list/description/update/{rowId}', [CartController::class, 'updateDescription'])->name('cart.description.update');
 
+Route::post('/shipping/update', [CartController::class, 'updateShipping'])->name('shipping.update');
+Route::post('/shipping/store', [CartController::class, 'store'])->name('shipping.store');
 
 
 Route::get('/submit-tasks', [CartController::class, 'checkout'])->name('cart.checkout');

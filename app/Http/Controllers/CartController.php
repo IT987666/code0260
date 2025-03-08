@@ -630,4 +630,37 @@ class CartController extends Controller
         // العودة إلى الصفحة السابقة مع رسالة النجاح
         return redirect()->back()->with('success', 'Description updated successfully!');
     }
+       public function updateShipping(Request $request)
+      {
+          $request->validate([
+              'shipping_type' => 'required|string',
+              'shipping_cost' => 'required|numeric|min:0',
+          ]);
+  
+           Session::put('shipping_type', $request->shipping_type);
+          Session::put('shipping_cost', $request->shipping_cost);
+  
+          return response()->json(['success' => 'Shipping updated successfully']);
+      }
+  /*    public function store(Request $request)
+{
+    $request->validate([
+        'shipping_type' => 'required|string',
+        'quantity' => 'required|integer|min:1',
+        'unit_price' => 'required|numeric|min:0',
+        'shipping_cost' => 'required|numeric|min:0',
+        'total_cost' => 'required|numeric|min:0',
+    ]);
+
+    ShippingDetail::create([
+        'shipping_type' => $request->shipping_type,
+        'quantity' => $request->quantity,
+        'unit_price' => $request->unit_price,
+        'shipping_cost' => $request->shipping_cost,
+        'total_cost' => $request->total_cost,
+    ]);
+
+    return redirect()->back()->with('success', 'Shipping details saved successfully!');
+}*/
+
 }
