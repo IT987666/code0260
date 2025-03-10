@@ -12,6 +12,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\ProductOrderSpecification;
+use App\Models\ShippingDetail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -278,8 +279,9 @@ class CartController extends Controller
 
     public function submitOrder(Request $request)
     {
-        $user_id = Auth::user()->id;
 
+        $user_id = Auth::user()->id;
+        $old_order_id = Order::query()->where('user_id', $user_id)->latest()->first()->id;
         $address = Address::query()->where('user_id', $user_id)->latest()->first();
         $request->validate([
             'extra' => 'required',
@@ -372,7 +374,7 @@ class CartController extends Controller
         $order->tax = Session::get('checkout')['tax'];
         $order->save();
 
-
+        Session::put('old_order_id', $old_order_id);
         Session::put('order_id', $order->id);
 
         return redirect()->route('cart.order.confirmation');
@@ -396,10 +398,11 @@ class CartController extends Controller
                 $item->specifications = json_decode($item->custom_specifications, true);
             }
 
+            $shipping_type = ShippingDetail::query()->where('order_id', Session::get('old_order_id'))->first();
             // Clear session data
             Session::forget(['checkout', 'coupon', 'discounts']);
 
-            return view('order-confirmation', compact('order', 'orderItems'));
+            return view('order-confirmation', compact('order', 'orderItems', 'shipping_type'));
         }
 
         return redirect()->route('shop.index');
@@ -588,9 +591,13 @@ class CartController extends Controller
             $item->specifications = json_decode($item->custom_specifications, true);
         }
 
+        $shipping_type = ShippingDetail::query()->where('order_id', Session::get('old_order_id'))->first();
+
+
         // Generate the PDF
         $pdf = PDF::loadView('orders.pdf', [
             'order' => $order,
+            'shipping_type' => $shipping_type,
             'orderItems' => $orderItems,
             'base64EncodeImageA' => [$this, 'base64EncodeImageA'], // Pass the image encoding function
         ]);
@@ -630,37 +637,38 @@ class CartController extends Controller
         // العودة إلى الصفحة السابقة مع رسالة النجاح
         return redirect()->back()->with('success', 'Description updated successfully!');
     }
-       public function updateShipping(Request $request)
-      {
-          $request->validate([
-              'shipping_type' => 'required|string',
-              'shipping_cost' => 'required|numeric|min:0',
-          ]);
-  
-           Session::put('shipping_type', $request->shipping_type);
-          Session::put('shipping_cost', $request->shipping_cost);
-  
-          return response()->json(['success' => 'Shipping updated successfully']);
-      }
-  /*    public function store(Request $request)
-{
-    $request->validate([
-        'shipping_type' => 'required|string',
-        'quantity' => 'required|integer|min:1',
-        'unit_price' => 'required|numeric|min:0',
-        'shipping_cost' => 'required|numeric|min:0',
-        'total_cost' => 'required|numeric|min:0',
-    ]);
+    public function updateShipping(Request $request)
+    {
+        $request->validate([
+            'shipping_type' => 'required|string',
+            'shipping_cost' => 'required|numeric|min:0',
+        ]);
 
-    ShippingDetail::create([
-        'shipping_type' => $request->shipping_type,
-        'quantity' => $request->quantity,
-        'unit_price' => $request->unit_price,
-        'shipping_cost' => $request->shipping_cost,
-        'total_cost' => $request->total_cost,
-    ]);
+        Session::put('shipping_type', $request->shipping_type);
+        Session::put('shipping_cost', $request->shipping_cost);
 
-    return redirect()->back()->with('success', 'Shipping details saved successfully!');
-}*/
+        return response()->json(['success' => 'Shipping updated successfully']);
+    }
+    public function store(Request $request)
+    {
+        $user_id = Auth::user()->id;
+        $order = Order::where('user_id', $user_id)->latest()->first(); // جلب آخر طلب
+        $request->validate([
+            'shipping_type' => 'required|string',
+            'quantity' => 'required|integer|min:1',
+            'unit_price' => 'required|numeric|min:0',
+            'shipping_cost' => 'required|numeric|min:0',
+            'total_cost' => 'required|numeric|min:0',
+        ]);
 
+        $shipping_details = ShippingDetail::query()->updateOrCreate([
+            'order_id' => $order->id,
+            'shipping_type' => $request->shipping_type,
+            'quantity' => $request->quantity,
+            'unit_price' => $request->unit_price,
+            'shipping_cost' => $request->shipping_cost,
+            'total_cost' => $request->total_cost,
+        ]);
+        return redirect()->back()->with('shipping_details', $shipping_details);
+    }
 }

@@ -29,21 +29,22 @@
             background-color: #20bec6;
             transform: scale(1.05);
         }
+
         table {
-    width: 100%;
-    border-collapse: collapse;
-}
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-th, td {
-    border: 1px solid rgb(126, 126, 126);
-    padding: 10px;
-    text-align: left;
-}
+        th,
+        td {
+            border: 1px solid rgb(126, 126, 126);
+            padding: 10px;
+            text-align: left;
+        }
 
-th {
-    background-color: #f2f2f2;
-}
-
+        th {
+            background-color: #f2f2f2;
+        }
     </style>
 
     </style>
@@ -66,10 +67,10 @@ th {
                     </div>
                     <div class="order-info__item">
                         <label>Total</label>
-                        <span>${{ number_format((float)$order->subtotal, 2, '.', ',') }}</span>
+                        <span>${{ number_format((float) $order->subtotal, 2, '.', ',') }}</span>
                     </div>
                 </div>
- 
+
 
                 <div class="checkout__totals-wrapper">
                     <div class="checkout__totals">
@@ -142,7 +143,7 @@ th {
                                                 @foreach ($item->specifications as $spec)
                                                     <div class="specification">
                                                         <strong>{{ $spec['name'] ?? 'Specification' }}:</strong>
- 
+
                                                         <!-- Display paragraphs -->
                                                         @if (!empty($spec['paragraphs']))
                                                             <p>{!! $spec['paragraphs'] !!}</p>
@@ -154,7 +155,7 @@ th {
                                                                 @foreach ($spec['images'] as $image)
                                                                     <img src="{{ asset('storage/' . $image) }}"
                                                                         alt="spec image" width="100" height="100"
-                                                                         style="margin-right: 10px;">
+                                                                        style="margin-right: 10px;">
                                                                 @endforeach
                                                             </div>
                                                         @endif
@@ -177,6 +178,40 @@ th {
                             </tbody>
 
                         </table>
+                        @if ($shipping_type)
+                            <h3>Shipping Type</h3>
+                            <table class="checkout-cart-items">
+                                <thead>
+                                    <tr>
+                                        <th>shipping type</th>
+                                        <th>quantity</th>
+                                        <th>unit price</th>
+                                        <th>shipping cost</th>
+                                        <th>total cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ $shipping_type->shipping_type }}</td>
+                                        <td class="text-right">
+                                            {{ $shipping_type->quantity }}
+                                        </td>
+                                        <td class="text-right">
+                                            {{ $shipping_type->unit_price }}
+                                        </td>
+                                        <td class="text-right">
+                                            {{ $shipping_type->shipping_cost }}
+                                        </td>
+                                        <td class="text-right">{{ $shipping_type->total_cost }}</td>
+
+                                    </tr>
+
+
+                                </tbody>
+
+                            </table>
+                        @endif
+
                         <div class="order-images">
                             <h3>Order Images</h3>
                             <div class="image-gallery">
@@ -211,15 +246,15 @@ th {
         </section>
     </main>
 @endsection
-  @push('scripts')
+@push('scripts')
     <script>
         function disableButton(event) {
             const button = event.currentTarget;
 
-             button.style.pointerEvents = 'none';
+            button.style.pointerEvents = 'none';
             button.style.opacity = '0.6';
 
-             button.innerHTML = 'Processing...';
+            button.innerHTML = 'Processing...';
         }
     </script>
-@endpush 
+@endpush

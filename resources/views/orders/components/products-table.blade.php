@@ -21,10 +21,45 @@
             <td style="text-align: center;">Total:</td> <!-- جعل النص في المنتصف -->
             <td></td> <!-- عمود الكمية -->
             <td></td> <!-- عمود السعر -->
-                        <td>${{ number_format($order->subtotal, 2, '.', ',') }}</td>
+            <td>${{ number_format($order->subtotal, 2, '.', ',') }}</td>
         </tr>
     </tbody>
 </table>
+
+
+@if ($shipping_type)
+    <h3>Shipping Type</h3>
+    <table class="checkout-cart-items">
+        <thead>
+            <tr>
+                <th>shipping type</th>
+                <th>quantity</th>
+                <th>unit price</th>
+                <th>shipping cost</th>
+                <th>total cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ $shipping_type->shipping_type }}</td>
+                <td class="text-right">
+                    {{ $shipping_type->quantity }}
+                </td>
+                <td class="text-right">
+                    {{ $shipping_type->unit_price }}
+                </td>
+                <td class="text-right">
+                    {{ $shipping_type->shipping_cost }}
+                </td>
+                <td class="text-right">{{ $shipping_type->total_cost }}</td>
+
+            </tr>
+
+
+        </tbody>
+
+    </table>
+@endif
 
 
 

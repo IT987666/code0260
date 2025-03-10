@@ -35,17 +35,19 @@
         }
 
         .shop-main.container {
-    display: block;
-    text-align: center;
-    width: 60%; /* Adjust width as needed */
-    margin: auto;
-}
+            display: block;
+            text-align: center;
+            width: 60%;
+            /* Adjust width as needed */
+            margin: auto;
+        }
 
-.product-container,
-.cart-container {
-    width: 100%;
-    margin-bottom: 30px; /* Adds spacing between product and cart tables */
-}
+        .product-container,
+        .cart-container {
+            width: 100%;
+            margin-bottom: 30px;
+            /* Adds spacing between product and cart tables */
+        }
 
 
         /* Table Styles */
@@ -153,137 +155,140 @@
 
     <main class="pt-90">
         <section class="shop-main container">
-    <!-- Product List -->
-<div class="product-container">
-    <h3>Products</h3>
-    <input type="text" id="searchBox" placeholder="Search products..." class="custom-input"  />
+            <!-- Product List -->
+            <div class="product-container">
+                <h3>Products</h3>
+                <input type="text" id="searchBox" placeholder="Search products..." class="custom-input" />
 
-    <select id="productDropdown"   class="custom-select">
-        <option value="">Select a product</option>
-        @foreach ($products as $product)
-            <option value="{{ $product->id }}">{{ $product->name }}</option>
-        @endforeach
-    </select>
-</div>
-<style>
-    .product-container {
-        width: 100%;
-        max-width: 400px; /* تحديد عرض مناسب */
-        margin: 0 auto;
-        text-align: center;
-    }
+                <select id="productDropdown" class="custom-select">
+                    <option value="">Select a product</option>
+                    @foreach ($products as $product)
+                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <style>
+                .product-container {
+                    width: 100%;
+                    max-width: 400px;
+                    /* تحديد عرض مناسب */
+                    margin: 0 auto;
+                    text-align: center;
+                }
 
-    .product-title {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
+                .product-title {
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                }
 
-    .custom-input, .custom-select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 16px;
-        outline: none;
-        transition: 0.3s;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    }
+                .custom-input,
+                .custom-select {
+                    width: 100%;
+                    padding: 10px;
+                    margin-bottom: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    outline: none;
+                    transition: 0.3s;
+                    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+                }
 
-    .custom-input:focus, .custom-select:focus {
-        border-color: #007bff;
-        box-shadow: 2px 2px 15px rgba(0, 123, 255, 0.3);
-    }
+                .custom-input:focus,
+                .custom-select:focus {
+                    border-color: #007bff;
+                    box-shadow: 2px 2px 15px rgba(0, 123, 255, 0.3);
+                }
 
-    .custom-select {
-        cursor: pointer;
-        background: white;
-    }
-</style>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let dropdown = document.getElementById("productDropdown");
-        let searchBox = document.getElementById("searchBox");
-    
-        // عند الكتابة في مربع البحث
-        searchBox.addEventListener("keyup", function() {
-            let query = this.value.toLowerCase();
-            let hasResults = false;
-    
-            for (let option of dropdown.options) {
-                if (option.value === "") continue; // تخطي الخيار الأول (Select a product)
-                let match = option.text.toLowerCase().includes(query);
-                option.style.display = match ? "" : "none"; // إخفاء الخيارات غير المطابقة
-                if (match) hasResults = true;
-            }
-    
-            // فتح القائمة إذا كان هناك نتائج، وإغلاقها إذا لم يكن هناك شيء
-            if (hasResults && query !== "") {
-                dropdown.size = dropdown.options.length; // إظهار الخيارات المتاحة
-                dropdown.style.display = "block"; // تأكد من إظهاره
-            } else {
-                dropdown.size = 1;
-                dropdown.style.display = "none"; // إخفاء القائمة إذا لم تكن هناك نتائج
-            }
-        });
-    
-        // عند فقدان التركيز، يتم إغلاق القائمة
-        searchBox.addEventListener("blur", function () {
-            setTimeout(() => {
-                dropdown.size = 1;
-                dropdown.style.display = "block"; // إبقاؤه طبيعيًا
-            }, 200);
-        });
-    
-        // عند تحديد عنصر من القائمة
-        dropdown.addEventListener("change", function () {
-            searchBox.value = dropdown.options[dropdown.selectedIndex].text; // إدخال الاسم في البحث
-            dropdown.size = 1; // إعادة الحجم الطبيعي
-        });
-    });
-    </script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    let dropdown = document.getElementById("productDropdown");
-    let searchBox = document.getElementById("searchBox");
+                .custom-select {
+                    cursor: pointer;
+                    background: white;
+                }
+            </style>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    let dropdown = document.getElementById("productDropdown");
+                    let searchBox = document.getElementById("searchBox");
 
-    // تحميل آخر منتج تم تحديده من localStorage
-    let savedProduct = localStorage.getItem("selectedProduct");
-    if (savedProduct) {
-        dropdown.value = savedProduct;
-    }
+                    // عند الكتابة في مربع البحث
+                    searchBox.addEventListener("keyup", function() {
+                        let query = this.value.toLowerCase();
+                        let hasResults = false;
 
-    // عند تغيير المنتج المختار
-    dropdown.addEventListener("change", function () {
-        let productId = this.value;
-        if (!productId) return; // تجنب تنفيذ الطلب إذا لم يتم اختيار منتج
+                        for (let option of dropdown.options) {
+                            if (option.value === "") continue; // تخطي الخيار الأول (Select a product)
+                            let match = option.text.toLowerCase().includes(query);
+                            option.style.display = match ? "" : "none"; // إخفاء الخيارات غير المطابقة
+                            if (match) hasResults = true;
+                        }
 
-        localStorage.setItem("selectedProduct", productId); // حفظ المنتج المختار
+                        // فتح القائمة إذا كان هناك نتائج، وإغلاقها إذا لم يكن هناك شيء
+                        if (hasResults && query !== "") {
+                            dropdown.size = dropdown.options.length; // إظهار الخيارات المتاحة
+                            dropdown.style.display = "block"; // تأكد من إظهاره
+                        } else {
+                            dropdown.size = 1;
+                            dropdown.style.display = "none"; // إخفاء القائمة إذا لم تكن هناك نتائج
+                        }
+                    });
 
-        fetch("{{ route('cart.add') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({
-                id: productId,
-                quantity: 1
-            })
-        }).then(() => window.location.replace(window.location.href));
-    });
+                    // عند فقدان التركيز، يتم إغلاق القائمة
+                    searchBox.addEventListener("blur", function() {
+                        setTimeout(() => {
+                            dropdown.size = 1;
+                            dropdown.style.display = "block"; // إبقاؤه طبيعيًا
+                        }, 200);
+                    });
 
-    // فلترة المنتجات بناءً على البحث
-    searchBox.addEventListener("keyup", function() {
-        let query = this.value.toLowerCase();
-        for (let option of dropdown.options) {
-            if (option.value === "") continue; // تجاوز الخيار الافتراضي
-            option.style.display = option.text.toLowerCase().includes(query) ? "" : "none";
-        }
-    });
-});
-</script>
+                    // عند تحديد عنصر من القائمة
+                    dropdown.addEventListener("change", function() {
+                        searchBox.value = dropdown.options[dropdown.selectedIndex].text; // إدخال الاسم في البحث
+                        dropdown.size = 1; // إعادة الحجم الطبيعي
+                    });
+                });
+            </script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    let dropdown = document.getElementById("productDropdown");
+                    let searchBox = document.getElementById("searchBox");
+
+                    // تحميل آخر منتج تم تحديده من localStorage
+                    let savedProduct = localStorage.getItem("selectedProduct");
+                    if (savedProduct) {
+                        dropdown.value = savedProduct;
+                    }
+
+                    // عند تغيير المنتج المختار
+                    dropdown.addEventListener("change", function() {
+                        let productId = this.value;
+                        if (!productId) return; // تجنب تنفيذ الطلب إذا لم يتم اختيار منتج
+
+                        localStorage.setItem("selectedProduct", productId); // حفظ المنتج المختار
+
+                        fetch("{{ route('cart.add') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({
+                                id: productId,
+                                quantity: 1
+                            })
+                        }).then(() => window.location.replace(window.location.href));
+                    });
+
+                    // فلترة المنتجات بناءً على البحث
+                    searchBox.addEventListener("keyup", function() {
+                        let query = this.value.toLowerCase();
+                        for (let option of dropdown.options) {
+                            if (option.value === "") continue; // تجاوز الخيار الافتراضي
+                            option.style.display = option.text.toLowerCase().includes(query) ? "" : "none";
+                        }
+                    });
+                });
+            </script>
 
 
 
@@ -296,26 +301,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div style="height: 50px;"></div>
 
                 @if ($items->count() > 0)
-                <style>
-                     .description-input {
-                        width: 300px; /* زيادة العرض حسب الحاجة */
-                        height: 100px; /* تحديد ارتفاع الحقل */
-                    }
-                
-                    /* جعل حقل الكمية أصغر */
-                    input[name="qty"] {
-                        width: 60px; /* تصغير العرض */
-                    }
-                
-                    /* تحسين مظهر الجدول */
-                    table {
-                        width: 100%; /* جعل الجدول يأخذ العرض الكامل */
-                    }
-                    th, td {
-                        padding: 10px;
-                        text-align: center;
-                    }
-                </style>
+                    <style>
+                        .description-input {
+                            width: 300px;
+                            /* زيادة العرض حسب الحاجة */
+                            height: 100px;
+                            /* تحديد ارتفاع الحقل */
+                        }
+
+                        /* جعل حقل الكمية أصغر */
+                        input[name="qty"] {
+                            width: 60px;
+                            /* تصغير العرض */
+                        }
+
+                        /* تحسين مظهر الجدول */
+                        table {
+                            width: 100%;
+                            /* جعل الجدول يأخذ العرض الكامل */
+                        }
+
+                        th,
+                        td {
+                            padding: 10px;
+                            text-align: center;
+                        }
+                    </style>
                     <table>
                         <thead>
                             <tr>
@@ -377,7 +388,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             @endforeach
                         </tbody>
                     </table>
-                  
                 @else
                     <p>No items selected.</p>
                 @endif
@@ -392,7 +402,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <input type="hidden" name="shipping_cost" id="shippingCostInput">
                     <input type="hidden" name="total_cost" id="totalCostInput">
                 </form>
-            
+
                 <table>
                     <thead>
                         <tr>
@@ -406,11 +416,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         <tr>
                             <td>
                                 <select id="shippingType">
-                                    <option value="0">Shipping not included</option>
-                                    <option value="1210">40' HC Container</option>
-                                    <option value="850">20' HC Container</option>
-                                    <option value="1500">OT Container</option>
-                                    <option value="600">Truck</option>
+                                    <option value="Shipping not included">Shipping not included</option>
+                                    <option value="40' HC Container">40' HC Container</option>
+                                    <option value="20' HC Container">20' HC Container</option>
+                                    <option value="OT Container">OT Container</option>
+                                    <option value="Truck">Truck</option>
                                 </select>
                             </td>
                             <td>
@@ -425,7 +435,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </tr>
                     </tbody>
                 </table>
-            
+
                 <div style="margin-top: 20px; text-align: right;">
                     <strong>Subtotal (Products Only) (USD):</strong>
                     <input type="number" id="subtotal" value="0.00" step="0.01" readonly />
@@ -437,7 +447,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <span id="total-cost">0.00</span>
                 </div>
             </div>
-            
+
             <script>
                 const quantityInput = document.getElementById('quantity');
                 const unitPriceInput = document.getElementById('unitPrice');
@@ -446,46 +456,52 @@ document.addEventListener("DOMContentLoaded", function () {
                 const productTotalSpan = document.getElementById('product-total');
                 const totalCostSpan = document.getElementById('total-cost');
                 const subtotalInput = document.getElementById('subtotal');
-            
+
                 function calculateProductSubtotal() {
                     let productTotal = parseFloat(unitPriceInput.value || 0) * parseFloat(quantityInput.value || 1);
                     return productTotal;
                 }
-            
+
                 function updateTotalCost(shippingCost = null) {
                     const productTotal = calculateProductSubtotal();
                     const quantity = parseFloat(quantityInput.value) || 1;
                     const shippingUnitPrice = shippingCost !== null ? shippingCost : (parseFloat(shippingTypeSelect.value) || 0);
                     const totalShippingCost = quantity * shippingUnitPrice;
-            
+
                     shippingCostInput.value = totalShippingCost.toFixed(2);
-                    productTotalSpan.textContent = productTotal.toLocaleString('en-US', { minimumFractionDigits: 2 });
+                    productTotalSpan.textContent = productTotal.toLocaleString('en-US', {
+                        minimumFractionDigits: 2
+                    });
                     subtotalInput.value = productTotal.toFixed(2);
-                    
+
                     const totalWithShipping = productTotal + totalShippingCost;
-                    totalCostSpan.textContent = totalWithShipping.toLocaleString('en-US', { minimumFractionDigits: 2 });
+                    totalCostSpan.textContent = totalWithShipping.toLocaleString('en-US', {
+                        minimumFractionDigits: 2
+                    });
                     saveShippingDetails();
                 }
-            
+
                 function fetchShippingCost() {
                     const shippingType = shippingTypeSelect.value;
                     fetch("{{ route('shipping.update') }}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({ shipping_type: shippingType })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success && data.shipping_cost !== undefined) {
-                            updateTotalCost(data.shipping_cost);
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                shipping_type: shippingType
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success && data.shipping_cost !== undefined) {
+                                updateTotalCost(data.shipping_cost);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
                 }
-            
+
                 function saveShippingDetails() {
                     document.getElementById('shippingTypeInput').value = shippingTypeSelect.value;
                     document.getElementById('quantityInput').value = quantityInput.value;
@@ -494,16 +510,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById('totalCostInput').value = totalCostSpan.textContent.replace(',', '');
                     document.getElementById('shippingForm').submit();
                 }
-            
+
                 quantityInput.addEventListener('input', () => updateTotalCost());
                 unitPriceInput.addEventListener('input', () => updateTotalCost());
-                shippingTypeSelect.addEventListener('change', fetchShippingCost);
-            
-                window.onload = () => {
-                    updateTotalCost();
-                };
+                shippingTypeSelect.addEventListener('input', fetchShippingCost);
+
+                // window.onload = () => {
+                //     updateTotalCost();
+                // };
             </script>
-          {{--  <div class="cart-container">
+            {{--  <div class="cart-container">
                 <h3>Shipping Details</h3>
                 <form id="shippingForm" action="{{ route('shipping.store') }}" method="POST">
                     @csrf
@@ -512,10 +528,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     <input type="hidden" name="unit_price" id="unitPriceInput">
                     <input type="hidden" name="shipping_cost" id="shippingCostInput">
                     <input type="hidden" name="total_cost" id="totalCostInput">
-                
+
                     <button type="submit">Save Shipping Details</button>
                 </form>
-                
+
                 <table>
                     <thead>
                         <tr>
@@ -548,7 +564,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </tr>
                     </tbody>
                 </table>
-            
+
                 <div style="margin-top: 20px; text-align: right;">
                     <strong>Subtotal (Products Only) (USD):</strong>
                     <input type="number" id="subtotal" value="0.00" step="0.01" readonly />
@@ -560,7 +576,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <span id="total-cost">0.00</span>
                 </div>
             </div>
-            
+
             <script>
 const quantityInput = document.getElementById('quantity');
 const unitPriceInput = document.getElementById('unitPrice');
@@ -656,16 +672,15 @@ shippingTypeSelect.addEventListener('change', fetchShippingCost);
 console.log("Auto-save shipping script loaded!");
 
 
-            </script>--}}
-            
-            
+            </script> --}}
+
+
             <div style="text-align: center; margin-top: 100px;">
-                <a href="{{ route('cart.order') }}" class="btn btn-primary" 
-                id="proceedToOrder"
-                style="font-size: 16px; padding: 10px 20px;">
-                 Proceed to order
-             </a>
-             
+                <a href="{{ route('cart.order') }}" class="btn btn-primary" id="proceedToOrder"
+                    style="font-size: 16px; padding: 10px 20px;">
+                    Proceed to order
+                </a>
+
             </div>
         </section>
     </main>
@@ -797,32 +812,34 @@ console.log("Auto-save shipping script loaded!");
     </script>
 @endpush
 @push('scripts')
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // استهداف زر Proceed to Order
-        document.getElementById('proceedToOrder').addEventListener('click', function (event) {
-            event.preventDefault(); // منع الانتقال مباشرة
-            let descriptions = document.querySelectorAll('.description-input');
-            let forms = [];
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // استهداف زر Proceed to Order
+            document.getElementById('proceedToOrder').addEventListener('click', function(event) {
+                event.preventDefault(); // منع الانتقال مباشرة
+                let descriptions = document.querySelectorAll('.description-input');
+                let forms = [];
 
-            descriptions.forEach(textarea => {
-                let form = textarea.closest('.description-form');
-                if (form) {
-                    forms.push(fetch(form.action, {
-                        method: "POST",
-                        body: new FormData(form),
-                        headers: {
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    }));
-                }
-            });
+                descriptions.forEach(textarea => {
+                    let form = textarea.closest('.description-form');
+                    if (form) {
+                        forms.push(fetch(form.action, {
+                            method: "POST",
+                            body: new FormData(form),
+                            headers: {
+                                "X-CSRF-TOKEN": document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            }
+                        }));
+                    }
+                });
 
-            // إرسال جميع البيانات أولاً ثم الانتقال إلى صفحة الطلب
-            Promise.all(forms).then(() => {
-                window.location.href = "{{ route('cart.order') }}";
+                // إرسال جميع البيانات أولاً ثم الانتقال إلى صفحة الطلب
+                Promise.all(forms).then(() => {
+                    window.location.href = "{{ route('cart.order') }}";
+                });
             });
         });
-    });
-</script>
+    </script>
 @endpush
