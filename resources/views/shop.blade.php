@@ -392,7 +392,7 @@
                     <p>No items selected.</p>
                 @endif
             </div>
-            <div class="cart-container">
+         {{--    <div class="cart-container">
                 <h3>Shipping Details</h3>
                 <form id="shippingForm" action="{{ route('shipping.store') }}" method="POST">
                     @csrf
@@ -448,7 +448,7 @@
                 </div>
             </div>
 
-            <script>
+           <script>
                 const quantityInput = document.getElementById('quantity');
                 const unitPriceInput = document.getElementById('unitPrice');
                 const shippingTypeSelect = document.getElementById('shippingType');
@@ -518,8 +518,8 @@
                 // window.onload = () => {
                 //     updateTotalCost();
                 // };
-            </script>
-            {{--  <div class="cart-container">
+            </script>--}}
+              <div class="cart-container">
                 <h3>Shipping Details</h3>
                 <form id="shippingForm" action="{{ route('shipping.store') }}" method="POST">
                     @csrf
@@ -529,8 +529,7 @@
                     <input type="hidden" name="shipping_cost" id="shippingCostInput">
                     <input type="hidden" name="total_cost" id="totalCostInput">
 
-                    <button type="submit">Save Shipping Details</button>
-                </form>
+                 </form>
 
                 <table>
                     <thead>
@@ -638,7 +637,7 @@ const subtotalInput = document.getElementById('subtotal');
         shipping_cost: shippingCostInput.value,
         total_cost: totalCostSpan.textContent.replace(',', '')
     };
-
+ 
     fetch("{{ route('shipping.store') }}", {
         method: "POST",
         headers: {
@@ -670,9 +669,102 @@ shippingTypeSelect.addEventListener('change', fetchShippingCost);
 };
 
 console.log("Auto-save shipping script loaded!");
+/*const quantityInput = document.getElementById('quantity');
+const unitPriceInput = document.getElementById('unitPrice');
+const shippingTypeSelect = document.getElementById('shippingType');
+const shippingCostInput = document.getElementById('shippingCost');
+const productTotalSpan = document.getElementById('product-total');
+const totalCostSpan = document.getElementById('total-cost');
+const subtotalInput = document.getElementById('subtotal');
 
+ function calculateProductSubtotal() {
+    let productTotal = 0;
+    document.querySelectorAll('.total-price').forEach(item => {
+        productTotal += parseFloat(item.textContent.replace('$', '')) || 0;
+    });
+    return productTotal;
+}
 
-            </script> --}}
+ function updateTotalCost(shippingCost = null) {
+    const productTotal = calculateProductSubtotal();
+    const quantity = parseFloat(quantityInput.value) || 1;
+    const shippingUnitPrice = shippingCost !== null ? shippingCost : (parseFloat(unitPriceInput.value) || 0);
+    const totalShippingCost = quantity * shippingUnitPrice;
+
+    shippingCostInput.value = totalShippingCost.toFixed(2);
+    productTotalSpan.textContent = productTotal.toLocaleString('en-US', { minimumFractionDigits: 2 });
+    subtotalInput.value = productTotal.toFixed(2);
+
+    const totalWithShipping = productTotal + totalShippingCost;
+    totalCostSpan.textContent = totalWithShipping.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+     autoSaveShippingDetails();
+}
+
+// استعلام من السيرفر للحصول على تكلفة الشحن بناءً على نوع الشحن المحدد
+function fetchShippingCost() {
+    const shippingType = shippingTypeSelect.value;
+
+    fetch("{{ route('shipping.update') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ shipping_type: shippingType })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.shipping_cost !== undefined) {
+            updateTotalCost(data.shipping_cost);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+ function autoSaveShippingDetails() {
+    const formData = {
+        shipping_type: shippingTypeSelect.value,
+        quantity: quantityInput.value,
+        unit_price: unitPriceInput.value,
+        shipping_cost: shippingCostInput.value,
+        total_cost: totalCostSpan.textContent.replace(',', '')
+    };
+
+     fetch("{{ route('shipping.store') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Shipping details saved successfully!");
+        }
+    })
+    .catch(error => console.error('Error saving shipping details:', error));
+}
+
+ const observer = new MutationObserver(() => updateTotalCost());
+document.querySelectorAll('.total-price').forEach(element => {
+    observer.observe(element, { childList: true });
+});
+
+ quantityInput.addEventListener('input', () => updateTotalCost());
+unitPriceInput.addEventListener('input', () => updateTotalCost());
+shippingTypeSelect.addEventListener('change', fetchShippingCost);
+
+ window.onload = () => {
+    updateTotalCost();
+};
+
+console.log("Auto-save shipping script loaded!");
+*/
+
+            </script> 
 
 
             <div style="text-align: center; margin-top: 100px;">
