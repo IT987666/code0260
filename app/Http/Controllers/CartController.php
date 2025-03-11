@@ -639,20 +639,33 @@ class CartController extends Controller
     }
     public function updateShipping(Request $request)
     {
+        // التحقق من صحة البيانات الواردة
         $request->validate([
             'shipping_type' => 'required|string',
             'shipping_cost' => 'required|numeric|min:0',
         ]);
-
+    
+        // تخزين بيانات الشحن في الـ session
         Session::put('shipping_type', $request->shipping_type);
         Session::put('shipping_cost', $request->shipping_cost);
-
+    
         return response()->json(['success' => 'Shipping updated successfully']);
     }
+    
     public function store(Request $request)
     {
+        // جلب المستخدم الحالي
         $user_id = Auth::user()->id;
-        $order = Order::where('user_id', $user_id)->latest()->first(); // جلب آخر طلب
+    
+        // جلب آخر طلب للمستخدم
+        $order = Order::where('user_id', $user_id)->latest()->first();
+    
+        if (!$order) {
+            // في حال ما في طلب، يمكنك إعطاء رد مناسب
+            return redirect()->back()->withErrors(['message' => 'No orders found for the user']);
+        }
+    
+        // التحقق من صحة البيانات
         $request->validate([
             'shipping_type' => 'required|string',
             'quantity' => 'required|integer|min:1',
@@ -660,15 +673,19 @@ class CartController extends Controller
             'shipping_cost' => 'required|numeric|min:0',
             'total_cost' => 'required|numeric|min:0',
         ]);
-
-        $shipping_details = ShippingDetail::query()->updateOrCreate([
+    
+        // تحديث أو إنشاء تفاصيل الشحن
+        $shipping_details = ShippingDetail::updateOrCreate([
             'order_id' => $order->id,
+        ], [
             'shipping_type' => $request->shipping_type,
             'quantity' => $request->quantity,
             'unit_price' => $request->unit_price,
             'shipping_cost' => $request->shipping_cost,
             'total_cost' => $request->total_cost,
         ]);
+    
         return redirect()->back()->with('shipping_details', $shipping_details);
     }
+    
 }

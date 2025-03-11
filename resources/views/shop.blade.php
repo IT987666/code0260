@@ -1,6 +1,32 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .description-input {
+        width: 300px;
+        /* زيادة العرض حسب الحاجة */
+        height: 100px;
+        /* تحديد ارتفاع الحقل */
+    }
+
+    /* جعل حقل الكمية أصغر */
+    input[name="qty"] {
+        width: 60px;
+        /* تصغير العرض */
+    }
+
+    /* تحسين مظهر الجدول */
+    table {
+        width: 100%;
+        /* جعل الجدول يأخذ العرض الكامل */
+    }
+
+    th,
+    td {
+        padding: 10px;
+        text-align: center;
+    }
+</style>
     <style>
         /* General Styles */
         body {
@@ -290,7 +316,7 @@
                 });
             </script>
             <!-- Cart Table -->
-            <div class="cart-container">
+            {{--<div class="cart-container">
                 <div style="height: 22px;"></div>
 
                 <h3>Selected Products</h3>
@@ -298,32 +324,7 @@
                 <div style="height: 50px;"></div>
 
                 @if ($items->count() > 0)
-                    <style>
-                        .description-input {
-                            width: 300px;
-                            /* زيادة العرض حسب الحاجة */
-                            height: 100px;
-                            /* تحديد ارتفاع الحقل */
-                        }
-
-                        /* جعل حقل الكمية أصغر */
-                        input[name="qty"] {
-                            width: 60px;
-                            /* تصغير العرض */
-                        }
-
-                        /* تحسين مظهر الجدول */
-                        table {
-                            width: 100%;
-                            /* جعل الجدول يأخذ العرض الكامل */
-                        }
-
-                        th,
-                        td {
-                            padding: 10px;
-                            text-align: center;
-                        }
-                    </style>
+                
                     <table>
                         <thead>
                             <tr>
@@ -414,12 +415,13 @@
                         <tr>
                             <td>
                                 <select id="shippingType">
-                                    <option value="0">Shipping not included</option>
-                                    <option value="1210">40' HC Container</option>
-                                    <option value="850">20' HC Container</option>
-                                    <option value="1500">OT Container</option>
-                                    <option value="600">Truck</option>
+                                    <option value="Shipping not included">Shipping not included</option>
+                                    <option value="40' HC Container">40' HC Container</option>
+                                    <option value="20' HC Container">20' HC Container</option>
+                                    <option value="OT Container">OT Container</option>
+                                    <option value="Truck">Truck</option>
                                 </select>
+                                
                             </td>
                             <td>
                                 <input type="number" name="quantity" id="quantity" value="1" min="1" />
@@ -461,6 +463,23 @@ const subtotalInput = document.getElementById('subtotal');
     });
     return productTotal;
 }
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('proceedToOrder').addEventListener('click', function(event) {
+        event.preventDefault(); // منع الانتقال التلقائي
+
+        // تحديث القيم في الحقول المخفية
+        document.getElementById('shippingTypeInput').value = document.getElementById('shippingType').value;
+        document.getElementById('quantityInput').value = document.getElementById('quantity').value;
+        document.getElementById('unitPriceInput').value = document.getElementById('unitPrice').value;
+        document.getElementById('shippingCostInput').value = document.getElementById('shippingCost').value;
+        document.getElementById('totalCostInput').value = document.getElementById('total-cost').textContent.replace(',', '');
+
+        const shippingForm = document.getElementById('shippingForm');
+        
+        // إرسال النموذج
+        shippingForm.submit();
+    });
+});
 
  function updateTotalCost(shippingCost = null) {
     const productTotal = calculateProductSubtotal();
@@ -541,12 +560,274 @@ console.log("Auto-save shipping script loaded!");
 
 
             </script> 
-            <div style="text-align: center; margin-top: 100px;">
-                <a href="{{ route('cart.order') }}" class="btn btn-primary" id="proceedToOrder"
-                    style="font-size: 16px; padding: 10px 20px;">
-                    Proceed to order
-                </a>
-            </div>
+           <div style="text-align: center; margin-top: 100px;">
+            <button type="button" class="btn btn-primary" id="proceedToOrder" style="font-size: 16px; padding: 10px 20px;">
+                Proceed to Order
+            </button>
+        </div>--}}
+        <!-- Cart Table -->
+<div class="cart-container">
+    <div style="height: 22px;"></div>
+    <h3>Selected Products</h3>
+    <span style="display: block; height: 20px;"></span>
+    <div style="height: 50px;"></div>
+
+    @if ($items->count() > 0)
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($items as $item)
+                    <tr>
+                        <td>{{ $item->name }}</td>
+                        <td>
+                            <form method="POST" action="{{ route('cart.price.update', ['rowId' => $item->rowId]) }}">
+                                @csrf
+                                @method('PUT')
+                                <input type="number" name="price" value="{{ $item->price }}" step="0.01" />
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST" action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}">
+                                @csrf
+                                @method('PUT')
+                                <input type="number" name="qty" value="{{ $item->qty }}" min="1" />
+                            </form>
+                        </td>
+                        <td class="total-price">${{ $item->subTotal() }}</td>
+                        <td>
+                            <form method="POST" action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}" class="description-form">
+                                @csrf
+                                @method('PUT')
+                                <textarea name="description" class="description-input" data-row-id="{{ $item->rowId }}">{{ $item->options['description'] }}</textarea>
+                            </form>
+                        </td>
+                        <td>
+                            <div class="button-group">
+                                <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}" class="btn btn-primary">Edit Specifications</a>
+                                <form method="POST" action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger" style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @else
+        <p>No items selected.</p>
+    @endif
+</div>
+
+<div class="cart-container">
+    <h3>Shipping Details</h3>
+    <form id="shippingForm" action="{{ route('shipping.store') }}" method="POST">
+        @csrf
+        <input type="hidden" name="shipping_type" id="shippingTypeInput">
+        <input type="hidden" name="quantity" id="quantityInput">
+        <input type="hidden" name="unit_price" id="unitPriceInput">
+        <input type="hidden" name="shipping_cost" id="shippingCostInput">
+        <input type="hidden" name="total_cost" id="totalCostInput">
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Shipping Type</th>
+                <th>Quantity</th>
+                <th>Unit Price (USD)</th>
+                <th>Shipping Cost (USD)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <select id="shippingType">
+                        <option value="Shipping not included">Shipping not included</option>
+                        <option value="40' HC Container">40' HC Container</option>
+                        <option value="20' HC Container">20' HC Container</option>
+                        <option value="OT Container">OT Container</option>
+                        <option value="Truck">Truck</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="quantity" id="quantity" value="1" min="1" />
+                </td>
+                <td>
+                    <input type="number" name="unit_price" id="unitPrice" value="0.00" step="0.01" />
+                </td>
+                <td>
+                    <input type="number" id="shippingCost" value="0.00" step="0.01" readonly />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 20px; text-align: right;">
+        <strong>Subtotal (Products Only) (USD):</strong>
+        <input type="number" id="subtotal" value="0.00" step="0.01" readonly />
+        <br />
+        <strong>Total Product Cost (USD):</strong>
+        <span id="product-total">0.00</span>
+        <br />
+        <strong>Total Cost with Shipping (USD):</strong>
+        <span id="total-cost">0.00</span>
+    </div>
+</div>
+
+<script>
+const quantityInput = document.getElementById('quantity');
+const unitPriceInput = document.getElementById('unitPrice');
+const shippingTypeSelect = document.getElementById('shippingType');
+const shippingCostInput = document.getElementById('shippingCost');
+const productTotalSpan = document.getElementById('product-total');
+const totalCostSpan = document.getElementById('total-cost');
+const subtotalInput = document.getElementById('subtotal');
+
+function calculateProductSubtotal() {
+    let productTotal = 0;
+    document.querySelectorAll('.total-price').forEach(item => {
+        productTotal += parseFloat(item.textContent.replace('$', '')) || 0;
+    });
+    return productTotal;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('proceedToOrder').addEventListener('click', function(event) {
+        event.preventDefault();
+        // Update hidden shipping fields
+        document.getElementById('shippingTypeInput').value = shippingTypeSelect.value;
+        document.getElementById('quantityInput').value = quantityInput.value;
+        document.getElementById('unitPriceInput').value = unitPriceInput.value;
+        document.getElementById('shippingCostInput').value = shippingCostInput.value;
+        document.getElementById('totalCostInput').value = totalCostSpan.textContent.replace(',', '');
+
+        let descriptions = document.querySelectorAll('.description-input');
+        let forms = [];
+        descriptions.forEach(textarea => {
+            let form = textarea.closest('.description-form');
+            if (form) {
+                forms.push(fetch(form.action, {
+                    method: "POST",
+                    body: new FormData(form),
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                }));
+            }
+        });
+
+        const shippingForm = document.getElementById('shippingForm');
+        forms.push(fetch(shippingForm.action, {
+            method: "POST",
+            body: new FormData(shippingForm),
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        }));
+
+        // Send all data and proceed to order page
+        Promise.all(forms).then(() => {
+            window.location.href = "{{ route('cart.order') }}";
+        });
+    });
+});
+
+function updateTotalCost(shippingCost = null) {
+    const productTotal = calculateProductSubtotal();
+    const quantity = parseFloat(quantityInput.value) || 1;
+    const shippingUnitPrice = shippingCost !== null ? shippingCost : (parseFloat(unitPriceInput.value) || 0);
+    const totalShippingCost = quantity * shippingUnitPrice;
+
+    shippingCostInput.value = totalShippingCost.toFixed(2);
+    productTotalSpan.textContent = productTotal.toLocaleString('en-US', { minimumFractionDigits: 2 });
+    subtotalInput.value = productTotal.toFixed(2);
+
+    const totalWithShipping = productTotal + totalShippingCost;
+    totalCostSpan.textContent = totalWithShipping.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+    autoSaveShippingDetails();
+}
+
+function fetchShippingCost() {
+    const shippingType = shippingTypeSelect.value;
+
+    fetch("{{ route('shipping.update') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ shipping_type: shippingType })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.shipping_cost !== undefined) {
+            updateTotalCost(data.shipping_cost);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function autoSaveShippingDetails() {
+    const formData = {
+        shipping_type: shippingTypeSelect.value,
+        quantity: quantityInput.value,
+        unit_price: unitPriceInput.value,
+        shipping_cost: shippingCostInput.value,
+        total_cost: totalCostSpan.textContent.replace(',', '')
+    };
+
+    fetch("{{ route('shipping.store') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Shipping details saved successfully!");
+        }
+    })
+    .catch(error => console.error('Error saving shipping details:', error));
+}
+
+const observer = new MutationObserver(() => updateTotalCost());
+document.querySelectorAll('.total-price').forEach(element => {
+    observer.observe(element, { childList: true });
+});
+
+quantityInput.addEventListener('input', () => updateTotalCost());
+unitPriceInput.addEventListener('input', () => updateTotalCost());
+shippingTypeSelect.addEventListener('change', fetchShippingCost);
+
+window.onload = () => {
+    updateTotalCost();
+};
+
+console.log("Auto-save shipping script loaded!");
+</script>
+
+<div style="text-align: center; margin-top: 100px;">
+    <button type="button" class="btn btn-primary" id="proceedToOrder" style="font-size: 16px; padding: 10px 20px;">
+        Proceed to Order
+    </button>
+</div>
+
+        
         </section>
     </main>
 @endsection
@@ -676,28 +957,33 @@ console.log("Auto-save shipping script loaded!");
 @endpush
 @push('scripts')
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // استهداف زر Proceed to Order
-            document.getElementById('proceedToOrder').addEventListener('click', function(event) {
-                event.preventDefault(); // منع الانتقال مباشرة
-                let descriptions = document.querySelectorAll('.description-input');
-                let forms = [];
+     document.getElementById('proceedToOrder').addEventListener('click', function(event) {
+    event.preventDefault(); 
 
-                descriptions.forEach(textarea => {
-                    let form = textarea.closest('.description-form');
-                    if (form) {
-                        forms.push(fetch(form.action, {
-                            method: "POST",
-                            body: new FormData(form),
-                            headers: {
-                                "X-CSRF-TOKEN": document.querySelector(
-                                    'meta[name="csrf-token"]').getAttribute(
-                                    'content')
-                            }
-                        }));
-                    }
-                });
- const shippingForm = document.getElementById('shippingForm');
+    // تحديث الحقول المخفية الخاصة بالشحن
+    document.getElementById('shippingTypeInput').value = document.getElementById('shippingType').value;
+    document.getElementById('quantityInput').value = document.getElementById('quantity').value;
+    document.getElementById('unitPriceInput').value = document.getElementById('unitPrice').value;
+    document.getElementById('shippingCostInput').value = document.getElementById('shippingCost').value;
+    document.getElementById('totalCostInput').value = document.getElementById('total-cost').textContent.replace(',', '');
+
+    let descriptions = document.querySelectorAll('.description-input');
+    let forms = [];
+
+    descriptions.forEach(textarea => {
+        let form = textarea.closest('.description-form');
+        if (form) {
+            forms.push(fetch(form.action, {
+                method: "POST",
+                body: new FormData(form),
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            }));
+        }
+    });
+
+    const shippingForm = document.getElementById('shippingForm');
     forms.push(fetch(shippingForm.action, {
         method: "POST",
         body: new FormData(shippingForm),
@@ -705,11 +991,12 @@ console.log("Auto-save shipping script loaded!");
             "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     }));
-                // إرسال جميع البيانات أولاً ثم الانتقال إلى صفحة الطلب
-                Promise.all(forms).then(() => {
-                    window.location.href = "{{ route('cart.order') }}";
-                });
-            });
-        });
+
+    // إرسال جميع البيانات ثم الانتقال إلى صفحة الطلب
+    Promise.all(forms).then(() => {
+        window.location.href = "{{ route('cart.order') }}";
+    });
+});
+
     </script>
 @endpush

@@ -1,3 +1,4 @@
+
 <table class="price-offer-table">
     <thead>
         <tr style="background-color: #20bec6; color:black">
@@ -29,37 +30,30 @@
 
 @if ($shipping_type)
     <h3>Shipping Type</h3>
-    <table class="checkout-cart-items">
+    <table class="checkout-cart-items" style="width: 100%; border-collapse: collapse;">
         <thead>
-            <tr>
-                <th>shipping type</th>
-                <th>quantity</th>
-                <th>unit price</th>
-                <th>shipping cost</th>
-                <th>total cost</th>
+            <tr style="background-color: #20bec6 !important; color: black !important;">
+                <th>Shipping Type</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Shipping Cost</th>
+                <th>Total Cost</th>
             </tr>
         </thead>
+        
         <tbody>
-            <tr>
+            <tr style="background-color: #f8f9fa;">
                 <td>{{ $shipping_type->shipping_type }}</td>
-                <td class="text-right">
-                    {{ $shipping_type->quantity }}
-                </td>
-                <td class="text-right">
-                    {{ $shipping_type->unit_price }}
-                </td>
-                <td class="text-right">
-                    {{ $shipping_type->shipping_cost }}
-                </td>
+                <td class="text-right">{{ $shipping_type->quantity }}</td>
+                <td class="text-right">{{ $shipping_type->unit_price }}</td>
+                <td class="text-right">{{ $shipping_type->shipping_cost }}</td>
                 <td class="text-right">{{ $shipping_type->total_cost }}</td>
-
             </tr>
-
-
         </tbody>
-
     </table>
 @endif
+
+
 
 
 

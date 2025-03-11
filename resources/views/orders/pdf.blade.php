@@ -84,6 +84,16 @@
         color: black !important;
         text-align: center;
     }
+    <style>
+    .checkout-cart-items thead tr {
+        background-color: #20bec6 !important;
+        color: black !important;
+    }
+
+ 
+</style>
+
+
 </style>
 
 
