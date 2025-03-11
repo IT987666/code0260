@@ -152,21 +152,6 @@
             /* Resolves header overlap */
         }
     </style>
-
-    <main class="pt-90">
-        <section class="shop-main container">
-            <!-- Product List -->
-            <div class="product-container">
-                <h3>Products</h3>
-                <input type="text" id="searchBox" placeholder="Search products..." class="custom-input" />
-
-                <select id="productDropdown" class="custom-select">
-                    <option value="">Select a product</option>
-                    @foreach ($products as $product)
-                        <option value="{{ $product->id }}">{{ $product->name }}</option>
-                    @endforeach
-                </select>
-            </div>
             <style>
                 .product-container {
                     width: 100%;
@@ -206,6 +191,21 @@
                     background: white;
                 }
             </style>
+    <main class="pt-90">
+        <section class="shop-main container">
+            <!-- Product List -->
+            <div class="product-container">
+                <h3>Products</h3>
+                <input type="text" id="searchBox" placeholder="Search products..." class="custom-input" />
+
+                <select id="productDropdown" class="custom-select">
+                    <option value="">Select a product</option>
+                    @foreach ($products as $product)
+                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
             <script>
                 document.addEventListener("DOMContentLoaded", function() {
                     let dropdown = document.getElementById("productDropdown");
@@ -289,9 +289,6 @@
                     });
                 });
             </script>
-
-
-
             <!-- Cart Table -->
             <div class="cart-container">
                 <div style="height: 22px;"></div>
@@ -391,134 +388,7 @@
                 @else
                     <p>No items selected.</p>
                 @endif
-            </div>
-         {{--    <div class="cart-container">
-                <h3>Shipping Details</h3>
-                <form id="shippingForm" action="{{ route('shipping.store') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="shipping_type" id="shippingTypeInput">
-                    <input type="hidden" name="quantity" id="quantityInput">
-                    <input type="hidden" name="unit_price" id="unitPriceInput">
-                    <input type="hidden" name="shipping_cost" id="shippingCostInput">
-                    <input type="hidden" name="total_cost" id="totalCostInput">
-                </form>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Shipping Type</th>
-                            <th>Quantity</th>
-                            <th>Unit Price (USD)</th>
-                            <th>Shipping Cost (USD)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <select id="shippingType">
-                                    <option value="Shipping not included">Shipping not included</option>
-                                    <option value="40' HC Container">40' HC Container</option>
-                                    <option value="20' HC Container">20' HC Container</option>
-                                    <option value="OT Container">OT Container</option>
-                                    <option value="Truck">Truck</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" name="quantity" id="quantity" value="1" min="1" />
-                            </td>
-                            <td>
-                                <input type="number" name="unit_price" id="unitPrice" value="0.00" step="0.01" />
-                            </td>
-                            <td>
-                                <input type="number" id="shippingCost" value="0.00" step="0.01" readonly />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div style="margin-top: 20px; text-align: right;">
-                    <strong>Subtotal (Products Only) (USD):</strong>
-                    <input type="number" id="subtotal" value="0.00" step="0.01" readonly />
-                    <br />
-                    <strong>Total Product Cost (USD):</strong>
-                    <span id="product-total">0.00</span>
-                    <br />
-                    <strong>Total Cost with Shipping (USD):</strong>
-                    <span id="total-cost">0.00</span>
-                </div>
-            </div>
-
-           <script>
-                const quantityInput = document.getElementById('quantity');
-                const unitPriceInput = document.getElementById('unitPrice');
-                const shippingTypeSelect = document.getElementById('shippingType');
-                const shippingCostInput = document.getElementById('shippingCost');
-                const productTotalSpan = document.getElementById('product-total');
-                const totalCostSpan = document.getElementById('total-cost');
-                const subtotalInput = document.getElementById('subtotal');
-
-                function calculateProductSubtotal() {
-                    let productTotal = parseFloat(unitPriceInput.value || 0) * parseFloat(quantityInput.value || 1);
-                    return productTotal;
-                }
-
-                function updateTotalCost(shippingCost = null) {
-                    const productTotal = calculateProductSubtotal();
-                    const quantity = parseFloat(quantityInput.value) || 1;
-                    const shippingUnitPrice = shippingCost !== null ? shippingCost : (parseFloat(shippingTypeSelect.value) || 0);
-                    const totalShippingCost = quantity * shippingUnitPrice;
-
-                    shippingCostInput.value = totalShippingCost.toFixed(2);
-                    productTotalSpan.textContent = productTotal.toLocaleString('en-US', {
-                        minimumFractionDigits: 2
-                    });
-                    subtotalInput.value = productTotal.toFixed(2);
-
-                    const totalWithShipping = productTotal + totalShippingCost;
-                    totalCostSpan.textContent = totalWithShipping.toLocaleString('en-US', {
-                        minimumFractionDigits: 2
-                    });
-                    saveShippingDetails();
-                }
-
-                function fetchShippingCost() {
-                    const shippingType = shippingTypeSelect.value;
-                    fetch("{{ route('shipping.update') }}", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            },
-                            body: JSON.stringify({
-                                shipping_type: shippingType
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success && data.shipping_cost !== undefined) {
-                                updateTotalCost(data.shipping_cost);
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
-                }
-
-                function saveShippingDetails() {
-                    document.getElementById('shippingTypeInput').value = shippingTypeSelect.value;
-                    document.getElementById('quantityInput').value = quantityInput.value;
-                    document.getElementById('unitPriceInput').value = unitPriceInput.value;
-                    document.getElementById('shippingCostInput').value = shippingCostInput.value;
-                    document.getElementById('totalCostInput').value = totalCostSpan.textContent.replace(',', '');
-                    document.getElementById('shippingForm').submit();
-                }
-
-                quantityInput.addEventListener('input', () => updateTotalCost());
-                unitPriceInput.addEventListener('input', () => updateTotalCost());
-                shippingTypeSelect.addEventListener('input', fetchShippingCost);
-
-                // window.onload = () => {
-                //     updateTotalCost();
-                // };
-            </script>--}}
+            </div>   
               <div class="cart-container">
                 <h3>Shipping Details</h3>
                 <form id="shippingForm" action="{{ route('shipping.store') }}" method="POST">
@@ -575,7 +445,6 @@
                     <span id="total-cost">0.00</span>
                 </div>
             </div>
-
             <script>
 const quantityInput = document.getElementById('quantity');
 const unitPriceInput = document.getElementById('unitPrice');
@@ -669,116 +538,18 @@ shippingTypeSelect.addEventListener('change', fetchShippingCost);
 };
 
 console.log("Auto-save shipping script loaded!");
-/*const quantityInput = document.getElementById('quantity');
-const unitPriceInput = document.getElementById('unitPrice');
-const shippingTypeSelect = document.getElementById('shippingType');
-const shippingCostInput = document.getElementById('shippingCost');
-const productTotalSpan = document.getElementById('product-total');
-const totalCostSpan = document.getElementById('total-cost');
-const subtotalInput = document.getElementById('subtotal');
 
- function calculateProductSubtotal() {
-    let productTotal = 0;
-    document.querySelectorAll('.total-price').forEach(item => {
-        productTotal += parseFloat(item.textContent.replace('$', '')) || 0;
-    });
-    return productTotal;
-}
-
- function updateTotalCost(shippingCost = null) {
-    const productTotal = calculateProductSubtotal();
-    const quantity = parseFloat(quantityInput.value) || 1;
-    const shippingUnitPrice = shippingCost !== null ? shippingCost : (parseFloat(unitPriceInput.value) || 0);
-    const totalShippingCost = quantity * shippingUnitPrice;
-
-    shippingCostInput.value = totalShippingCost.toFixed(2);
-    productTotalSpan.textContent = productTotal.toLocaleString('en-US', { minimumFractionDigits: 2 });
-    subtotalInput.value = productTotal.toFixed(2);
-
-    const totalWithShipping = productTotal + totalShippingCost;
-    totalCostSpan.textContent = totalWithShipping.toLocaleString('en-US', { minimumFractionDigits: 2 });
-
-     autoSaveShippingDetails();
-}
-
-// استعلام من السيرفر للحصول على تكلفة الشحن بناءً على نوع الشحن المحدد
-function fetchShippingCost() {
-    const shippingType = shippingTypeSelect.value;
-
-    fetch("{{ route('shipping.update') }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({ shipping_type: shippingType })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.shipping_cost !== undefined) {
-            updateTotalCost(data.shipping_cost);
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
- function autoSaveShippingDetails() {
-    const formData = {
-        shipping_type: shippingTypeSelect.value,
-        quantity: quantityInput.value,
-        unit_price: unitPriceInput.value,
-        shipping_cost: shippingCostInput.value,
-        total_cost: totalCostSpan.textContent.replace(',', '')
-    };
-
-     fetch("{{ route('shipping.store') }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log("Shipping details saved successfully!");
-        }
-    })
-    .catch(error => console.error('Error saving shipping details:', error));
-}
-
- const observer = new MutationObserver(() => updateTotalCost());
-document.querySelectorAll('.total-price').forEach(element => {
-    observer.observe(element, { childList: true });
-});
-
- quantityInput.addEventListener('input', () => updateTotalCost());
-unitPriceInput.addEventListener('input', () => updateTotalCost());
-shippingTypeSelect.addEventListener('change', fetchShippingCost);
-
- window.onload = () => {
-    updateTotalCost();
-};
-
-console.log("Auto-save shipping script loaded!");
-*/
 
             </script> 
-
-
             <div style="text-align: center; margin-top: 100px;">
                 <a href="{{ route('cart.order') }}" class="btn btn-primary" id="proceedToOrder"
                     style="font-size: 16px; padding: 10px 20px;">
                     Proceed to order
                 </a>
-
             </div>
         </section>
     </main>
 @endsection
-
-
 @push('scripts')
     <script>
         document.querySelectorAll('.description-input').forEach(textarea => {
@@ -926,7 +697,14 @@ console.log("Auto-save shipping script loaded!");
                         }));
                     }
                 });
-
+ const shippingForm = document.getElementById('shippingForm');
+    forms.push(fetch(shippingForm.action, {
+        method: "POST",
+        body: new FormData(shippingForm),
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    }));
                 // إرسال جميع البيانات أولاً ثم الانتقال إلى صفحة الطلب
                 Promise.all(forms).then(() => {
                     window.location.href = "{{ route('cart.order') }}";
