@@ -184,15 +184,19 @@
                                 <thead>
                                     <tr>
                                         <th>shipping type</th>
+                                        <th>Incoterm</th>
+                                        <th>Port/City</th>
                                         <th>quantity</th>
                                         <th>unit price</th>
                                         <th>shipping cost</th>
                                         <th>total cost</th>
-                                    </tr>
+                                    </tr> 
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td>{{ $shipping_type->shipping_type }}</td>
+                                        <td>{{ $shipping_type->shipping_incoterm ?? '-' }}</td>
+                                        <td>{{ $shipping_type->port_name_or_city ?? '-' }}</td>
                                         <td class="text-right">
                                             {{ $shipping_type->quantity }}
                                         </td>

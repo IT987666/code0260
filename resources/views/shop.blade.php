@@ -1,7 +1,51 @@
 @extends('layouts.app')
 
 @section('content')
+ 
 <style>
+    
+    .dropdown-container {
+        position: relative;
+        display: none;
+        width: 100%;
+    }
+    
+    .dropdown-content {
+        position: absolute;
+        width: 100%;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        max-height: 200px;
+        overflow-y: auto;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .dropdown-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f1f1f1;
+    }
+
+    .add-to-cart-btn {
+        background-color: #20bec6;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 3px;
+    }
+
+    .add-to-cart-btn:hover {
+        background-color: #20bec6;
+    }
     .description-input {
         width: 300px;
         /* زيادة العرض حسب الحاجة */
@@ -26,8 +70,7 @@
         padding: 10px;
         text-align: center;
     }
-</style>
-    <style>
+
         /* General Styles */
         body {
 
@@ -177,8 +220,37 @@
             margin-top: 80px;
             /* Resolves header overlap */
         }
-    </style>
-            <style>
+    
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .form-container {
+        width: 400px;
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    .form-header {
+        background-color: #20bec6;
+        color: white;
+        font-weight: bold;
+        padding: 8px;
+    }
+    .form-row {
+        display: flex;
+        border-bottom: 1px solid black;
+    }
+    .form-row label {
+        width: 50%;
+        padding: 8px;
+        background-color: #F8F8F8;
+        border-right: 1px solid black;
+    }
+    .form-row select, .form-row input {
+        width: 50%;
+        padding: 6px;
+        border: none;
+    }
+ 
                 .product-container {
                     width: 100%;
                     max-width: 400px;
@@ -219,353 +291,78 @@
             </style>
     <main class="pt-90">
         <section class="shop-main container">
-            <!-- Product List -->
-            <div class="product-container">
-                <h3>Products</h3>
-                <input type="text" id="searchBox" placeholder="Search products..." class="custom-input" />
+<!-- Product List -->
+<div class="product-container">
+    <h3>Products</h3>
+    <input type="text" id="searchBox" placeholder="Search products..." class="custom-input" />
 
-                <select id="productDropdown" class="custom-select">
-                    <option value="">Select a product</option>
-                    @foreach ($products as $product)
-                        <option value="{{ $product->id }}">{{ $product->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    let dropdown = document.getElementById("productDropdown");
-                    let searchBox = document.getElementById("searchBox");
-
-                    // عند الكتابة في مربع البحث
-                    searchBox.addEventListener("keyup", function() {
-                        let query = this.value.toLowerCase();
-                        let hasResults = false;
-
-                        for (let option of dropdown.options) {
-                            if (option.value === "") continue; // تخطي الخيار الأول (Select a product)
-                            let match = option.text.toLowerCase().includes(query);
-                            option.style.display = match ? "" : "none"; // إخفاء الخيارات غير المطابقة
-                            if (match) hasResults = true;
-                        }
-
-                        // فتح القائمة إذا كان هناك نتائج، وإغلاقها إذا لم يكن هناك شيء
-                        if (hasResults && query !== "") {
-                            dropdown.size = dropdown.options.length; // إظهار الخيارات المتاحة
-                            dropdown.style.display = "block"; // تأكد من إظهاره
-                        } else {
-                            dropdown.size = 1;
-                            dropdown.style.display = "none"; // إخفاء القائمة إذا لم تكن هناك نتائج
-                        }
-                    });
-
-                    // عند فقدان التركيز، يتم إغلاق القائمة
-                    searchBox.addEventListener("blur", function() {
-                        setTimeout(() => {
-                            dropdown.size = 1;
-                            dropdown.style.display = "block"; // إبقاؤه طبيعيًا
-                        }, 200);
-                    });
-
-                    // عند تحديد عنصر من القائمة
-                    dropdown.addEventListener("change", function() {
-                        searchBox.value = dropdown.options[dropdown.selectedIndex].text; // إدخال الاسم في البحث
-                        dropdown.size = 1; // إعادة الحجم الطبيعي
-                    });
-                });
-            </script>
-            <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    let dropdown = document.getElementById("productDropdown");
-                    let searchBox = document.getElementById("searchBox");
-
-                    // تحميل آخر منتج تم تحديده من localStorage
-                    let savedProduct = localStorage.getItem("selectedProduct");
-                    if (savedProduct) {
-                        dropdown.value = savedProduct;
-                    }
-
-                    // عند تغيير المنتج المختار
-                    dropdown.addEventListener("change", function() {
-                        let productId = this.value;
-                        if (!productId) return; // تجنب تنفيذ الطلب إذا لم يتم اختيار منتج
-
-                        localStorage.setItem("selectedProduct", productId); // حفظ المنتج المختار
-
-                        fetch("{{ route('cart.add') }}", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                            },
-                            body: JSON.stringify({
-                                id: productId,
-                                quantity: 1
-                            })
-                        }).then(() => window.location.replace(window.location.href));
-                    });
-
-                    // فلترة المنتجات بناءً على البحث
-                    searchBox.addEventListener("keyup", function() {
-                        let query = this.value.toLowerCase();
-                        for (let option of dropdown.options) {
-                            if (option.value === "") continue; // تجاوز الخيار الافتراضي
-                            option.style.display = option.text.toLowerCase().includes(query) ? "" : "none";
-                        }
-                    });
-                });
-            </script>
-            <!-- Cart Table -->
-            {{--<div class="cart-container">
-                <div style="height: 22px;"></div>
-
-                <h3>Selected Products</h3>
-                <span style="display: block; height: 20px;"></span>
-                <div style="height: 50px;"></div>
-
-                @if ($items->count() > 0)
-                
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
-                                <th>Description</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($items as $item)
-                                <tr>
-                                    <td>{{ $item->name }}</td>
-                                    <td>
-                                        <form method="POST"
-                                            action="{{ route('cart.price.update', ['rowId' => $item->rowId]) }}">
-                                            @csrf
-                                            @method('PUT')
-                                            <input type="number" name="price" value="{{ $item->price }}"
-                                                step="0.01" />
-                                        </form>
-                                    </td>
-                                    <td>
-                                        <form method="POST"
-                                            action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}">
-                                            @csrf
-                                            @method('PUT')
-                                            <input type="number" name="qty" value="{{ $item->qty }}"
-                                                min="1" />
-                                        </form>
-                                    </td>
-                                    <td class="total-price">${{ $item->subTotal() }}</td>
-                                    <td>
-                                        <form method="POST"
-                                            action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}"
-                                            class="description-form">
-                                            @csrf
-                                            @method('PUT')
-                                            <textarea name="description" class="description-input" data-row-id="{{ $item->rowId }}">{{ $item->options['description'] }}</textarea>
-                                        </form>
-                                    </td>
-                                    <td>
-                                        <div class="button-group">
-
-                                            <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}"
-                                                class="btn btn-primary">Edit Specifications</a>
-                                            <form method="POST"
-                                                action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger"
-                                                    style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @else
-                    <p>No items selected.</p>
-                @endif
-            </div>   
-              <div class="cart-container">
-                <h3>Shipping Details</h3>
-                <form id="shippingForm" action="{{ route('shipping.store') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="shipping_type" id="shippingTypeInput">
-                    <input type="hidden" name="quantity" id="quantityInput">
-                    <input type="hidden" name="unit_price" id="unitPriceInput">
-                    <input type="hidden" name="shipping_cost" id="shippingCostInput">
-                    <input type="hidden" name="total_cost" id="totalCostInput">
-
-                 </form>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Shipping Type</th>
-                            <th>Quantity</th>
-                            <th>Unit Price (USD)</th>
-                            <th>Shipping Cost (USD)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <select id="shippingType">
-                                    <option value="Shipping not included">Shipping not included</option>
-                                    <option value="40' HC Container">40' HC Container</option>
-                                    <option value="20' HC Container">20' HC Container</option>
-                                    <option value="OT Container">OT Container</option>
-                                    <option value="Truck">Truck</option>
-                                </select>
-                                
-                            </td>
-                            <td>
-                                <input type="number" name="quantity" id="quantity" value="1" min="1" />
-                            </td>
-                            <td>
-                                <input type="number" name="unit_price" id="unitPrice" value="0.00" step="0.01" />
-                            </td>
-                            <td>
-                                <input type="number" id="shippingCost" value="0.00" step="0.01" readonly />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div style="margin-top: 20px; text-align: right;">
-                    <strong>Subtotal (Products Only) (USD):</strong>
-                    <input type="number" id="subtotal" value="0.00" step="0.01" readonly />
-                    <br />
-                    <strong>Total Product Cost (USD):</strong>
-                    <span id="product-total">0.00</span>
-                    <br />
-                    <strong>Total Cost with Shipping (USD):</strong>
-                    <span id="total-cost">0.00</span>
+    <div id="dropdownContainer" class="dropdown-container">
+        <div id="productDropdown" class="dropdown-content">
+            @foreach ($products as $product)
+                <div class="dropdown-item" data-id="{{ $product->id }}">
+                    <span>{{ $product->name }}</span>
+                    <button class="add-to-cart-btn" data-id="{{ $product->id }}">Add</button>
                 </div>
-            </div>
-            <script>
-const quantityInput = document.getElementById('quantity');
-const unitPriceInput = document.getElementById('unitPrice');
-const shippingTypeSelect = document.getElementById('shippingType');
-const shippingCostInput = document.getElementById('shippingCost');
-const productTotalSpan = document.getElementById('product-total');
-const totalCostSpan = document.getElementById('total-cost');
-const subtotalInput = document.getElementById('subtotal');
+            @endforeach
+        </div>
+    </div>
+</div>
 
- function calculateProductSubtotal() {
-    let productTotal = 0;
-    document.querySelectorAll('.total-price').forEach(item => {
-        productTotal += parseFloat(item.textContent.replace('$', '')) || 0;
-    });
-    return productTotal;
-}
+<script>
 document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById('proceedToOrder').addEventListener('click', function(event) {
-        event.preventDefault(); // منع الانتقال التلقائي
+    let searchBox = document.getElementById("searchBox");
+    let dropdownContainer = document.getElementById("dropdownContainer");
+    let productDropdown = document.getElementById("productDropdown");
 
-        // تحديث القيم في الحقول المخفية
-        document.getElementById('shippingTypeInput').value = document.getElementById('shippingType').value;
-        document.getElementById('quantityInput').value = document.getElementById('quantity').value;
-        document.getElementById('unitPriceInput').value = document.getElementById('unitPrice').value;
-        document.getElementById('shippingCostInput').value = document.getElementById('shippingCost').value;
-        document.getElementById('totalCostInput').value = document.getElementById('total-cost').textContent.replace(',', '');
+    // إظهار القائمة عند النقر على حقل البحث
+    searchBox.addEventListener("focus", function() {
+        dropdownContainer.style.display = "block";
+    });
 
-        const shippingForm = document.getElementById('shippingForm');
-        
-        // إرسال النموذج
-        shippingForm.submit();
+    // إخفاء القائمة عند النقر خارجها
+    document.addEventListener("click", function(event) {
+        if (!dropdownContainer.contains(event.target) && event.target !== searchBox) {
+            dropdownContainer.style.display = "none";
+        }
+    });
+
+    // البحث داخل القائمة
+    searchBox.addEventListener("keyup", function() {
+        let query = this.value.toLowerCase();
+        let items = productDropdown.getElementsByClassName("dropdown-item");
+        let hasResults = false;
+
+        for (let item of items) {
+            let match = item.textContent.toLowerCase().includes(query);
+            item.style.display = match ? "flex" : "none";
+            if (match) hasResults = true;
+        }
+
+        // إظهار القائمة فقط إذا كان هناك نتائج
+        dropdownContainer.style.display = hasResults ? "block" : "none";
+    });
+
+    // إضافة المنتج عند النقر على الزر
+    productDropdown.addEventListener("click", function(event) {
+        if (event.target.classList.contains("add-to-cart-btn")) {
+            let productId = event.target.getAttribute("data-id");
+
+            fetch("{{ route('cart.add') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    id: productId,
+                    quantity: 1
+                })
+            }).then(() => window.location.replace(window.location.href));
+        }
     });
 });
-
- function updateTotalCost(shippingCost = null) {
-    const productTotal = calculateProductSubtotal();
-    const quantity = parseFloat(quantityInput.value) || 1;
-    const shippingUnitPrice = shippingCost !== null ? shippingCost : (parseFloat(unitPriceInput.value) || 0);
-    const totalShippingCost = quantity * shippingUnitPrice;
-
-    shippingCostInput.value = totalShippingCost.toFixed(2);
-    productTotalSpan.textContent = productTotal.toLocaleString('en-US', { minimumFractionDigits: 2 });
-    subtotalInput.value = productTotal.toFixed(2);
-
-    const totalWithShipping = productTotal + totalShippingCost;
-    totalCostSpan.textContent = totalWithShipping.toLocaleString('en-US', { minimumFractionDigits: 2 });
-
-    autoSaveShippingDetails();
-}
-
- function fetchShippingCost() {
-    const shippingType = shippingTypeSelect.value;
-
-    fetch("{{ route('shipping.update') }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({ shipping_type: shippingType })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.shipping_cost !== undefined) {
-            updateTotalCost(data.shipping_cost);
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
- function autoSaveShippingDetails() {
-    const formData = {
-        shipping_type: shippingTypeSelect.value,
-        quantity: quantityInput.value,
-        unit_price: unitPriceInput.value,
-        shipping_cost: shippingCostInput.value,
-        total_cost: totalCostSpan.textContent.replace(',', '')
-    };
- 
-    fetch("{{ route('shipping.store') }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log("Shipping details saved successfully!");
-        }
-    })
-    .catch(error => console.error('Error saving shipping details:', error));
-}
-
- const observer = new MutationObserver(() => updateTotalCost());
-document.querySelectorAll('.total-price').forEach(element => {
-    observer.observe(element, { childList: true });
-});
-
- quantityInput.addEventListener('input', () => updateTotalCost());
-unitPriceInput.addEventListener('input', () => updateTotalCost());
-shippingTypeSelect.addEventListener('change', fetchShippingCost);
-
- window.onload = () => {
-    updateTotalCost();
-};
-
-console.log("Auto-save shipping script loaded!");
-
-
-            </script> 
-           <div style="text-align: center; margin-top: 100px;">
-            <button type="button" class="btn btn-primary" id="proceedToOrder" style="font-size: 16px; padding: 10px 20px;">
-                Proceed to Order
-            </button>
-        </div>--}}
-        <!-- Cart Table -->
+</script>
+      <!-- Cart Table -->
 <div class="cart-container">
     <div style="height: 22px;"></div>
     <h3>Selected Products</h3>
@@ -638,52 +435,86 @@ console.log("Auto-save shipping script loaded!");
         <input type="hidden" name="unit_price" id="unitPriceInput">
         <input type="hidden" name="shipping_cost" id="shippingCostInput">
         <input type="hidden" name="total_cost" id="totalCostInput">
-    </form>
+     
 
-    <table>
-        <thead>
-            <tr>
-                <th>Shipping Type</th>
-                <th>Quantity</th>
-                <th>Unit Price (USD)</th>
-                <th>Shipping Cost (USD)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <select id="shippingType">
-                        <option value="Shipping not included">Shipping not included</option>
-                        <option value="40' HC Container">40' HC Container</option>
-                        <option value="20' HC Container">20' HC Container</option>
-                        <option value="OT Container">OT Container</option>
-                        <option value="Truck">Truck</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="number" name="quantity" id="quantity" value="1" min="1" />
-                </td>
-                <td>
-                    <input type="number" name="unit_price" id="unitPrice" value="0.00" step="0.01" />
-                </td>
-                <td>
-                    <input type="number" id="shippingCost" value="0.00" step="0.01" readonly />
-                </td>
-            </tr>
-        </tbody>
-    </table>
 
-    <div style="margin-top: 20px; text-align: right;">
-        <strong>Subtotal (Products Only) (USD):</strong>
-        <input type="number" id="subtotal" value="0.00" step="0.01" readonly />
-        <br />
-        <strong>Total Product Cost (USD):</strong>
-        <span id="product-total">0.00</span>
-        <br />
-        <strong>Total Cost with Shipping (USD):</strong>
-        <span id="total-cost">0.00</span>
+        <table>
+            <thead>
+                <tr>
+                    <th>Shipping Type</th>
+                    <th>Quantity</th>
+                    <th>Unit Price (USD)</th>
+                    <th>Shipping Cost (USD)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <select id="shippingType">
+                            <option value="Shipping not included">Shipping not included</option>
+                            <option value="40' HC Container">40' HC Container</option>
+                            <option value="20' HC Container">20' HC Container</option>
+                            <option value="OT Container">OT Container</option>
+                            <option value="Truck">Truck</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="quantity" id="quantity" value="1" min="1" />
+                    </td>
+                    <td>
+                        <input type="number" name="unit_price" id="unitPrice" value="0.00" step="0.01" />
+                    </td>
+                    <td>
+                        <input type="number" id="shippingCost" value="0.00" step="0.01" readonly />
+                    </td>
+                </tr>
+               <!-- الصف الخاص بإجمالي تكلفة المنتج -->
+               <div style="margin-top: 20px; text-align: right;">
+                <input type="hidden" type="number" id="subtotal" value="0.00" step="0.01" readonly />
+                <br />
+             
+            </div>
+        <tr>
+            <td colspan="2" style="text-align: left;"><strong>Total Product Cost (USD):</strong></td>
+            <td colspan="2"><span id="product-total">0.00</span></td>
+        </tr>
+        <!-- الصف الخاص بالإجمالي مع الشحن -->
+        <tr>
+            <td colspan="2" style="text-align: left;"><strong>Total Cost with Shipping (USD):</strong></td>
+            <td colspan="2"><span id="total-cost">0.00</span></td>
+        </tr>
+    </tbody>
+</table>
+        
+    <div class="form-container">
+        <div class="form-header">Enter Project Information</div>
+        
+        <div class="form-row">
+            <label for="shipping_incoterm">Shipping Incoterm:</label>
+            <select id="shipping_incoterm" name="shipping_incoterm">
+                <option value="">Select Incoterm</option>
+                <option value="EXW">EXW</option>
+                <option value="FCA">FCA</option>
+                <option value="FOB">FOB</option>
+                <option value="CIF">CIF</option>
+                <option value="CFR">CFR</option>
+                <option value="DDP">DDP</option>
+                <option value="DDU">DDU</option>
+            </select>
+        </div>
+        
+        <div class="form-row">
+            <label for="port_name_or_city">Port Name or City:</label>
+            <input type="text" id="port_name_or_city" name="port_name_or_city">
+        </div>
+       
+        
     </div>
+   
+</form>
+   
 </div>
+
 
 <script>
 const quantityInput = document.getElementById('quantity');

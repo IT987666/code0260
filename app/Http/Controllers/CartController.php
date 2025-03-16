@@ -281,7 +281,7 @@ class CartController extends Controller
     {
 
         $user_id = Auth::user()->id;
-        $old_order_id = Order::query()->where('user_id', $user_id)->latest()->first()->id;
+        $old_order_id = Order::query()->where('user_id', $user_id)->latest()->first()?->id;
         $address = Address::query()->where('user_id', $user_id)->latest()->first();
         $request->validate([
             'extra' => 'required',
@@ -602,7 +602,7 @@ class CartController extends Controller
             'base64EncodeImageA' => [$this, 'base64EncodeImageA'], // Pass the image encoding function
         ]);
 
-        Cart::instance('cart')->destroy();
+         Cart::instance('cart')->destroy();
 
         return $pdf->download('order_' . $order->id . '.pdf');
     }
@@ -672,6 +672,8 @@ class CartController extends Controller
             'unit_price' => 'required|numeric|min:0',
             'shipping_cost' => 'required|numeric|min:0',
             'total_cost' => 'required|numeric|min:0',
+            'shipping_incoterm' => 'nullable|string',
+            'port_name_or_city' => 'nullable|string',
         ]);
     
         // تحديث أو إنشاء تفاصيل الشحن
@@ -683,6 +685,8 @@ class CartController extends Controller
             'unit_price' => $request->unit_price,
             'shipping_cost' => $request->shipping_cost,
             'total_cost' => $request->total_cost,
+            'shipping_incoterm' => $request->shipping_incoterm,
+            'port_name_or_city' => $request->port_name_or_city,
         ]);
     
         return redirect()->back()->with('shipping_details', $shipping_details);

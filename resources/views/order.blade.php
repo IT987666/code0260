@@ -25,7 +25,7 @@
         border: 1px solid #ddd;
         padding: 12px 16px;
         font-size: 16px;
-        background-color: #f9f9f9;
+        background-color: #f9f9f9; 
         transition: all 0.3s ease;
     }
 
@@ -291,7 +291,7 @@
                                     <div id="preview-container" class="preview-container"></div>
                                 </div>
                             </fieldset>
-
+                                                     
                             <!-- Preview of selected images as a grid -->
                             <div id="image-preview" class="my-3"></div>
 
