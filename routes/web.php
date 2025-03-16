@@ -27,6 +27,8 @@ Route::post('/task-list/add', [CartController::class, 'add_to_cart'])->name('car
 Route::put('/task-list/increase-quantity/{rowId}', [CartController::class, 'increase_cart_quantity'])->name('cart.qty.increase');
 Route::put('/task-list/decrease-quantity/{rowId}', [CartController::class, 'decrease_cart_quantity'])->name('cart.qty.decrease');
 Route::put('/task-list/update-price/{rowId}', [CartController::class, 'update_price'])->name('cart.price.update');
+Route::put('/cart/area/{rowId}', [CartController::class, 'update_area'])->name('cart.area.update');
+
 Route::put('task-list/qty/update/{rowId}', [CartController::class, 'update_qty'])->name('cart.qty.update');
 Route::post('/task-list/duplicate/{rowId}', [CartController::class, 'duplicateItem'])->name('cart.duplicate');
 

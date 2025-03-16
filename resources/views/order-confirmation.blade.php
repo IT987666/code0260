@@ -67,7 +67,7 @@
                     </div>
                     <div class="order-info__item">
                         <label>Total</label>
-                        <span>${{ number_format((float) $order->subtotal, 2, '.', ',') }}</span>
+                        <span>${{ $shipping_type->total_cost }}</span>
                     </div>
                 </div>
 
@@ -135,7 +135,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($orderItems as $item)
+                                 @foreach ($orderItems as $item)
                                     <tr>
                                         <td>{{ $item->product->name }} x {{ $item->quantity }}</td>
                                         <td>
@@ -250,7 +250,7 @@
         </section>
     </main>
 @endsection
-@push('scripts')
+ @push('scripts')
     <script>
         function disableButton(event) {
             const button = event.currentTarget;
@@ -262,3 +262,4 @@
         }
     </script>
 @endpush
+ 

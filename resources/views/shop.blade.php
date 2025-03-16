@@ -288,6 +288,51 @@
                     cursor: pointer;
                     background: white;
                 }
+                .cart-container {
+    width: 120%; /* تحديد عرض مناسب للجدولين */
+    margin: auto; /* جعل الجدولين في المنتصف */
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed; /* يجعل الأعمدة تحتفظ بحجم متساوٍ */
+}
+
+th, td {
+    white-space: nowrap; /* منع النصوص من الانكسار */
+    overflow: hidden;
+    text-overflow: ellipsis; /* إضافة "..." عند النصوص الطويلة */
+}
+
+td input, td textarea {
+    width: 90%; /* جعل الحقول داخل الجدول متناسبة */
+    max-width: 120px; /* تحديد حد أقصى للعرض */
+}
+
+td .description-input {
+    width: 90%; /* التأكد من أن حقل الوصف لا يمتد خارج الجدول */
+    max-width: 250px;
+}
+
+.cart-container:last-child {
+    margin-top: 40px; /* إضافة مسافة بين الجدولين */
+}
+
+@media (max-width: 768px) {
+    .cart-container {
+        width: 100%;
+    }
+    
+    table {
+        font-size: 12px; /* تصغير حجم النصوص على الشاشات الصغيرة */
+    }
+
+    td input, td textarea {
+        max-width: 100px;
+    }
+}
+
             </style>
     <main class="pt-90">
         <section class="shop-main container">
@@ -370,17 +415,28 @@ document.addEventListener("DOMContentLoaded", function() {
     <div style="height: 50px;"></div>
 
     @if ($items->count() > 0)
-        <table>
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th>Description</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
+    <table>
+        <colgroup>
+            <col style="width: 15%;"> <!-- المنتج -->
+            <col style="width: 15%;"> <!-- السعر -->
+            <col style="width: 15%;"> <!-- المساحة -->
+            <col style="width: 15%;"> <!-- الكمية -->
+            <col style="width: 20%;"> <!-- المجموع -->
+            <col style="width: 30%;"> <!-- الوصف (أعرض) -->
+            <col style="width: 20%;"> <!-- الإجراءات (أعرض) -->
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Area</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    
             <tbody>
                 @foreach ($items as $item)
                     <tr>
@@ -392,6 +448,15 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <input type="number" name="price" value="{{ $item->price }}" step="0.01" />
                             </form>
                         </td>
+                         
+                        <td>
+                            <form method="POST" action="{{ route('cart.area.update', ['rowId' => $item->rowId]) }}">
+                                @csrf
+                                @method('PUT')
+                                <input type="text" name="area" value="{{ $item->options['area'] ?? '' }}" />
+                            </form>
+                        </td>
+                        
                         <td>
                             <form method="POST" action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}">
                                 @csrf
@@ -734,6 +799,8 @@ console.log("Auto-save shipping script loaded!");
                 var row = $(this).closest("tr"); // Get the closest table row
                 var priceInput = $(this); // The input field
                 var price = parseFloat(priceInput.val()) || 0;
+                var area = parseFloat(priceInput.val()) || 0;
+
                 var quantity = parseInt(row.find("input[name='qty']").val()) || 1;
                 var total = (price * quantity).toFixed(2); // Calculate total
 
@@ -761,6 +828,8 @@ console.log("Auto-save shipping script loaded!");
                 var row = $(this).closest("tr"); // Get the closest table row
                 var quantityInput = $(this);
                 var price = parseFloat(row.find("input[name='price']").val()) || 0;
+                var area = parseFloat(row.find("input[name='area']").val()) || 0;
+
                 var quantity = parseInt(quantityInput.val()) || 1;
                 var total = (price * quantity).toFixed(2); // Calculate total
 
@@ -784,6 +853,32 @@ console.log("Auto-save shipping script loaded!");
                 });
             });
         });
+        $(document).ready(function() {
+    // تحديث الحقل Area عندما يفقد الحقل التركيز
+    $("input[name='area']").on("blur", function() {
+        var row = $(this).closest("tr"); // تحديد الصف الحالي
+        var areaInput = $(this);
+        var area = areaInput.val(); // قراءة القيمة المدخلة
+
+        // إرسال الطلب عبر AJAX لتحديث القيمة في الداتا بيز
+        $.ajax({
+            url: areaInput.closest("form").attr("action"),
+            method: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                _method: "PUT",
+                area: area
+            },
+            success: function(response) {
+                console.log("Area updated successfully", response);
+            },
+            error: function(error) {
+                console.log("Error updating area", error);
+            }
+        });
+    });
+});
+
     </script>
 @endpush
 @push('scripts')

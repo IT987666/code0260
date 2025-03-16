@@ -23,6 +23,7 @@ class OrderItem extends Model
         'description',
         'customers_responsibilities',
         'companies_responsibilities',
+         'area'
     ];
 
     /**

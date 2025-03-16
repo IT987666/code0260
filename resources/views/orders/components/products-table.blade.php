@@ -1,9 +1,22 @@
 
+<style>
+    /* جعل حقل Area أعرض */
+    .price-offer-table td:nth-child(3), .price-offer-table th:nth-child(3) {
+        width: 150px; /* تغيير هذا الرقم لتعديل العرض كما تريد */
+    }
+
+    /* جعل النص في صف Total بالخط العريض */
+    .total-row td {
+        font-weight: bold;
+    }
+</style>
+
 <table class="price-offer-table">
     <thead>
         <tr style="background-color: #20bec6; color:black">
             <th>Product Description</th>
             <th>Quantity</th>
+            <th>Area (m²)</th>
             <th>Unit Price (USD)</th>
             <th>Total Amount (USD)</th>
         </tr>
@@ -13,19 +26,18 @@
             <tr>
                 <td>{{ $cartItem->description ?? 'No description available' }}</td>
                 <td>{{ $cartItem->quantity }}</td>
+                <td>{{ $cartItem->area }}</td>
                 <td>${{ number_format($cartItem->price, 2, '.', ',') }}</td>
                 <td>${{ number_format($cartItem->quantity * $cartItem->price, 2, '.', ',') }}</td>
             </tr>
         @endforeach
-        <!-- صف الإجمالي -->
-        <tr style="background-color: #f8f9fa; font-weight: bold;">
-            <td style="text-align: center;">Total:</td> <!-- جعل النص في المنتصف -->
-            <td></td> <!-- عمود الكمية -->
-            <td></td> <!-- عمود السعر -->
-            <td>${{ number_format($order->subtotal, 2, '.', ',') }}</td>
+        <tr class="total-row">
+            <td colspan="3" style="text-align: right;">Total:</td>
+            <td colspan="2" style="text-align: center;">${{ number_format($order->subtotal, 2, '.', ',') }}</td>
         </tr>
     </tbody>
 </table>
+
 @if ($shipping_type)
     <h3>Shipping Type</h3>
     <table class="checkout-cart-items" style="width: 100%; border-collapse: collapse; border: 1px solid black;">

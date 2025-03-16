@@ -183,6 +183,8 @@
                             <tr>
                                 <th>Product</th>
                                 <th>Price</th>
+                                <th>Area</th>
+
                                 <th>Quantity</th>
                                 <th>Total</th>
                                 <th>Product Description</th>
@@ -206,7 +208,19 @@
                                                 onkeydown="if(event.key === 'Enter'){this.form.submit();}">
                                         </form>
                                     </td>
-                                    
+                                    <td>
+                                        <form method="POST" action="{{ route('cart.area.update', ['rowId' => $item->rowId]) }}" style="display:inline;">
+                                            @csrf
+                                            @method('PUT')
+                                            <input 
+                                                type="number" 
+                                                name="area" 
+                                                value="{{ $item->area }}" 
+                                                step="0.01" 
+                                                class="price-input" 
+                                                onkeydown="if(event.key === 'Enter'){this.form.submit();}">
+                                        </form>
+                                    </td>
                                     <td>
                                         <form method="POST" action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}" style="display:inline;">
                                             @csrf
