@@ -332,6 +332,34 @@ td .description-input {
         max-width: 100px;
     }
 }
+/* ضبط تنسيق العناصر داخل القائمة */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap; /* تأكد من أن النص لا يلتف افتراضيًا */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%; /* تحديد عرض العنصر */
+}
+
+/* في حال أردت أن يلتف النص على عدة أسطر بدلًا من الاقتصاص */
+.dropdown-item span {
+    max-width: 70%; /* تحديد أقصى عرض للنص */
+    word-wrap: break-word; /* السماح للنص بالالتفاف */
+    overflow-wrap: break-word;
+    font-size: 14px; /* تصغير الخط إذا لزم الأمر */
+}
+
+/* زر الإضافة يبقى بجانب النص دون أن يختفي */
+.add-to-cart-btn {
+    flex-shrink: 0; /* يمنع الزر من التصغير */
+    margin-left: 10px; /* إضافة مسافة بين النص والزر */
+    padding: 5px 10px;
+    font-size: 14px;
+}
 
             </style>
     <main class="pt-90">
@@ -716,12 +744,59 @@ window.onload = () => {
 
 console.log("Auto-save shipping script loaded!");
 </script>
-
 <div style="text-align: center; margin-top: 100px;">
     <button type="button" class="btn btn-primary" id="proceedToOrder" style="font-size: 16px; padding: 10px 20px;">
         Proceed to Order
     </button>
 </div>
+
+<!-- شاشة التحميل -->
+<div id="loadingScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; flex-direction: column;">
+    <div class="spinner"></div>
+    <p style="color: white; font-size: 18px; margin-top: 10px;">Loading, please wait...</p>
+</div>
+
+<!-- أنيميشن التحميل -->
+<style>
+  .spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid transparent;
+    border-top: 5px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    position: relative;
+}
+
+/* تأثير الدوران */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+        border-top-color: #ff5733; /* لون البداية */
+    }
+    50% {
+        border-top-color: #33ff57; /* لون متغير أثناء الدوران */
+    }
+    100% {
+        transform: rotate(360deg);
+        border-top-color: #5733ff; /* لون النهاية */
+    }
+}
+
+</style>
+
+<script>
+    document.getElementById("proceedToOrder").addEventListener("click", function () {
+        let loadingScreen = document.getElementById("loadingScreen");
+        loadingScreen.style.display = "flex"; // إظهار شاشة التحميل بعد الضغط فقط
+        loadingScreen.style.position = "fixed"; // تأكيد أن الشاشة تغطي الصفحة
+
+        setTimeout(function () {
+            window.location.href = "{{ route('cart.order') }}"; // غير الرابط لصفحة الطلب الفعلية
+        }, 3000);
+    });
+</script>
 
         
         </section>
