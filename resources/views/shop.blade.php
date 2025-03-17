@@ -864,13 +864,17 @@
 @push('scripts')
     <script>
         document.querySelectorAll('.description-input').forEach(textarea => {
-            textarea.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
+            let typingTimer;
+            const typingDelay = 1000; 
+
+            textarea.addEventListener('input', function() {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => {
                     this.closest('.description-form').submit();
-                }
+                }, typingDelay);
             });
         });
+
         document.getElementById('orderby').addEventListener('change', function() {
             this.form.submit();
         });
