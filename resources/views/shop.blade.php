@@ -463,7 +463,7 @@
                 });
             </script>
             <!-- Cart Table -->
-            <div class="cart-container">
+            {{--<div class="cart-container">
                 <div style="height: 22px;"></div>
                 <h3>Selected Products</h3>
                 <span style="display: block; height: 20px;"></span>
@@ -555,8 +555,92 @@
                 @else
                     <p>No items selected.</p>
                 @endif
-            </div>
-
+            </div>--}}
+      <!-- Cart Table -->
+      <div class="cart-container">
+        <div style="height: 22px;"></div>
+        <h3>Selected Products</h3>
+        <span style="display: block; height: 20px;"></span>
+        <div style="height: 50px;"></div>
+    
+        <table>
+            <colgroup>
+                <col style="width: 15%;"> <!-- المنتج -->
+                <col style="width: 15%;"> <!-- السعر -->
+                <col style="width: 15%;"> <!-- المساحة -->
+                <col style="width: 15%;"> <!-- الكمية -->
+                <col style="width: 20%;"> <!-- المجموع -->
+                <col style="width: 30%;"> <!-- الوصف (أعرض) -->
+                <col style="width: 20%;"> <!-- الإجراءات (أعرض) -->
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Area</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+    
+            <tbody>
+                @if ($items->count() > 0)
+                    @foreach ($items as $item)
+                        <tr>
+                            <td>{{ $item->name }}</td>
+                            <td>
+                                <form method="POST" action="{{ route('cart.price.update', ['rowId' => $item->rowId]) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="number" name="price" value="{{ $item->price }}" step="0.01" />
+                                </form>
+                            </td>
+    
+                            <td>
+                                <form method="POST" action="{{ route('cart.area.update', ['rowId' => $item->rowId]) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="text" name="area" value="{{ $item->options['area'] ?? '' }}" />
+                                </form>
+                            </td>
+    
+                            <td>
+                                <form method="POST" action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="number" name="qty" value="{{ $item->qty }}" min="1" />
+                                </form>
+                            </td>
+                            <td class="total-price">${{ $item->subTotal() }}</td>
+                            <td>
+                                <form method="POST" action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}" class="description-form">
+                                    @csrf
+                                    @method('PUT')
+                                    <textarea name="description" class="description-input" data-row-id="{{ $item->rowId }}">{{ $item->options['description'] }}</textarea>
+                                </form>
+                            </td>
+                            <td>
+                                <div class="button-group">
+                                    <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}" class="btn btn-primary">Edit Specifications</a>
+                                    <form method="POST" action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger" style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 20px;">No items selected.</td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
+    </div>
             <div class="cart-container">
                 <h3>Shipping Details</h3>
                 <form id="shippingForm" action="{{ route('shipping.store') }}" method="POST">

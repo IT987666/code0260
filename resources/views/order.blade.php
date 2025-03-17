@@ -295,12 +295,13 @@
                             <!-- Preview of selected images as a grid -->
                             <div id="image-preview" class="my-3"></div>
 
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary"
-                                    style="background-color: #20bec6; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; transition: transform 0.3s ease, background-color 0.3s ease;">
-                                    Proceed To Order
-                                </button>
-                            </div>
+                           
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary"
+                                style="background-color: #20bec6; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; transition: transform 0.3s ease, background-color 0.3s ease;">
+                                Proceed To Order
+                            </button>
                         </div>
                     </div>
 
