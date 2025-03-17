@@ -53,8 +53,8 @@ class CartController extends Controller
             'name' => $product->name,
             'qty' => $request->quantity,
             'price' => $price,
-            
- 
+
+
             'options' => [
                 'unique_key' => $uniqueIdentifier, // Force a unique option to make the item distinct
                 'description' => $product->description,
@@ -87,7 +87,7 @@ class CartController extends Controller
 
             'name' => $item->name,
             'qty' => $item->qty,
-            
+
             'price' => $item->price,
             'area' => $item->area,
 
@@ -96,7 +96,7 @@ class CartController extends Controller
 
         return redirect()->back()->with('success', 'Product duplicated successfully!');
     }
-   public function increase_cart_quantity($rowId)
+    public function increase_cart_quantity($rowId)
     {
         $product = Cart::instance('cart')->get($rowId);
         $qty = $product->qty + 1;
@@ -205,7 +205,7 @@ class CartController extends Controller
             'total' => $total
         ]);
     }
-   private function generateReferenceCode()
+    private function generateReferenceCode()
     {
         // الحصول على تاريخ اليوم
         $date = Carbon::now()->format('ymd');
@@ -332,9 +332,9 @@ class CartController extends Controller
                 'product_id' => $item->id,
                 'order_id' => $order->id,
                 'price' => $item->price,
-                 'area' => $item->options['area'] ?? null,
+                'area' => $item->options['area'] ?? null,
 
- 
+
                 'product_name' => $product->name,
                 'quantity' => $item->qty,
                 'description' => $item->options['description'] ?? null,
@@ -425,18 +425,18 @@ class CartController extends Controller
         $request->validate([
             'area' => 'required|string|max:255'
         ]);
-    
+
         // تحديث `area`
         Cart::instance('cart')->update($rowId, [
             'options' => array_merge(Cart::get($rowId)->options->toArray(), [
                 'area' => $request->area
             ])
         ]);
-    
+
         return redirect()->back()->with('success', 'Area updated successfully!');
     }
-    
-      public function update_qty(Request $request, $rowId)
+
+    public function update_qty(Request $request, $rowId)
     {
         // التحقق من صحة الكمية
         $validated = $request->validate([
@@ -481,7 +481,7 @@ class CartController extends Controller
         $validated = $request->validate([
             'qty' => 'required|integer|min:1',  // التحقق من الكمية
             'price' => 'required|numeric|min:0',  // التحقق من السعر
- 
+
             'description' => 'nullable|string',  // التحقق من الوصف
             'companies_responsibilities' => 'nullable|string',  // التحقق من الوصف
             'customers_responsibilities' => 'nullable|string',  // التحقق من الوصف
@@ -515,14 +515,14 @@ class CartController extends Controller
             'qty' => $validated['qty'],
             'rowId' => $rowId,
             'price' => $validated['price'],
-             
+
 
             'options' => $updatedOptions,
         ]);
 
         return redirect()->route('shop.index')->with('success', 'Cart item updated successfully!');
     }
-   private function encodeImages($images)
+    private function encodeImages($images)
     {
         if (is_array($images)) {
             return json_encode($images);
@@ -538,7 +538,7 @@ class CartController extends Controller
         }
         return null;
     }
-      public function base64EncodeImageA($image)
+    public function base64EncodeImageA($image)
     {
         // مسار الصورة الكامل
         $fullPath = public_path('storage/' . $image);
@@ -578,11 +578,11 @@ class CartController extends Controller
             'base64EncodeImageA' => [$this, 'base64EncodeImageA'], // Pass the image encoding function
         ]);
 
-          Cart::instance('cart')->destroy();
+        Cart::instance('cart')->destroy();
 
         return $pdf->download('order_' . $order->id . '.pdf');
     }
-  public function updateDescription($rowId, Request $request)
+    public function updateDescription($rowId, Request $request)
     {
         // التحقق من صحة المدخلات
         $request->validate([
@@ -616,27 +616,27 @@ class CartController extends Controller
             'shipping_type' => 'required|string',
             'shipping_cost' => 'required|numeric|min:0',
         ]);
-    
+
         // تخزين بيانات الشحن في الـ session
         Session::put('shipping_type', $request->shipping_type);
         Session::put('shipping_cost', $request->shipping_cost);
-    
+
         return response()->json(['success' => 'Shipping updated successfully']);
     }
-    
+
     public function store(Request $request)
     {
         // جلب المستخدم الحالي
         $user_id = Auth::user()->id;
-    
+
         // جلب آخر طلب للمستخدم
         $order = Order::where('user_id', $user_id)->latest()->first();
-    
+
         if (!$order) {
             // في حال ما في طلب، يمكنك إعطاء رد مناسب
             return redirect()->back()->withErrors(['message' => 'No orders found for the user']);
         }
-    
+
         // التحقق من صحة البيانات
         $request->validate([
             'shipping_type' => 'required|string',
@@ -647,7 +647,7 @@ class CartController extends Controller
             'shipping_incoterm' => 'nullable|string',
             'port_name_or_city' => 'nullable|string',
         ]);
-    
+
         // تحديث أو إنشاء تفاصيل الشحن
         $shipping_details = ShippingDetail::updateOrCreate([
             'order_id' => $order->id,
@@ -660,8 +660,7 @@ class CartController extends Controller
             'shipping_incoterm' => $request->shipping_incoterm,
             'port_name_or_city' => $request->port_name_or_city,
         ]);
-    
+
         return redirect()->back()->with('shipping_details', $shipping_details);
     }
-    
 }
