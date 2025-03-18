@@ -159,9 +159,27 @@
         .logo {
             width: 170px; /* Increased the width */
             height: auto;
-            margin-bottom: 40px; /* Added space between the logo and the content */
+     margin-top:    -20px;    /* المسافة من الأعلى */
+    margin-bottom: -20px; /* المسافة من الأسفل */
+     margin-right: 60px;  /* المسافة من اليمين */
+     margin-left: 30px; /* حرك اللوجو أكثر نحو اليمين */
+
+
+
         }
-    
+        .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; /* عرض الشاشة بالكامل */
+    height: 100vh; /* ارتفاع الشاشة بالكامل */
+    background: url('{{ public_path('images/logo/enhanced_photo.png') }}') no-repeat center center;
+    background-size: contain; /* أو جرّب cover */
+    opacity: 0.1; /* يمكنك تعديل الشفافية حسب الحاجة */
+    z-index: -1;
+}
+
+
         header {
             position: fixed;
             top: -10;
@@ -179,6 +197,7 @@
     <header>
         <img src="{{ public_path('images/logo/logo.png') }}" alt="Company Logo" class="logo">
     </header>
+    <div class="background"></div>
 
     <div class="container">
         @yield('intro')

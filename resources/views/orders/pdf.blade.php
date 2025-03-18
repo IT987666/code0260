@@ -1,101 +1,174 @@
 @extends('layouts.offer')
 {{-- Add this CSS within a <style> tag --}}
-<style>
-    @page {
-        margin-bottom: 3px;
-        /* Adjust based on footer height */
-    }
-
-    .contact-info {
-        margin-top: 5px;
-        /* يضيف مسافة بين الصورة والنص */
-    }
-
-
-    .pdf-footer {
-        position: fixed;
-        bottom: -40px;
-        /* تقليل المسافة بين الفوتر والحافة السفلية */
-        left: 0;
-        right: 0;
-        text-align: center;
-        font-size: 9px;
-        /* تقليل حجم النص */
-        line-height: 1.2;
-        /* تصغير المسافات بين الأسطر */
-        padding: 5px 0;
-        /* تقليل الحشو داخل الفوتر */
-    }
-
-    .pdf-footer img {
-        width: 700;
-        /* Adjust size as needed */
-        height: auto;
-        display: block;
-        margin: 0 auto;
-    }
-
-    .pdf-footer .page-number::after {
-        content: counter(page);
-    }
-
-    .pdf-footer .total-pages:after {
-        content: counter(pages);
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th,
-    td {
-        border: 1px solid black !important;
-        padding: 8px;
-        text-align: left;
-    }
-
-    th {
-        background-color: #f2f2f2 !important;
-        font-weight: bold;
-    }
-
-    .intro-container {
-        font-size: 14px;
-        line-height: 1.6;
-    }
-
-    .intro-container p {
-        margin: 5px 0;
-        display: flex;
-        align-items: baseline;
-        /* يجعل النصوص بنفس الخط */
-    }
-
-    .intro-container strong {
-        font-weight: bold;
-        display: inline-block;
-        width: 120px;
-        /* ضبط عرض العناوين */
-    }
-
-    .price-offer-table th {
-        background-color: #20bec6 !important;
-        color: black !important;
-        text-align: center;
-    }
     <style>
-    .checkout-cart-items thead tr {
-        background-color: #20bec6 !important;
-        color: black !important;
-    }
+        @page {
+            margin-bottom: 3px;
+            /* Adjust based on footer height */
+     background: url('{{ public_path('images/logo/logo.png') }}') no-repeat center center;
+    background-size: cover; /* لجعل الصورة تغطي الصفحة بالكامل */
 
- 
-</style>
+        }
+    
+        /* نوع الخط العام */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #000;
+        }
+        .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('{{ public_path('images/logo/enhanced_photo.png') }}') no-repeat center center;
+    background-size: cover;
+    opacity: 0.1; /* تقليل الوضوح لمحاكاة الشفافية */
+    z-index: -1;
+}
 
+        /* تنسيق العناوين الرئيسية */
+        h1, .main-title {
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+    
+        /* تنسيق العناوين الفرعية */
+        h2, .sub-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+    
+        /* تنسيق النصوص العادية */
+        p, .body-text {
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 5px 0;
+        }
+    
+        /* تنسيق القوائم */
+        ul {
+            padding-left: 20px;
+        }
+    
+        ul li {
+            margin-bottom: 5px;
+        }
+    
+        /* تنسيق الجداول */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+    
+        th, td {
+            border: 1px solid black !important;
+            padding: 8px;
+            text-align: left;
+        }
+    
+        th {
+            background-color: #f2f2f2 !important;
+            font-weight: bold;
+        }
+    
+        /* الفوتر */
+        .pdf-footer {
+            position: fixed;
+            bottom: -40px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            line-height: 1.2;
+            padding: 5px 0;
+        }
+    
+        .pdf-footer img {
+            width: 500px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+    
+        .pdf-footer .page-number::after {
+            content: counter(page);
+        }
+    
+        .pdf-footer .total-pages::after {
+            content: counter(pages);
+        }
+    
+        /* تنسيق معلومات الاتصال */
+        .contact-info {
+            margin-top: 5px;
+        }
+    
+        /* تنسيق القسم التمهيدي */
+        .intro-container {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    
+        .intro-container p {
+            margin: 5px 0;
+            display: flex;
+            align-items: baseline;
+        }
+    
+        .intro-container strong {
+            font-weight: bold;
+            display: inline-block;
+            width: 120px;
+        }
+    
+        /* تنسيق جداول عروض الأسعار */
+        .price-offer-table th {
+            background-color: #20bec6 !important;
+            color: black !important;
+            text-align: center;
+        }
+    
+        /* تنسيق عناوين سلة المشتريات */
+        .checkout-cart-items thead tr {
+            background-color: #20bec6 !important;
+            color: black !important;
+        }
+    
+        /* رقم الصفحة */
+        .page-number-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: bold;
+        }
+     
+        table {
+    page-break-inside: avoid;
+    width: 100%;
+}
 
-</style>
+tr {
+    page-break-inside: avoid;
+    page-break-before: auto;
+}
 
+thead {
+    display: table-header-group;
+}
+
+tfoot {
+    display: table-footer-group;
+}
+
+    </style>
+    
 
 
 
@@ -165,14 +238,19 @@
 
 {{-- Footer HTML --}}
 <div class="pdf-footer">
-    <img src="{{ public_path('images/logo/Picture1.png') }}" alt="Footer Image">
-    <span class="page-number"></span>
-    <div class="contact-info">
-        <p>
-            Yesilbaglar Mh. Selvili Sk. Helis Beyaz Ofis B Blok No:2/2/22-23 Pendik/Istanbul/Turkey<br>
-            <span style="color: #20bec6;">Tel.: +90 216 306 7374</span> /
-            <span style="color: #20bec6;">E-Mail: info@prefabex.com</span><br>
-            <a href="http://www.prefabex.com" target="_blank" style="color: #20bec6;">www.prefabex.com</a>
-        </p>
+    <div class="page-number-container">
+        <span class="page-number"></span>
     </div>
+    <img src="{{ public_path('images/logo/Picture1.png') }}" alt="Footer Image">
+    <div class="contact-info">
+    
+        <p style="font-size: 12px;">
+            Yesilbaglar Mh. Selvili Sk. Helis Beyaz Ofis B Blok No:2/2/22-23 Pendik/Istanbul/Turkey<br>
+            <span style="color: #20bec6;">Tel.: +90 216 306 7374</span>, 
+            E-Mail: <span style="color: #20bec6;">info@prefabex.com</span>, 
+            Website: <a href="http://www.prefabex.com" target="_blank" style="color: #20bec6;">www.prefabex.com</a>
+        </p>
+        
+    </div>
+    
 </div>
