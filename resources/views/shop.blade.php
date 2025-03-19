@@ -947,7 +947,7 @@
 @endsection
 @push('scripts')
     <script>
-        document.querySelectorAll('.description-input').forEach(textarea => {
+        /*document.querySelectorAll('.description-input').forEach(textarea => {
             let typingTimer;
             const typingDelay = 1000; 
 
@@ -957,8 +957,32 @@
                     this.closest('.description-form').submit();
                 }, typingDelay);
             });
-        });
+        });*/
+        document.querySelectorAll('.description-input').forEach(textarea => {
+    let typingTimer;
+    const typingDelay = 1000; 
 
+    textarea.addEventListener('input', function() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+            let form = this.closest('.description-form');
+            let formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Description updated successfully", data);
+            })
+            .catch(error => console.error("Error updating description", error));
+        }, typingDelay);
+    });
+});
         document.getElementById('orderby').addEventListener('change', function() {
             this.form.submit();
         });
