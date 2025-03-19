@@ -303,13 +303,13 @@
 
     <div class="header-mobile header_sticky">
         <div class="container d-flex align-items-center h-100">
-            <a class="mobile-nav-activator d-block position-relative" href="#">
+           {{-- <a class="mobile-nav-activator d-block position-relative" href="#">
                 <svg class="nav-icon" width="25" height="18" viewBox="0 0 25 18"
                     xmlns="http://www.w3.org/2000/svg">
                     <use href="#icon_nav" />
                 </svg>
                 <button class="btn-close-lg position-absolute top-0 start-0 w-100"></button>
-            </a>
+            </a>--}}
 
             <div class="logo">
                 <a href="index.html">
@@ -317,13 +317,13 @@
                 </a>
             </div>
 
-            <a href="#" class="header-tools__item header-tools__cart js-open-aside" data-aside="cartDrawer">
+            {{--<a href="#" class="header-tools__item header-tools__cart js-open-aside" data-aside="cartDrawer">
                 <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
                     <use href="#icon_cart" />
                 </svg>
                 <span class="cart-amount d-block position-absolute js-cart-items-count">3</span>
-            </a>
+            </a>--}}
         </div>
 
         <nav
@@ -365,7 +365,7 @@
                 </div>
             </div>
 
-            <div class="border-top mt-auto pb-2">
+           {{-- <div class="border-top mt-auto pb-2">
                 <div class="customer-links container mt-4 mb-2 pb-1">
                     <svg class="d-inline-block align-middle" width="20" height="20" viewBox="0 0 20 20"
                         fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -419,7 +419,7 @@
                         </a>
                     </li>
                 </ul>
-            </div>
+            </div>--}}
         </nav>
     </div>
 
@@ -453,7 +453,7 @@
                 </nav>
 
                 <div class="header-tools d-flex align-items-center">
-                    <div class="header-tools__item hover-container">
+                    {{-- <div class="header-tools__item hover-container">
                         <div class="js-hover__open position-relative">
                             <a class="js-search-popup search-field__actor" href="#">
                                 <svg class="d-block" width="20" height="20" viewBox="0 0 20 20"
@@ -486,7 +486,7 @@
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </div> --}}
 
                     @guest
                         <div class="header-tools__item hover-container">

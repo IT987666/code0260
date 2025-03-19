@@ -15,7 +15,7 @@ use App\Models\ProductOrderSpecification;
 use App\Models\ShippingDetail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
+//use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -67,7 +67,7 @@ class CartController extends Controller
                 'area' => $area,
             ],
         ])->associate('App\Models\Product');
-        Log::info(Cart::instance('cart')->content());
+        //Log::info(Cart::instance('cart')->content());
         return redirect()->back()->with('success', 'Product added to cart successfully!');
     }
     public function duplicateItem($rowId)
