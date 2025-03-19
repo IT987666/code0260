@@ -292,7 +292,7 @@ class AdminController extends Controller
     public function orders()
     {
         $sort = request('sort', 'desc'); // الافتراضي هو الأحدث أولًا
-        $orders = Order::orderBy('created_at', $sort)->paginate(10);
+        $orders = Order::orderBy('created_at', $sort)->paginate(10000000);
 
 
         return view('admin.orders', compact('orders')); // تمرير المتغير إلى الـ View
