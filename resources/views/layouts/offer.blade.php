@@ -215,11 +215,13 @@
         @yield('technicalSpecification')
     </div>
 
+     
+    @if(View::hasSection('technicalDrawingOrImage'))
     <div class="page-break"></div>
-
     <div class="container">
         @yield('technicalDrawingOrImage')
     </div>
+@endif
 
     @stack('scripts')
 </body>

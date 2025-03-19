@@ -230,10 +230,14 @@ tfoot {
 
 {{-- ------------------------------------------------------- --}}
 
-@section('technicalDrawingOrImage')
-    <h3>Attachment-3: Technical Drawing or Image</h3>
-    @include('orders.components.products-technical-drawing', ['order' => $order])
-@endsection
+@if (!empty($order->images) && count(json_decode($order->images)) > 0)
+    @section('technicalDrawingOrImage')
+        <h3>Attachment-3: Technical Drawing or Image</h3>
+        @include('orders.components.products-technical-drawing', ['order' => $order])
+    @endsection
+@endif
+
+
 
 
 {{-- Footer HTML --}}
