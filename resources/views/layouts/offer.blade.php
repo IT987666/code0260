@@ -173,9 +173,9 @@
     left: 0;
     width: 100vw; /* عرض الشاشة بالكامل */
     height: 100vh; /* ارتفاع الشاشة بالكامل */
-    background: url('{{ public_path('images/logo/enhanced_photo.png') }}') no-repeat center center;
+    background: url('{{ public_path('images/logo/photo.png') }}') no-repeat center center;
     background-size: contain; /* أو جرّب cover */
-    opacity: 0.1; /* يمكنك تعديل الشفافية حسب الحاجة */
+    opacity: 0.3; /* يمكنك تعديل الشفافية حسب الحاجة */
     z-index: -1;
 }
 
