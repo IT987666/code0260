@@ -32,7 +32,7 @@
                                 @php
                                     $base64Image = $base64EncodeImageA($image);
                                 @endphp
-
+                                {{ asset('storage/' . $image) }}
                                 {{-- @if ($base64Image)
                                         <img src="{{ $base64Image }}" class="product-image" alt="spec image">
                                     @endif --}}
