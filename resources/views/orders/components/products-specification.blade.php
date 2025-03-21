@@ -32,7 +32,7 @@
                                     @php
                                         $base64Image = $base64EncodeImageA($image);
                                     @endphp
-                                    {{ dd($base64Image) }}
+
                                     @if ($base64Image)
                                         <img src="{{ $base64Image }}" class="product-image" alt="spec image">
                                     @endif
