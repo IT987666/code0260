@@ -1,13 +1,17 @@
-@foreach ($orderItems as $item)
+@foreach ($groupedOrderItems as $specifications => $productGroup)
+    @php
+        $firstItem = $productGroup->first();
+    @endphp
+
     <div>
         <div class="product-name">
             PREFABEX
-            <span>{{ $item->product->name }}</span>
+            <span>{{ $firstItem->product->name }}</span>
             TECHNICAL SPECIFICATIONS
         </div>
 
-        @if (!empty($item->specifications))
-            @foreach ($item->specifications as $spec)
+        @if (!empty($firstItem->specifications))
+            @foreach ($firstItem->specifications as $spec)
                 <div>
                     <h3>{{ $spec['name'] ?? 'Specification' }}</h3>
  

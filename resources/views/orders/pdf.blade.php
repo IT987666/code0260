@@ -172,89 +172,99 @@ tfoot {
 
 
 
+    @section('title', 'Price Offer for Flatpack Container')
 
-@section('title', 'Price Offer for Flatpack Container')
-
-@section('intro')
-    <div class="intro-container">
-        <p><strong>SUBJECT:</strong> Price offer for Flatpack Container</p>
-        <p><strong>REF:</strong> {{ $orderItems->first()->order->reference_code }}</p>
-        <p><strong>Date:</strong> {{ $order->created_at->format('d/m/Y') }}</p>
-    </div>
-
-
-    <div class="extra">
-        @if (!empty($order->extra))
-            {!! $order->extra !!}
-        @endif
-
-        <p class="manager-signature"><strong>{{ Auth::user()->name }}</strong><br>Branch Manager</p>
-    </div>
-
-    <div>
-        <h3>Attachments:</h3>
-        <ul class="attachments-list">
-            <li>Attachment-1: Price Offer</li>
-            <li>Attachment-2: Technical Specification</li>
-            <li>Attachment-3: Technical Drawing or Image</li>
-        </ul>
-    </div>
-@endsection
-
-{{-- ------------------------------------------------------- --}}
-
-@section('priceOffer')
-    <h3>Attachment-1: Price Offer</h3>
-    @include('orders.components.products-table', [
-        'orderItems' => $orderItems,
-        'shipping_type' => $shipping_type,
-    ]) <!-- Use orderItems -->
-@endsection
-
-{{-- ------------------------------------------------------- --}}
-@section('technicalSpecification')
-    @php
-        $itemCount = count($orderItems);
-    @endphp
-
-    @if ($itemCount > 15)
-        <div style="page-break-before: always;">
-            <h3>Attachment-2: Technical Specification</h3>
+    @section('intro')
+        <div class="intro-container">
+            <p><strong>SUBJECT:</strong> Price offer for Flatpack Container</p>
+            <p><strong>REF:</strong> {{ $orderItems->first()->order->reference_code }}</p>
+            <p><strong>Date:</strong> {{ $order->created_at->format('d/m/Y') }}</p>
         </div>
-    @else
-        <h3>Attachment-2: Technical Specification</h3>
-    @endif
-
-    @include('orders.components.products-specification', ['orderItems' => $orderItems])
-@endsection
-
-{{-- ------------------------------------------------------- --}}
-
-@if (!empty($order->images) && count(json_decode($order->images)) > 0)
-    @section('technicalDrawingOrImage')
-        <h3>Attachment-3: Technical Drawing or Image</h3>
-        @include('orders.components.products-technical-drawing', ['order' => $order])
+    
+        <div class="extra">
+            @if (!empty($order->extra))
+                {!! $order->extra !!}
+            @endif
+    
+            <p class="manager-signature"><strong>{{ Auth::user()->name }}</strong><br>Branch Manager</p>
+        </div>
+    
+        <div>
+            <h3>Attachments:</h3>
+            <ul class="attachments-list">
+                <li>Attachment-1: Price Offer</li>
+                <li>Attachment-2: Technical Specification</li>
+                <li>Attachment-3: Technical Drawing or Image</li>
+            </ul>
+        </div>
     @endsection
-@endif
-
-
-
-
-{{-- Footer HTML --}}
-<div class="pdf-footer">
-    <div class="page-number-container">
-        <span class="page-number"></span>
-    </div>
-    <img src="{{ public_path('images/logo/Picture1.png') }}" alt="Footer Image">
-    <div class="contact-info">
     
-        <p style="font-size: 12px;">
-            Yesilbaglar Mh. Selvili Sk. Helis Beyaz Ofis B Blok No:2/2/22-23 Pendik/Istanbul/Turkey<br>
-            <span style="color: #20bec6;">Tel.: +90 216 306 7374</span>, 
-            E-Mail: <span style="color: #20bec6;">info@prefabex.com</span>, 
-            Website: <a href="http://www.prefabex.com" target="_blank" style="color: #20bec6;">www.prefabex.com</a>
-        </p>
+    {{-- ------------------------------------------------------- --}}
+    
+    @section('priceOffer')
+        <h3>Attachment-1: Price Offer</h3>
+        @include('orders.components.products-table', [
+            'orderItems' => $orderItems,  
+            'shipping_type' => $shipping_type,
+        ])
+    @endsection
+    
+    {{-- ------------------------------------------------------- --}}
+    @section('technicalSpecification')
+        @php
+            $itemCount = count($orderItems);
+        @endphp
+    
+        @if ($itemCount > 15)
+            <div style="page-break-before: always;">
+                <h3>Attachment-2: Technical Specification</h3>
+            </div>
+        @else
+            <h3>Attachment-2: Technical Specification</h3>
+        @endif
+    
+        {{-- ✅ استخدام المنتجات المجمعة فقط في المواصفات الفنية --}}
+ 
+        @foreach($groupedOrderItems as $specifications => $productGroup)
+            @php
+                $firstItem = $productGroup->first();
+            @endphp
+    
+            <!-- عرض اسم المنتج -->
+            <h4>{{ $firstItem->product->name }}</h4>
+            @if ($loop->first)
+            <div>
+
+            @include('orders.components.products-specification', ['specifications' => $firstItem->specifications])
+        </div>
+
+            @endif
         
+          @endforeach
+    @endsection
+    
+    {{-- ------------------------------------------------------- --}}
+    
+    @if (!empty($order->images) && count(json_decode($order->images)) > 0)
+        @section('technicalDrawingOrImage')
+            <h3>Attachment-3: Technical Drawing or Image</h3>
+            @include('orders.components.products-technical-drawing', ['order' => $order])
+        @endsection
+    @endif
+    
+    {{-- Footer HTML --}}
+    <div class="pdf-footer">
+        <div class="page-number-container">
+            <span class="page-number"></span>
+        </div>
+        <img src="{{ public_path('images/logo/Picture1.png') }}" alt="Footer Image">
+        <div class="contact-info">
+            <p style="font-size: 12px;">
+                Yesilbaglar Mh. Selvili Sk. Helis Beyaz Ofis B Blok No:2/2/22-23 Pendik/Istanbul/Turkey<br>
+                <span style="color: #20bec6;">Tel.: +90 216 306 7374</span>, 
+                E-Mail: <span style="color: #20bec6;">info@prefabex.com</span>, 
+                Website: <a href="http://www.prefabex.com" target="_blank" style="color: #20bec6;">www.prefabex.com</a>
+            </p>
+        </div>
     </div>
     
-</div>

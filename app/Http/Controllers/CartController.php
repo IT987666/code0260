@@ -565,6 +565,56 @@ class CartController extends Controller
         return null;
     }
     public function downloadPdf($orderId)
+{
+    // استرجاع الطلب
+    $order = Order::findOrFail($orderId);
+
+    // جلب العناصر المرتبطة بالطلب مع بيانات المنتج
+    $orderItems = OrderItem::with(['product' => function ($query) {
+        $query->select('id', 'name');
+    }])->where('order_id', $order->id)->get();
+
+    // إضافة المواصفات الفنية إلى كل منتج
+    foreach ($orderItems as $item) {
+        $item->specifications = json_decode($item->custom_specifications, true);
+    }
+
+    // **🔹 تجميع المنتجات حسب المواصفات الفنية**
+    /*$groupedOrderItems = $orderItems->groupBy(function ($item) {
+        return json_encode($item->specifications); // تجميع المنتجات ذات المواصفات المتطابقة
+    });*/
+    $groupedOrderItems = $orderItems->groupBy(function ($item) {
+        $specifications = $item->specifications ?? []; // تأكد من عدم وجود null
+        if (is_array($specifications)) {
+            ksort($specifications); // ✅ تعديل نسخة محلية من المواصفات
+        }
+        return serialize($specifications);
+    });
+    
+    
+    
+    // استرجاع تفاصيل الشحن
+    $shipping_type = ShippingDetail::query()->where('order_id', Session::get('old_order_id'))->first();
+
+    $pdf = PDF::loadView('orders.pdf', [
+        'order' => $order,
+        'shipping_type' => $shipping_type,
+        'orderItems' => $orderItems, // الإبقاء على جميع العناصر الأصلية
+        'groupedOrderItems' => $groupedOrderItems, // إضافة البيانات المجمعة لتجنب التكرار
+        'base64EncodeImageA' => [$this, 'base64EncodeImageA'], 
+    ]);
+    
+
+    // تفريغ السلة بعد إنشاء الملف
+    Cart::instance('cart')->destroy();
+
+    // حفظ متغير في الجلسة لحذف بيانات الشحن بعد تحميل الصفحة
+    session()->flash('clear_shipping', true);
+
+    return $pdf->download('order_' . $order->id . '.pdf');
+}
+
+   /* public function downloadPdf($orderId)
     {
         // Retrieve the order
         $order = Order::findOrFail($orderId);
@@ -594,7 +644,7 @@ class CartController extends Controller
 // وضع متغير في Session لحذف بيانات الشحن بعد تحميل الصفحة
 session()->flash('clear_shipping', true);
         return $pdf->download('order_' . $order->id . '.pdf');
-    }
+    }*/
    /* public function updateDescription($rowId, Request $request)
     {
          $request->validate([
