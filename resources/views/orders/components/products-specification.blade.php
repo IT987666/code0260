@@ -26,11 +26,11 @@
                     @if (!empty($spec['base64Images']))
                         <div class="product-image-container">
                             @foreach ($spec['base64Images'] as $base64Image)
-                                <img src="data:image/png;base64,{{ $base64Image }}" class="product-image"
-                                    alt="spec image">
+                                <img src="{{ $base64Image }}" class="product-image" alt="spec image">
                             @endforeach
                         </div>
                     @endif
+
 
                 </div>
             @endforeach
