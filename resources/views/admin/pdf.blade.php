@@ -5,31 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orders Report</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .table, .table th, .table td {
-            border: 1px solid black;
-        }
-        .table th, .table td {
-            padding: 8px;
-            text-align: center;
-        }
-        .table th {
-            background-color:   #20bec6;;
-        }
-        .title {
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        
+   body {
+    font-family: DejaVu Sans, sans-serif !important;
+}
+
+.table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-top: 20px !important;
+}
+
+.table, .table th, .table td {
+    border: 1px solid black !important;
+}
+
+tr {
+    page-break-inside: avoid !important;
+}
+
+.table th, .table td {
+    padding: 8px !important;
+    text-align: center !important;
+}
+
+.table th {
+    background-color: #20bec6 !important;
+}
+
+.title {
+    text-align: center !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    margin-top: 10px !important;
+}
+
+@media print {
+    body {
+        -webkit-print-color-adjust: exact !important;
+    }
+}
+
+
     </style>
 </head>
 <body>
