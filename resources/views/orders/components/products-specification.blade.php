@@ -21,24 +21,15 @@
                     @endif
 
                     <!-- Images -->
-                    @if (!empty($spec['images']))
-                        @php
-                            $images = is_array($spec['images']) ? $spec['images'] : json_decode($spec['images'], true);
-                        @endphp
 
-                        @if (is_array($images) && count($images) > 0)
-                            <div class="product-image-container">
-                                @foreach ($images as $image)
-                                    @php
-                                        $base64Image = $base64EncodeImageA($image);
-                                    @endphp
 
-                                    @if ($base64Image)
-                                        <img src="{{ $base64Image }}" class="product-image" alt="spec image">
-                                    @endif
-                                @endforeach
-                            </div>
-                        @endif
+                    @if (!empty($spec['base64Images']))
+                        <div class="product-image-container">
+                            @foreach ($spec['base64Images'] as $base64Image)
+                                <img src="data:image/png;base64,{{ $base64Image }}" class="product-image"
+                                    alt="spec image">
+                            @endforeach
+                        </div>
                     @endif
 
                 </div>

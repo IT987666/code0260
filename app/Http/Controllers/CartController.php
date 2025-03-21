@@ -564,8 +564,7 @@ class CartController extends Controller
     public function downloadPdf($orderId)
     {
         $order = Order::findOrFail($orderId);
-
-        $orderItems = OrderItem::with(['product' => function ($query) {}])->where('order_id', $order->id)->get();
+        $orderItems = OrderItem::with(['product'])->where('order_id', $order->id)->get();
 
         foreach ($orderItems as $item) {
             $item->specifications = json_decode($item->custom_specifications, true);
@@ -579,29 +578,32 @@ class CartController extends Controller
             return serialize($specifications);
         });
 
-
-
         $shipping_type = ShippingDetail::query()->where('order_id', Session::get('old_order_id'))->first();
 
-        return view('orders.pdf', [
-            'order' => $order,
-            'shipping_type' => $shipping_type,
-            'orderItems' => $orderItems, // الإبقاء على جميع العناصر الأصلية
-            'groupedOrderItems' => $groupedOrderItems, // إضافة البيانات المجمعة لتجنب التكرار
-            'base64EncodeImageA' => [$this, 'base64EncodeImageA'],
-        ]);
+        // Preprocess images
+        $processedImages = [];
+
+        foreach ($orderItems as &$item) {
+            if (!empty($item->specifications)) {
+                foreach ($item->specifications as &$spec) {
+                    if (!empty($spec['images'])) {
+                        $images = is_array($spec['images']) ? $spec['images'] : json_decode($spec['images'], true);
+                        if (is_array($images) && count($images) > 0) {
+                            $spec['base64Images'] = array_map([$this, 'base64EncodeImageA'], $images);
+                        }
+                    }
+                }
+            }
+        }
 
         $pdf = PDF::loadView('orders.pdf', [
             'order' => $order,
             'shipping_type' => $shipping_type,
-            'orderItems' => $orderItems, // الإبقاء على جميع العناصر الأصلية
-            'groupedOrderItems' => $groupedOrderItems, // إضافة البيانات المجمعة لتجنب التكرار
-            'base64EncodeImageA' => [$this, 'base64EncodeImageA'],
+            'orderItems' => $orderItems,
+            'groupedOrderItems' => $groupedOrderItems,
         ]);
 
-
         Cart::instance('cart')->destroy();
-
         session()->flash('clear_shipping', true);
 
         return $pdf->download('order_' . $order->id . '.pdf');
