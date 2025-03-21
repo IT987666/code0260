@@ -120,14 +120,14 @@ class CartController extends Controller
     public function remove_item($rowId)
     {
         $item = Cart::instance('cart')->get($rowId);
-        
+
         if (!$item) {
             return redirect()->back()->withErrors('The item does not exist in the cart.');
         }
-        
+
         Cart::instance('cart')->remove($rowId);
         Session::save();
-        
+
         return redirect()->back()->with('success', 'Item removed successfully.');
     }
     public function empty_cart()
@@ -552,56 +552,54 @@ class CartController extends Controller
     }
     public function base64EncodeImageA($image)
     {
-         $fullPath = public_path('storage/' . $image);
+        $fullPath = public_path('storage/' . $image);
 
-         if (file_exists($fullPath)) {
+        if (file_exists($fullPath)) {
             $imageData = file_get_contents($fullPath);
             return 'data:image/' . pathinfo($fullPath, PATHINFO_EXTENSION) . ';base64,' . base64_encode($imageData);
         }
 
-         return null;
+        return null;
     }
     public function downloadPdf($orderId)
-{
-     $order = Order::findOrFail($orderId);
+    {
+        $order = Order::findOrFail($orderId);
 
-     $orderItems = OrderItem::with(['product' => function ($query) {
-        $query->select('id', 'name');
-    }])->where('order_id', $order->id)->get();
+        $orderItems = OrderItem::with(['product' => function ($query) {}])->where('order_id', $order->id)->get();
 
-     foreach ($orderItems as $item) {
-        $item->specifications = json_decode($item->custom_specifications, true);
-    }
- 
-    $groupedOrderItems = $orderItems->groupBy(function ($item) {
-        $specifications = $item->specifications ?? []; 
-        if (is_array($specifications)) {
-            ksort($specifications);  
+        foreach ($orderItems as $item) {
+            $item->specifications = json_decode($item->custom_specifications, true);
         }
-        return serialize($specifications);
-    });
-    
-    
-    
-     $shipping_type = ShippingDetail::query()->where('order_id', Session::get('old_order_id'))->first();
 
-    $pdf = PDF::loadView('orders.pdf', [
-        'order' => $order,
-        'shipping_type' => $shipping_type,
-        'orderItems' => $orderItems, // الإبقاء على جميع العناصر الأصلية
-        'groupedOrderItems' => $groupedOrderItems, // إضافة البيانات المجمعة لتجنب التكرار
-        'base64EncodeImageA' => [$this, 'base64EncodeImageA'], 
-    ]);
-    
+        $groupedOrderItems = $orderItems->groupBy(function ($item) {
+            $specifications = $item->specifications ?? [];
+            if (is_array($specifications)) {
+                ksort($specifications);
+            }
+            return serialize($specifications);
+        });
 
-     Cart::instance('cart')->destroy();
 
-     session()->flash('clear_shipping', true);
 
-    return $pdf->download('order_' . $order->id . '.pdf');
-}
+        $shipping_type = ShippingDetail::query()->where('order_id', Session::get('old_order_id'))->first();
 
-   /* public function downloadPdf($orderId)
+        $pdf = PDF::loadView('orders.pdf', [
+            'order' => $order,
+            'shipping_type' => $shipping_type,
+            'orderItems' => $orderItems, // الإبقاء على جميع العناصر الأصلية
+            'groupedOrderItems' => $groupedOrderItems, // إضافة البيانات المجمعة لتجنب التكرار
+            'base64EncodeImageA' => [$this, 'base64EncodeImageA'],
+        ]);
+
+
+        Cart::instance('cart')->destroy();
+
+        session()->flash('clear_shipping', true);
+
+        return $pdf->download('order_' . $order->id . '.pdf');
+    }
+
+    /* public function downloadPdf($orderId)
     {
         // Retrieve the order
         $order = Order::findOrFail($orderId);
@@ -632,10 +630,10 @@ class CartController extends Controller
 session()->flash('clear_shipping', true);
         return $pdf->download('order_' . $order->id . '.pdf');
     }*/
-   /* public function updateDescription($rowId, Request $request)
+    /* public function updateDescription($rowId, Request $request)
     {
          $request->validate([
-            'description' => 'nullable|string|max:255'  
+            'description' => 'nullable|string|max:255'
         ]);
 
          $product = Cart::instance('cart')->get($rowId);
@@ -648,32 +646,32 @@ session()->flash('clear_shipping', true);
         $updatedOptions['description'] = $request->description;
 
          Cart::instance('cart')->update($rowId, [
-            'options' => $updatedOptions,   
-            'qty' => $product->qty    
+            'options' => $updatedOptions,
+            'qty' => $product->qty
         ]);
 
          return redirect()->back()->with('success', 'Description updated successfully!');
     }*/
     public function updateDescription(Request $request, $rowId)
-{
-    $request->validate([
-        'description' => 'nullable|string|max:255',
-    ]);
-    
-    $item = Cart::instance('cart')->get($rowId);
-    
-    if (!$item) {
-        return redirect()->back()->withErrors('The item does not exist in the cart.');
+    {
+        $request->validate([
+            'description' => 'nullable|string|max:255',
+        ]);
+
+        $item = Cart::instance('cart')->get($rowId);
+
+        if (!$item) {
+            return redirect()->back()->withErrors('The item does not exist in the cart.');
+        }
+
+        Cart::instance('cart')->update($rowId, [
+            'options' => array_merge($item->options->toArray(), ['description' => $request->description])
+        ]);
+
+        Session::save();
+
+        return redirect()->back()->with('success', 'Description updated successfully.');
     }
-    
-    Cart::instance('cart')->update($rowId, [
-        'options' => array_merge($item->options->toArray(), ['description' => $request->description])
-    ]);
-    
-    Session::save();
-    
-    return redirect()->back()->with('success', 'Description updated successfully.');
-}
     public function updateShipping(Request $request)
     {
         // التحقق من صحة البيانات الواردة
@@ -712,14 +710,14 @@ session()->flash('clear_shipping', true);
             'shipping_incoterm' => 'nullable|string',
             'port_name_or_city' => 'nullable|string',
         ]);
-// تحديد القيم الافتراضية إذا كانت الحقول فارغة
-$shipping_type = $request->shipping_type ?? 'default_shipping_type';
-$quantity = $request->quantity ?? 1;
-$unit_price = $request->unit_price ?? 0;
-$shipping_cost = $request->shipping_cost ?? 0;
-$total_cost = $request->total_cost ?? 0;
-$shipping_incoterm = $request->shipping_incoterm ?? 'default_incoterm';
-$port_name_or_city = $request->port_name_or_city ?? 'default_port';
+        // تحديد القيم الافتراضية إذا كانت الحقول فارغة
+        $shipping_type = $request->shipping_type ?? 'default_shipping_type';
+        $quantity = $request->quantity ?? 1;
+        $unit_price = $request->unit_price ?? 0;
+        $shipping_cost = $request->shipping_cost ?? 0;
+        $total_cost = $request->total_cost ?? 0;
+        $shipping_incoterm = $request->shipping_incoterm ?? 'default_incoterm';
+        $port_name_or_city = $request->port_name_or_city ?? 'default_port';
 
         // تحديث أو إنشاء تفاصيل الشحن
         $shipping_details = ShippingDetail::updateOrCreate([
