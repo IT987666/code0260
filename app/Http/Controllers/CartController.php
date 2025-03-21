@@ -552,49 +552,38 @@ class CartController extends Controller
     }
     public function base64EncodeImageA($image)
     {
-        // مسار الصورة الكامل
-        $fullPath = public_path('storage/' . $image);
+         $fullPath = public_path('storage/' . $image);
 
-        // تحقق إذا كانت الصورة موجودة
-        if (file_exists($fullPath)) {
+         if (file_exists($fullPath)) {
             $imageData = file_get_contents($fullPath);
             return 'data:image/' . pathinfo($fullPath, PATHINFO_EXTENSION) . ';base64,' . base64_encode($imageData);
         }
 
-        // إذا لم تكن الصورة موجودة
-        return null;
+         return null;
     }
     public function downloadPdf($orderId)
 {
-    // استرجاع الطلب
-    $order = Order::findOrFail($orderId);
+     $order = Order::findOrFail($orderId);
 
-    // جلب العناصر المرتبطة بالطلب مع بيانات المنتج
-    $orderItems = OrderItem::with(['product' => function ($query) {
+     $orderItems = OrderItem::with(['product' => function ($query) {
         $query->select('id', 'name');
     }])->where('order_id', $order->id)->get();
 
-    // إضافة المواصفات الفنية إلى كل منتج
-    foreach ($orderItems as $item) {
+     foreach ($orderItems as $item) {
         $item->specifications = json_decode($item->custom_specifications, true);
     }
-
-    // **🔹 تجميع المنتجات حسب المواصفات الفنية**
-    /*$groupedOrderItems = $orderItems->groupBy(function ($item) {
-        return json_encode($item->specifications); // تجميع المنتجات ذات المواصفات المتطابقة
-    });*/
+ 
     $groupedOrderItems = $orderItems->groupBy(function ($item) {
-        $specifications = $item->specifications ?? []; // تأكد من عدم وجود null
+        $specifications = $item->specifications ?? []; 
         if (is_array($specifications)) {
-            ksort($specifications); // ✅ تعديل نسخة محلية من المواصفات
+            ksort($specifications);  
         }
         return serialize($specifications);
     });
     
     
     
-    // استرجاع تفاصيل الشحن
-    $shipping_type = ShippingDetail::query()->where('order_id', Session::get('old_order_id'))->first();
+     $shipping_type = ShippingDetail::query()->where('order_id', Session::get('old_order_id'))->first();
 
     $pdf = PDF::loadView('orders.pdf', [
         'order' => $order,
@@ -605,11 +594,9 @@ class CartController extends Controller
     ]);
     
 
-    // تفريغ السلة بعد إنشاء الملف
-    Cart::instance('cart')->destroy();
+     Cart::instance('cart')->destroy();
 
-    // حفظ متغير في الجلسة لحذف بيانات الشحن بعد تحميل الصفحة
-    session()->flash('clear_shipping', true);
+     session()->flash('clear_shipping', true);
 
     return $pdf->download('order_' . $order->id . '.pdf');
 }
