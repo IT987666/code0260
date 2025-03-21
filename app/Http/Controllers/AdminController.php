@@ -402,7 +402,7 @@ class AdminController extends Controller
     public function exportPdf()
     {
         $orders = Order::with('orderItems')->get(); // جلب الطلبات مع المنتجات
-         $pdf = Pdf::loadView('admin.pdf', compact('orders'))->setPaper('a3', 'landscape');
+         $pdf = Pdf::loadView('admin.pdf', compact('orders'))->setPaper('a2', 'landscape');
 
         return $pdf->download('orders_report.pdf'); // تحميل الـ PDF
     }
