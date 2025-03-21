@@ -583,6 +583,14 @@ class CartController extends Controller
 
         $shipping_type = ShippingDetail::query()->where('order_id', Session::get('old_order_id'))->first();
 
+        return view('orders.pdf', [
+            'order' => $order,
+            'shipping_type' => $shipping_type,
+            'orderItems' => $orderItems, // الإبقاء على جميع العناصر الأصلية
+            'groupedOrderItems' => $groupedOrderItems, // إضافة البيانات المجمعة لتجنب التكرار
+            'base64EncodeImageA' => [$this, 'base64EncodeImageA'],
+        ]);
+
         $pdf = PDF::loadView('orders.pdf', [
             'order' => $order,
             'shipping_type' => $shipping_type,
