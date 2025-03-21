@@ -159,9 +159,6 @@ class AdminController extends Controller
 
         return redirect()->route('admin.products')->with('status', 'Product added successfully');
     }
-
-
-
     public function product_edit($id)
     {
         $product = Product::find($id);
@@ -189,6 +186,15 @@ class AdminController extends Controller
 
         // Update the product
         $product = Product::findOrFail($request->id);
+     if ($request->code) {
+        $existingProduct = Product::where('code', $request->code)
+            ->where('id', '!=', $product->id)
+            ->first();
+        
+        if ($existingProduct) {
+            return redirect()->back()->withErrors(['code' => 'This code is already in use by another product.'])->withInput();
+        }
+    }
         $product->name = $request->name;
         $product->companies_responsibilities = $request->companies_responsibilities;
         $product->customers_responsibilities = $request->customers_responsibilities;
