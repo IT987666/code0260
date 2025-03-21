@@ -567,7 +567,21 @@ class CartController extends Controller
         $orderItems = OrderItem::with(['product'])->where('order_id', $order->id)->get();
 
         foreach ($orderItems as $item) {
-            $item->specifications = json_decode($item->custom_specifications, true);
+            // Decode the specifications
+            $specifications = json_decode($item->custom_specifications, true) ?? [];
+
+            // Process each specification
+            foreach ($specifications as &$spec) {
+                if (!empty($spec['images'])) {
+                    $images = is_array($spec['images']) ? $spec['images'] : json_decode($spec['images'], true);
+                    if (is_array($images) && count($images) > 0) {
+                        $spec['base64Images'] = array_map([$this, 'base64EncodeImageA'], $images);
+                    }
+                }
+            }
+
+            // Assign the modified specifications back to the item
+            $item->specifications = $specifications;
         }
 
         $groupedOrderItems = $orderItems->groupBy(function ($item) {
@@ -579,22 +593,6 @@ class CartController extends Controller
         });
 
         $shipping_type = ShippingDetail::query()->where('order_id', Session::get('old_order_id'))->first();
-
-        // Preprocess images
-        $processedImages = [];
-
-        foreach ($orderItems as &$item) {
-            if (!empty($item->specifications)) {
-                foreach ($item->specifications as &$spec) {
-                    if (!empty($spec['images'])) {
-                        $images = is_array($spec['images']) ? $spec['images'] : json_decode($spec['images'], true);
-                        if (is_array($images) && count($images) > 0) {
-                            $spec['base64Images'] = array_map([$this, 'base64EncodeImageA'], $images);
-                        }
-                    }
-                }
-            }
-        }
 
         $pdf = PDF::loadView('orders.pdf', [
             'order' => $order,
