@@ -233,12 +233,7 @@
                                 name="items[{{ $item->id }}][specifications][{{ $index }}][name]"
                                 value="{{ $spec->name }}">
                 
-                            <label for="spec_title_{{ $item->id }}_{{ $index }}" class="form-label">Title</label>
-                            <input type="text" class="form-control mb-2"
-                                id="spec_title_{{ $item->id }}_{{ $index }}"
-                                name="items[{{ $item->id }}][specifications][{{ $index }}][title]"
-                                value="{{ $spec->title }}">
-                
+                            
                             <label for="spec_paragraphs_{{ $item->id }}_{{ $index }}" class="form-label">Paragraphs</label>
                             <textarea class="ckeditor form-control mb-2" id="spec_paragraphs_{{ $item->id }}_{{ $index }}"
                                 name="items[{{ $item->id }}][specifications][{{ $index }}][paragraphs]">{!! $spec->paragraphs !!}</textarea>
@@ -248,24 +243,7 @@
                                 id="spec_images_{{ $item->id }}_{{ $index }}"
                                 name="items[{{ $item->id }}][specifications][{{ $index }}][images][]"
                                 multiple>
-                
-                            <!-- Display Existing Images -->
-                            {{--@if (!empty($spec->images))
-                                <p>Existing Images:</p>
-                                <div class="mb-3">
-                                    <ul class="list-unstyled">
-                                        @foreach (json_decode($spec->images) as $image)
-                                            <li class="mb-2 d-flex align-items-center">
-                                                <img src="{{ asset('storage/' . $image) }}" alt="Specification Image"
-                                                    width="100" class="me-3">
-                                                <button type="button" class="btn btn-danger btn-sm"
-                                                    onclick="deleteSpecImage('{{ $image }}', '{{ $spec->id }}')">Delete</button>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif--}}
-                            <!-- Display Existing Images -->
+                 
 @if (!empty($spec->images) && is_string($spec->images) && !is_null(json_decode($spec->images, true)))
 <p>Existing Images:</p>
 <div class="mb-3">

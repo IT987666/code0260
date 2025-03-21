@@ -112,12 +112,24 @@ class CartController extends Controller
         return redirect()->back();
     }
 
-    public function remove_item($rowId)
+    /*public function remove_item($rowId)
     {
         Cart::instance('cart')->remove($rowId);
         return redirect()->back();
+    }*/
+    public function remove_item($rowId)
+    {
+        $item = Cart::instance('cart')->get($rowId);
+        
+        if (!$item) {
+            return redirect()->back()->withErrors('The item does not exist in the cart.');
+        }
+        
+        Cart::instance('cart')->remove($rowId);
+        Session::save();
+        
+        return redirect()->back()->with('success', 'Item removed successfully.');
     }
-
     public function empty_cart()
     {
         Cart::instance('cart')->destroy();
@@ -579,36 +591,52 @@ class CartController extends Controller
         ]);
 
         Cart::instance('cart')->destroy();
-
+// وضع متغير في Session لحذف بيانات الشحن بعد تحميل الصفحة
+session()->flash('clear_shipping', true);
         return $pdf->download('order_' . $order->id . '.pdf');
     }
-    public function updateDescription($rowId, Request $request)
+   /* public function updateDescription($rowId, Request $request)
     {
-        // التحقق من صحة المدخلات
-        $request->validate([
-            'description' => 'required|string|max:255'  // التحقق من الوصف
+         $request->validate([
+            'description' => 'nullable|string|max:255'  
         ]);
 
-        // الحصول على المنتج في السلة
-        $product = Cart::instance('cart')->get($rowId);
+         $product = Cart::instance('cart')->get($rowId);
 
         if (!$product) {
             return redirect()->back()->with('error', 'Product not found in cart.');
         }
 
-        // الاحتفاظ بالقيم الحالية مع تحديث الوصف فقط
-        $updatedOptions = $product->options->toArray();
+         $updatedOptions = $product->options->toArray();
         $updatedOptions['description'] = $request->description;
 
-        // تحديث المنتج في السلة
-        Cart::instance('cart')->update($rowId, [
-            'options' => $updatedOptions,  // الاحتفاظ بالقيم القديمة مع تحديث الوصف فقط
-            'qty' => $product->qty  // الحفاظ على الكمية كما هي
+         Cart::instance('cart')->update($rowId, [
+            'options' => $updatedOptions,   
+            'qty' => $product->qty    
         ]);
 
-        // العودة إلى الصفحة السابقة مع رسالة النجاح
-        return redirect()->back()->with('success', 'Description updated successfully!');
+         return redirect()->back()->with('success', 'Description updated successfully!');
+    }*/
+    public function updateDescription(Request $request, $rowId)
+{
+    $request->validate([
+        'description' => 'nullable|string|max:255',
+    ]);
+    
+    $item = Cart::instance('cart')->get($rowId);
+    
+    if (!$item) {
+        return redirect()->back()->withErrors('The item does not exist in the cart.');
     }
+    
+    Cart::instance('cart')->update($rowId, [
+        'options' => array_merge($item->options->toArray(), ['description' => $request->description])
+    ]);
+    
+    Session::save();
+    
+    return redirect()->back()->with('success', 'Description updated successfully.');
+}
     public function updateShipping(Request $request)
     {
         // التحقق من صحة البيانات الواردة
@@ -639,14 +667,22 @@ class CartController extends Controller
 
         // التحقق من صحة البيانات
         $request->validate([
-            'shipping_type' => 'required|string',
-            'quantity' => 'required|integer|min:1',
-            'unit_price' => 'required|numeric|min:0',
-            'shipping_cost' => 'required|numeric|min:0',
-            'total_cost' => 'required|numeric|min:0',
+            'shipping_type' => 'nullable|string',
+            'quantity' => 'nullable|integer|min:1',
+            'unit_price' => 'nullable|numeric|min:0',
+            'shipping_cost' => 'nullable|numeric|min:0',
+            'total_cost' => 'nullable|numeric|min:0',
             'shipping_incoterm' => 'nullable|string',
             'port_name_or_city' => 'nullable|string',
         ]);
+// تحديد القيم الافتراضية إذا كانت الحقول فارغة
+$shipping_type = $request->shipping_type ?? 'default_shipping_type';
+$quantity = $request->quantity ?? 1;
+$unit_price = $request->unit_price ?? 0;
+$shipping_cost = $request->shipping_cost ?? 0;
+$total_cost = $request->total_cost ?? 0;
+$shipping_incoterm = $request->shipping_incoterm ?? 'default_incoterm';
+$port_name_or_city = $request->port_name_or_city ?? 'default_port';
 
         // تحديث أو إنشاء تفاصيل الشحن
         $shipping_details = ShippingDetail::updateOrCreate([

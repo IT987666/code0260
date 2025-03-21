@@ -177,7 +177,7 @@ class AdminController extends Controller
             'description' => 'nullable',
             'companies_responsibilities' => 'nullable',
             'customers_responsibilities' => 'nullable',
-            'code' => 'nullable|unique:products,code', // ضمان تفرد الكود
+            'code' => 'nullable',  
             'featured' => 'nullable|boolean',
             'specifications.*.id' => 'nullable|integer|exists:product_specifications,id',
             'specifications.*.name' => 'required|string|max:255',
@@ -402,33 +402,13 @@ class AdminController extends Controller
     public function exportPdf()
     {
         $orders = Order::with('orderItems')->get(); // جلب الطلبات مع المنتجات
-        $pdf = Pdf::loadView('admin.pdf', compact('orders')); // تحميل الـ View
+         $pdf = Pdf::loadView('admin.pdf', compact('orders'))->setPaper('a4', 'landscape');
+
         return $pdf->download('orders_report.pdf'); // تحميل الـ PDF
     }
 
 
-    /* public function generateOrderPDF($id)
-    {
-        $order = Order::with('orderItems.product.category')->findOrFail($id);
-
-        $pdf = Pdf::loadView('admin.orders.pdf', compact('order'))->setPaper('a4', 'portrait');
-
-        $fileName = 'Order-' . $order->id . '.pdf';
-
-        // حفظ الملف في مجلد
-        $path = public_path('uploads/orders/');
-        if (!file_exists($path)) {
-            mkdir($path, 0777, true);
-        }
-        $pdf->save($path . $fileName);
-
-        // تحديث عمود landmark لحفظ مسار PDF
-        $order->landmark = 'uploads/orders/' . $fileName;
-        $order->save();
-
-
-        return response()->download($path . $fileName);
-    }*/
+  
     public function order_delete($id)
     {
         $order = Order::find($id);

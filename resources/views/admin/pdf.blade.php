@@ -21,7 +21,7 @@
             text-align: center;
         }
         .table th {
-            background-color: #f2f2f2;
+            background-color:   #20bec6;;
         }
         .title {
             text-align: center;
@@ -29,6 +29,7 @@
             font-weight: bold;
             margin-top: 10px;
         }
+        
     </style>
 </head>
 <body>

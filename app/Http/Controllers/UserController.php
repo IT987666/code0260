@@ -10,6 +10,10 @@ use App\Models\ProductOrderSpecification;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Illuminate\Support\Facades\Response;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 class UserController extends Controller
 {
@@ -73,8 +77,7 @@ class UserController extends Controller
             'note' => 'nullable|string',
             'order_images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'items.*.quantity' => 'required|integer|min:1',
-            'items.*.specifications.*.title' => 'nullable|string|max:255',
-            'items.*.specifications.*.paragraphs' => 'nullable|string',
+             'items.*.specifications.*.paragraphs' => 'nullable|string',
             'items.*.specifications.*.images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -116,8 +119,7 @@ class UserController extends Controller
                     $spec = ProductOrderSpecification::findOrFail($specId);
 
                     $spec->name = $specData['name'];
-                    $spec->title = $specData['title'];
-                    $spec->paragraphs = $specData['paragraphs'];
+                     $spec->paragraphs = $specData['paragraphs'];
 
                     if ($request->hasFile("items.$itemId.specifications.$specIndex.images")) {
                         $uploadedSpecImages = [];
@@ -135,7 +137,8 @@ class UserController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', 'Order updated successfully.');
+         return redirect()->route('user.orders')->with('success', 'Order updated successfully.');
+
     }
 
 
@@ -181,79 +184,42 @@ class UserController extends Controller
     }
     public function exportExcel()
     {
-         $orders = Order::with('orderItems')->get();
-    
-         $filename = "orders_" . date('Y-m-d') . ".xls";
-    
-         $html = '<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <style>
-                .badge { padding: 5px; border-radius: 5px; color: white; }
-                .bg-success { background-color: green; }
-                .bg-danger { background-color: red; }
-                .bg-info { background-color: skyblue; }
-                .bg-primary { background-color: blue; }
-                .bg-secondary { background-color: gray; }
-                .bg-warning { background-color: orange; }
-                .bg-dark { background-color: black; }
-            </style>
-        </head>
-        <body>
-            <table border="1" style="border-collapse: collapse; width: 100%;">
-                <thead>
-                    <tr>
-                        <th>ID Number</th>
-                        <th>Client\'s Name</th>
-                        <th>Phone</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Order Date</th>
-                        <th>Total Items</th>
-                        <th>Notes</th>
-                    </tr>
-                </thead>
-                <tbody>';
-    
-                foreach ($orders as $order) {
-                    $statusClass = match ($order->status) {
-                        'delivered' => 'bg-success',
-                        'canceled', 'cancelled' => 'bg-danger',
-                        'offer_sent' => 'bg-info',
-                        'offer_signed' => 'bg-primary',
-                        'downpayment_received' => 'bg-secondary',
-                        'in_production' => 'bg-warning',
-                        'pending_final_payment' => 'bg-dark',
-                        'final_payment_received' => 'bg-success',
-                        'shipped' => 'bg-info',
-                        default => 'bg-warning',
-                    };
-                
-                    $html .= "<tr>
-                        <td>{$order->id}</td>
-                        <td>{$order->name}</td>
-                        <td>{$order->phone}</td>
-                        <td>\${$order->subtotal}</td>
-                        <td><span class='badge {$statusClass}'>" . ucfirst(str_replace('_', ' ', $order->status)) . "</span></td>
-                        <td>{$order->created_at}</td>
-                        <td>" . $order->orderItems->count() . "</td>
-                        <td>" . ($order->note) . "</td>
-                    </tr>";
-                }
-                
-        $html .= '</tbody></table></body></html>';
-    
-         $headers = [
-            "Content-Type" => "application/vnd.ms-excel",
-            "Content-Disposition" => "attachment; filename=\"$filename\"",
-            "Cache-Control" => "no-cache, no-store, must-revalidate",
-            "Pragma" => "no-cache",
-            "Expires" => "0",
-        ];
-    
-         return response($html, 200, $headers);
+        $orders = Order::with('orderItems')->get();
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // تعيين رؤوس الأعمدة
+        $sheet->setCellValue('A1', 'ID Number');
+        $sheet->setCellValue('B1', 'Client Name');
+        $sheet->setCellValue('C1', 'Phone');
+        $sheet->setCellValue('D1', 'Total');
+        $sheet->setCellValue('E1', 'Status');
+        $sheet->setCellValue('F1', 'Order Date');
+        $sheet->setCellValue('G1', 'Total Items');
+        $sheet->setCellValue('H1', 'Notes');
+
+        $row = 2;
+        foreach ($orders as $order) {
+            $sheet->setCellValue('A' . $row, $order->id);
+            $sheet->setCellValue('B' . $row, $order->name);
+            $sheet->setCellValueExplicit('C' . $row, $order->phone, DataType::TYPE_STRING);
+            $sheet->setCellValue('D' . $row, $order->subtotal);
+            $sheet->setCellValue('E' . $row, ucfirst(str_replace('_', ' ', $order->status)));
+            $sheet->setCellValue('F' . $row, $order->created_at);
+            $sheet->setCellValue('G' . $row, $order->orderItems->count());
+            $sheet->setCellValue('H' . $row, $order->note);
+            $row++;
+        }
+
+        $filename = "orders_" . date('Y-m-d') . ".xlsx";
+        $writer = new Xlsx($spreadsheet);
+        
+        // إرسال الملف للتنزيل
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        $writer->save('php://output');
     }
+ 
     
 
 }

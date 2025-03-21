@@ -246,7 +246,12 @@
                 </a>
             </div>
 
-
+            @if(session('clear_shipping'))
+            <script>
+                sessionStorage.setItem('clear_shipping', 'true');
+            </script>
+        @endif
+        
         </section>
     </main>
 @endsection
@@ -260,6 +265,24 @@
 
             button.innerHTML = 'Processing...';
         }
+        document.addEventListener("DOMContentLoaded", function () {
+     if (sessionStorage.getItem('clear_shipping')) {
+        clearCartData();
+        sessionStorage.removeItem('clear_shipping');   
+    }
+
+     document.getElementById('downloadPdfButton').addEventListener('click', function () {
+        sessionStorage.setItem('clear_shipping', 'true');   
+    });
+});
+
+// دالة لحذف بيانات الشحن من localStorage
+function clearCartData() {
+    localStorage.removeItem('cartData');
+    console.log("done");
+}
+
     </script>
+    
 @endpush
  
