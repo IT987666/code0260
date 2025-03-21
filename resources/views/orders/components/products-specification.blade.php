@@ -14,7 +14,7 @@
             @foreach ($firstItem->specifications as $spec)
                 <div>
                     <h3>{{ $spec['name'] ?? 'Specification' }}</h3>
- 
+
                     <!-- Paragraphs -->
                     @if (!empty($spec['paragraphs']))
                         <div>{!! $spec['paragraphs'] !!}</div>
@@ -33,9 +33,10 @@
                                         $base64Image = $base64EncodeImageA($image);
                                     @endphp
 
-                                    @if ($base64Image)
+                                    {{-- @if ($base64Image)
                                         <img src="{{ $base64Image }}" class="product-image" alt="spec image">
-                                    @endif
+                                    @endif --}}
+                                    <img src="{{ asset('storage/' . $image) }}" alt="spec image" class="product-image">
                                 @endforeach
                             </div>
                         @endif
