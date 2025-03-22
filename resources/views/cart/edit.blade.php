@@ -29,6 +29,12 @@
                     <input type="number" name="price" id="price" class="form-control modern-input"
                         value="{{ $item->price }}" min="0.01" step="0.01">
                 </div>
+<!-- Area field - قابل للتعديل -->
+<div class="form-group">
+    <label for="area">Area</label>
+    <input type="text" name="area" id="area" class="form-control modern-input"
+        value="{{ $item->options['area'] ?? '' }}">
+</div>
 
                 <!-- Stock Status field - غير قابل للتعديل -->
                 <div class="form-group">
@@ -47,9 +53,10 @@
 
                 <div class="form-group">
                     <label for="description">PRODUCT DESCRIPTION</label>
-                    <input type="text" name="description" id="description" class="form-control modern-input"
-                        value="{{ $item->options['description'] }}">
+                    <textarea name="description" id="description" class="form-control modern-input auto-expand"
+                        rows="2">{{ $item->options['description'] }}</textarea>
                 </div>
+                
 
                 <label for="specifications"><strong>Specifications</strong></label>
 
@@ -394,5 +401,28 @@
                     `textarea[name='specifications[new_${specificationCounter}][paragraphs]']`)[0]);
             });
         });
+
+        // ✅ توسيع حقل الوصف تلقائيًا عند الكتابة
+document.addEventListener("DOMContentLoaded", function () {
+    const descriptionInputs = document.querySelectorAll(".auto-expand");
+
+    descriptionInputs.forEach(textarea => {
+        textarea.style.overflow = "hidden"; // إخفاء التمرير الداخلي
+        textarea.style.resize = "none"; // منع تغيير الحجم يدويًا
+
+        function adjustHeight(el) {
+            el.style.height = "auto"; // إعادة التعيين للحجم الأصلي
+            el.style.height = (el.scrollHeight) + "px"; // توسيع الحقل بناءً على المحتوى
+        }
+
+        textarea.addEventListener("input", function () {
+            adjustHeight(this);
+        });
+
+        // توسيع الحقل عند تحميل الصفحة إذا كان فيه نص طويل
+        adjustHeight(textarea);
+    });
+});
+
     </script>
 @endpush

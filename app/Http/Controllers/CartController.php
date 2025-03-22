@@ -34,8 +34,8 @@ class CartController extends Controller
         }
 
         $price = $request->price ?? 0.00;
-        $area = $request->area ?? 0.00;
-
+        $area = $request->area  ;
+ 
         $specifications = $product->specifications->map(function ($spec) {
             return [
                 'name' => $spec->name,
@@ -67,6 +67,7 @@ class CartController extends Controller
                 'area' => $area,
             ],
         ])->associate('App\Models\Product');
+        
         //Log::info(Cart::instance('cart')->content());
         return redirect()->back()->with('success', 'Product added to cart successfully!');
     }
@@ -493,6 +494,7 @@ class CartController extends Controller
         $validated = $request->validate([
             'qty' => 'required|integer|min:1',  // التحقق من الكمية
             'price' => 'required|numeric|min:0',  // التحقق من السعر
+            'area' => 'required|string',  // إضافة التحقق من المنطقة
 
             'description' => 'nullable|string',  // التحقق من الوصف
             'companies_responsibilities' => 'nullable|string',  // التحقق من الوصف
@@ -518,6 +520,8 @@ class CartController extends Controller
         // احتفظ بالقيم القديمة إذا لم يتم إرسالها في الطلب
         $updatedOptions = array_merge((array)$item->options, [
             'specifications' => $specifications ?? $item->options['specifications'],
+            'area' => $validated['area'] ?? $item->options['area'],
+
             'description' => $validated['description'] ?? $item->options['description'],
             'companies_responsibilities' => $validated['companies_responsibilities'] ?? $item->options['companies_responsibilities'],
             'customers_responsibilities' => $validated['customers_responsibilities'] ?? $item->options['customers_responsibilities'],
@@ -527,6 +531,7 @@ class CartController extends Controller
             'qty' => $validated['qty'],
             'rowId' => $rowId,
             'price' => $validated['price'],
+            'area' => $validated['area'] ?? $item->options['area'], // إضافة المنطقة
 
 
             'options' => $updatedOptions,

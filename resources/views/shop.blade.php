@@ -48,22 +48,16 @@
 
         .description-input {
             width: 300px;
-            /* زيادة العرض حسب الحاجة */
-            height: 100px;
-            /* تحديد ارتفاع الحقل */
-        }
+             height: 100px;
+         }
 
-        /* جعل حقل الكمية أصغر */
-        input[name="qty"] {
+         input[name="qty"] {
             width: 60px;
-            /* تصغير العرض */
-        }
+         }
 
-        /* تحسين مظهر الجدول */
-        table {
+         table {
             width: 100%;
-            /* جعل الجدول يأخذ العرض الكامل */
-        }
+         }
 
         th,
         td {
@@ -75,8 +69,7 @@
         body {
 
             padding-top: 20px;
-            /* Adds space at the top of the body content */
-
+ 
         }
 
         header {
@@ -297,47 +290,38 @@
 
         .cart-container {
             width: 135%;
-            /* تحديد عرض مناسب للجدولين */
-            margin: auto;
-            /* جعل الجدولين في المنتصف */
-            text-align: center;
-            margin-left: -15%; /* تحريك العنصر نحو اليمين */
+             margin: auto;
+             text-align: center;
+            margin-left: -15%;  
 
         }
 
         table {
             width: 100%;
             table-layout: fixed;
-            /* يجعل الأعمدة تحتفظ بحجم متساوٍ */
-        }
+         }
 
         th,
         td {
             white-space: nowrap;
-            /* منع النصوص من الانكسار */
-            overflow: hidden;
+             overflow: hidden;
             text-overflow: ellipsis;
-            /* إضافة "..." عند النصوص الطويلة */
-        }
+         }
 
         td input,
         td textarea {
             width: 90%;
-            /* جعل الحقول داخل الجدول متناسبة */
-            max-width: 120px;
-            /* تحديد حد أقصى للعرض */
-        }
+             max-width: 120px;
+         }
 
         td .description-input {
             width: 90%;
-            /* التأكد من أن حقل الوصف لا يمتد خارج الجدول */
-            max-width: 250px;
+             max-width: 250px;
         }
 
         .cart-container:last-child {
             margin-top: 40px;
-            /* إضافة مسافة بين الجدولين */
-        }
+         }
 
         @media (max-width: 768px) {
             .cart-container {
@@ -346,8 +330,7 @@
 
             table {
                 font-size: 12px;
-                /* تصغير حجم النصوص على الشاشات الصغيرة */
-            }
+             }
 
             td input,
             td textarea {
@@ -355,38 +338,28 @@
             }
         }
 
-        /* ضبط تنسيق العناصر داخل القائمة */
-        .dropdown-item {
+         .dropdown-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 8px;
             border-bottom: 1px solid #ddd;
             white-space: nowrap;
-            /* تأكد من أن النص لا يلتف افتراضيًا */
-            overflow: hidden;
+             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
-            /* تحديد عرض العنصر */
-        }
+         }
 
-        /* في حال أردت أن يلتف النص على عدة أسطر بدلًا من الاقتصاص */
-        .dropdown-item span {
+         .dropdown-item span {
             max-width: 70%;
-            /* تحديد أقصى عرض للنص */
-            word-wrap: break-word;
-            /* السماح للنص بالالتفاف */
-            overflow-wrap: break-word;
+             word-wrap: break-word;
+             overflow-wrap: break-word;
             font-size: 14px;
-            /* تصغير الخط إذا لزم الأمر */
-        }
+         }
 
-        /* زر الإضافة يبقى بجانب النص دون أن يختفي */
-        .add-to-cart-btn {
+         .add-to-cart-btn {
             flex-shrink: 0;
-            /* يمنع الزر من التصغير */
-            margin-left: 10px;
-            /* إضافة مسافة بين النص والزر */
+             margin-left: 10px;
             padding: 5px 10px;
             font-size: 14px;
         }
@@ -403,24 +376,20 @@
             position: relative;
         }
 
-        /* تأثير الدوران */
         @keyframes spin {
             0% {
                 transform: rotate(0deg);
-                border-top-color: #ff5733;
-                /* لون البداية */
-            }
+                border-top-color: #dbdbdbc4;
+             }
 
             50% {
-                border-top-color: #33ff57;
-                /* لون متغير أثناء الدوران */
-            }
+                border-top-color: #20bec6;
+             }
 
             100% {
                 transform: rotate(360deg);
-                border-top-color: #5733ff;
-                /* لون النهاية */
-            }
+                border-top-color: #0c4b64;
+             }
         }
     </style>
 
@@ -455,13 +424,13 @@
     
         <table>
             <colgroup>
-                <col style="width:30%;"> <!-- المنتج -->
-                <col style="width: 15%;"> <!-- السعر -->
-                <col style="width: 15%;"> <!-- المساحة -->
-                <col style="width: 15%;"> <!-- الكمية -->
-                <col style="width: 20%;"> <!-- المجموع -->
-                <col style="width: 30%;"> <!-- الوصف (أعرض) -->
-                <col style="width: 20%;"> <!-- الإجراءات (أعرض) -->
+                <col style="width:30%;"> 
+                <col style="width: 15%;"> 
+                <col style="width: 15%;"> 
+                <col style="width: 15%;">
+                <col style="width: 20%;">
+                <col style="width: 30%;"> 
+                <col style="width: 20%;"> 
             </colgroup>
             <thead>
                 <tr>
@@ -501,9 +470,10 @@
                                 <form method="POST" action="{{ route('cart.area.update', ['rowId' => $item->rowId]) }}">
                                     @csrf
                                     @method('PUT')
-                                    <input type="text" name="area" value="{{ $item->options['area'] ?? '' }}" />
+                                    <input type="text" name="area" data-row-id="{{ $item->rowId }}" value="{{ $item->options['area'] }}">
                                 </form>
                             </td>
+                            
     
                             <td>
                                 <form method="POST" action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}">
@@ -522,6 +492,7 @@
                             </td>
                             <td>
                                 <div class="button-group">
+                                    
                                     <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}" class="btn btn-primary">Edit Specifications</a>
                                     <form method="POST" action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
                                         @csrf
@@ -591,7 +562,6 @@
                                     <input type="number" id="shippingCost" value="0.00" step="0.01" readonly />
                                 </td>
                             </tr>
-                            <!-- الصف الخاص بإجمالي تكلفة المنتج -->
                             <div style="margin-top: 20px; text-align: right;">
                                 <input type="hidden" type="number" id="subtotal" value="0.00" step="0.01"
                                     readonly />
@@ -603,7 +573,6 @@
                                 </td>
                                 <td colspan="2"><span id="product-total">0.00</span></td>
                             </tr>
-                            <!-- الصف الخاص بالإجمالي مع الشحن -->
                             <tr>
                                 <td colspan="2" style="text-align: left;"><strong>Total Cost with Shipping
                                         (USD):</strong></td>
@@ -650,7 +619,6 @@
                 </button>
             </div>
 
-            <!-- شاشة التحميل -->
             <div id="loadingScreen"
                 style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; flex-direction: column;">
                 <div class="spinner"></div>
@@ -671,19 +639,16 @@
         let dropdownContainer = document.getElementById("dropdownContainer");
         let productDropdown = document.getElementById("productDropdown");
 
-        // إظهار القائمة عند النقر على حقل البحث
         searchBox.addEventListener("focus", function() {
             dropdownContainer.style.display = "block";
         });
 
-        // إخفاء القائمة عند النقر خارجها
         document.addEventListener("click", function(event) {
             if (!dropdownContainer.contains(event.target) && event.target !== searchBox) {
                 dropdownContainer.style.display = "none";
             }
         });
 
-        // البحث داخل القائمة
         searchBox.addEventListener("keyup", function() {
             let query = this.value.toLowerCase();
             let items = productDropdown.getElementsByClassName("dropdown-item");
@@ -695,11 +660,9 @@
                 if (match) hasResults = true;
             }
 
-            // إظهار القائمة فقط إذا كان هناك نتائج
             dropdownContainer.style.display = hasResults ? "block" : "none";
         });
 
-        // إضافة المنتج عند النقر على الزر
         productDropdown.addEventListener("click", function(event) {
             if (event.target.classList.contains("add-to-cart-btn")) {
                 let productId = event.target.getAttribute("data-id");
@@ -735,7 +698,9 @@ function saveToLocalStorage() {
         shipping_type: shippingTypeSelect.value,
         shipping_cost: shippingCostInput.value,
         total_cost: totalCostSpan.textContent.replace(',', ''),
-        subtotal: subtotalInput.value
+        subtotal: subtotalInput.value,
+        shipping_incoterm: document.getElementById('shipping_incoterm').value,
+        port_name_or_city: document.getElementById('port_name_or_city').value
     };
     localStorage.setItem('cartData', JSON.stringify(formData));
 }
@@ -844,8 +809,10 @@ function autoSaveShippingDetails() {
         quantity: quantityInput.value,
         unit_price: unitPriceInput.value,
         shipping_cost: shippingCostInput.value,
-        total_cost: totalCostSpan.textContent.replace(',', '')
-    };
+        total_cost: totalCostSpan.textContent.replace(',', ''),
+        shipping_incoterm: document.getElementById('shipping_incoterm').value,
+        port_name_or_city: document.getElementById('port_name_or_city').value
+        };
 
     fetch("{{ route('shipping.store') }}", {
         method: "POST",
@@ -893,8 +860,183 @@ document.addEventListener("DOMContentLoaded", function () {
 
   
 </script>
+@endpush
+@push('scripts')
 <script>
-    document.getElementById("proceedToOrder").addEventListener("click", function() {
+ $(document).ready(function() {
+    $("input[name='price']").on("input", function() {
+        var row = $(this).closest("tr"); 
+        var priceInput = $(this); 
+        var price = parseFloat(priceInput.val()) || 0;
+        var quantity = parseInt(row.find("input[name='qty']").val()) || 1;
+        var total = (price * quantity).toFixed(2); 
+
+        row.find(".total-price").text("$" + total); 
+
+        $.ajax({
+            url: priceInput.closest("form").attr("action"),
+            method: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                _method: "PUT",
+                price: price
+            },
+            success: function(response) {
+                console.log("✅ Price updated successfully");
+            },
+            error: function(error) {
+                console.log("❌ Error updating price", error);
+            }
+        });
+    });
+
+    $("input[name='qty']").on("input", function() {
+        var row = $(this).closest("tr"); 
+        var quantityInput = $(this);
+        var price = parseFloat(row.find("input[name='price']").val()) || 0;
+        var quantity = parseInt(quantityInput.val()) || 1;
+        var total = (price * quantity).toFixed(2); 
+
+        row.find(".total-price").text("$" + total); 
+
+        $.ajax({
+            url: quantityInput.closest("form").attr("action"),
+            method: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                _method: "PUT",
+                qty: quantity
+            },
+            success: function(response) {
+                console.log("✅ Quantity updated successfully");
+            },
+            error: function(error) {
+                console.log("❌ Error updating quantity", error);
+            }
+        });
+    });
+    $("input[name='area']").on("blur", function() {
+    var areaInput = $(this);
+    var form = areaInput.closest("form");
+    var formData = new FormData(form[0]);
+
+    $.ajax({
+        url: form.attr("action"),
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
+        },
+        success: function(response) {
+            console.log("✅ Area updated successfully");
+            location.reload();
+        },
+        error: function(error) {
+            console.log("❌ Error updating area", error);
+        }
+    });
+});
+ $(".description-input").on("blur", function() {
+    var descInput = $(this);
+    var form = descInput.closest("form");
+    var formData = new FormData(form[0]);
+
+    $.ajax({
+        url: form.attr("action"),
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
+        },
+        success: function(response) {
+            console.log("✅ Description updated successfully");
+            location.reload(); 
+        },
+        error: function(error) {
+            console.log("❌ Error updating description", error);
+        }
+    });
+});
+
+ 
+});
+
+    
+    
+ 
+ $(document).ready(function() {
+    $("#proceedToOrder").on("click", function(event) {
+        event.preventDefault(); 
+
+        let requests = []; 
+
+        $("input[name='price'], input[name='area']").each(function() {
+            let input = $(this);
+            input.trigger("input"); 
+        });
+
+        $(".description-input").each(function() {
+            let form = $(this).closest(".description-form");
+            if (form.length) {
+                let formData = new FormData(form[0]);
+                let request = fetch(form.attr("action"), {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
+                    }
+                }).catch(error => console.error("❌ خطأ في حفظ الوصف:", error));
+
+                requests.push(request);
+            }
+        });
+
+       
+$("input[name='area']").each(function() {
+    let areaInput = $(this);
+    let form = areaInput.closest("form");
+    let formData = new FormData(form[0]);
+
+    let request = fetch(form.attr("action"), {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
+        }
+    }).catch(error => console.error("❌ خطأ في تحديث Area:", error));
+
+    requests.push(request);
+});
+
+        $("#shippingTypeInput").val($("#shippingType").val());
+        $("#quantityInput").val($("#quantity").val());
+        $("#unitPriceInput").val($("#unitPrice").val());
+        $("#shippingCostInput").val($("#shippingCost").val());
+        $("#totalCostInput").val($("#total-cost").text().replace(',', ''));
+      formData.set('shipping_incoterm', document.getElementById('shipping_incoterm').value);
+    formData.set('port_name_or_city', document.getElementById('port_name_or_city').value);
+
+        let shippingRequest = fetch($("#shippingForm").attr("action"), {
+            method: "POST",
+            body: new FormData($("#shippingForm")[0]),
+            headers: {
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
+            }
+        }).catch(error => console.error("❌", error));
+
+        requests.push(shippingRequest);
+
+        Promise.all(requests).finally(() => {
+            window.location.href = "{{ route('cart.order') }}"; 
+        });
+    });
+});
+
+document.getElementById("proceedToOrder").addEventListener("click", function() {
         let loadingScreen = document.getElementById("loadingScreen");
         loadingScreen.style.display = "flex";      
         loadingScreen.style.position = "fixed"; 
@@ -910,224 +1052,7 @@ document.addEventListener("DOMContentLoaded", function () {
             loadingScreen.style.display = "none";
         }
     };
-</script>
+ 
 
-
-    <script>
-      
-        document.querySelectorAll('.description-input').forEach(textarea => {
-    let typingTimer;
-    const typingDelay = 1000; 
-
-    textarea.addEventListener('input', function() {
-        clearTimeout(typingTimer);
-        typingTimer = setTimeout(() => {
-            let form = this.closest('.description-form');
-            let formData = new FormData(form);
-
-            fetch(form.action, {
-                method: "POST",
-                body: formData,
-                headers: {
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Description updated successfully", data);
-            })
-            .catch(error => console.error("Error updating description", error));
-        }, typingDelay);
-    });
-});
-        document.getElementById('orderby').addEventListener('change', function() {
-            this.form.submit();
-        });
-
-        $(function() {
-            // Handle page size change
-            $("#pagesize").on("change", function() {
-                $("#size").val($("#pagesize option:selected").val());
-                $("#frmfilter").submit();
-            });
-
-            // Handle sorting order change
-            $("#orderby").on("change", function() {
-                $("#order").val($("#orderby option:selected").val());
-                $("#frmfilter").submit();
-            });
-
-            // Handle category filtering
-            $("input[name='categories']").on("change", function() {
-                var categories = "";
-                $("input[name='categories']:checked").each(function() {
-                    if (categories === "") {
-                        categories += $(this).val();
-                    } else {
-                        categories += "," + $(this).val();
-                    }
-                });
-                $("#hdnCategories").val(categories);
-                $("#frmfilter").submit();
-            });
-
-            // Handle price range changes
-            $("[name='price_range']").on("change", function() {
-                var min = $(this).val().split(',')[0];
-                var max = $(this).val().split(',')[1];
-                $("#hdnMinPrice").val(min);
-                $("#hdnMaxPrice").val(max);
-                setTimeout(() => {
-                    $("#frmfilter").submit();
-                }, 2000);
-            });
-        });
-
-
-        $(function() {
-            $(".qty-control__increase").on("click", function() {
-                $(this).closest('form').submit();
-            });
-            $(".qty-control__reduce").on("click", function() {
-                $(this).closest('form').submit();
-            });
-            $('.remove-cart').on("click", function() {
-                $(this).closest('form').submit();
-            });
-        })
-    </script>
-    <script>
-        $(document).ready(function() {
-            $("input[name='price']").on("input", function() {
-                var row = $(this).closest("tr"); // Get the closest table row
-                var priceInput = $(this); // The input field
-                var price = parseFloat(priceInput.val()) || 0;
-                var area = parseFloat(priceInput.val()) || 0;
-
-                var quantity = parseInt(row.find("input[name='qty']").val()) || 1;
-                var total = (price * quantity).toFixed(2); // Calculate total
-
-                row.find(".total-price").text("$" + total); // Update total in UI
-
-                // Send AJAX request to update the price in the database
-                $.ajax({
-                    url: priceInput.closest("form").attr("action"),
-                    method: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        _method: "PUT",
-                        price: price
-                    },
-                    success: function(response) {
-                        console.log("Price updated successfully");
-                    },
-                    error: function(error) {
-                        console.log("Error updating price", error);
-                    }
-                });
-            });
-
-            $("input[name='qty']").on("input", function() {
-                var row = $(this).closest("tr"); // Get the closest table row
-                var quantityInput = $(this);
-                var price = parseFloat(row.find("input[name='price']").val()) || 0;
-                var area = parseFloat(row.find("input[name='area']").val()) || 0;
-
-                var quantity = parseInt(quantityInput.val()) || 1;
-                var total = (price * quantity).toFixed(2); // Calculate total
-
-                row.find(".total-price").text("$" + total); // Update total in UI
-
-                // Send AJAX request to update the quantity
-                $.ajax({
-                    url: quantityInput.closest("form").attr("action"),
-                    method: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        _method: "PUT",
-                        qty: quantity
-                    },
-                    success: function(response) {
-                        console.log("Quantity updated successfully");
-                    },
-                    error: function(error) {
-                        console.log("Error updating quantity", error);
-                    }
-                });
-            });
-        });
-        $(document).ready(function() {
-            // تحديث الحقل Area عندما يفقد الحقل التركيز
-            $("input[name='area']").on("blur", function() {
-                var row = $(this).closest("tr"); // تحديد الصف الحالي
-                var areaInput = $(this);
-                var area = areaInput.val(); // قراءة القيمة المدخلة
-
-                // إرسال الطلب عبر AJAX لتحديث القيمة في الداتا بيز
-                $.ajax({
-                    url: areaInput.closest("form").attr("action"),
-                    method: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        _method: "PUT",
-                        area: area
-                    },
-                    success: function(response) {
-                        console.log("Area updated successfully", response);
-                    },
-                    error: function(error) {
-                        console.log("Error updating area", error);
-                    }
-                });
-            });
-        });
-        
-    </script>
-@endpush
-@push('scripts')
-    <script>
-        document.getElementById('proceedToOrder').addEventListener('click', function(event) {
-            event.preventDefault();
-
-            // تحديث الحقول المخفية الخاصة بالشحن
-            document.getElementById('shippingTypeInput').value = document.getElementById('shippingType').value;
-            document.getElementById('quantityInput').value = document.getElementById('quantity').value;
-            document.getElementById('unitPriceInput').value = document.getElementById('unitPrice').value;
-            document.getElementById('shippingCostInput').value = document.getElementById('shippingCost').value;
-            document.getElementById('totalCostInput').value = document.getElementById('total-cost').textContent
-                .replace(',', '');
-
-            let descriptions = document.querySelectorAll('.description-input');
-            let forms = [];
-
-            descriptions.forEach(textarea => {
-                let form = textarea.closest('.description-form');
-                if (form) {
-                    forms.push(fetch(form.action, {
-                        method: "POST",
-                        body: new FormData(form),
-                        headers: {
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
-                        }
-                    }));
-                }
-            });
-
-            const shippingForm = document.getElementById('shippingForm');
-            forms.push(fetch(shippingForm.action, {
-                method: "POST",
-                body: new FormData(shippingForm),
-                headers: {
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute(
-                        'content')
-                }
-            }));
-
-            // إرسال جميع البيانات ثم الانتقال إلى صفحة الطلب
-            Promise.all(forms).then(() => {
-                window.location.href = "{{ route('cart.order') }}";
-            });
-        });
     </script>
 @endpush
