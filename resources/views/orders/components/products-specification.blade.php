@@ -20,26 +20,22 @@
                         <div>{!! $spec['paragraphs'] !!}</div>
                     @endif
 
-                    <!-- Images -->
-                    @if (!empty($spec['images']))
-                        @php
-                            $images = is_array($spec['images']) ? $spec['images'] : json_decode($spec['images'], true);
-                        @endphp
+                  
+                  <!-- Images -->
+@if (!empty($spec['images']))
+@php
+    $images = is_array($spec['images']) ? $spec['images'] : json_decode($spec['images'], true);
+@endphp
 
-                        @if (is_array($images) && count($images) > 0)
-                            <div class="product-image-container">
-                                @foreach ($images as $image)
-                                    @php
-                                        $base64Image = $base64EncodeImageA($image);
-                                    @endphp
+@if (is_array($images) && count($images) > 0)
+    <div class="product-image-container">
+        @foreach ($images as $image)
+            <img src="{{ public_path('storage/' . $image) }}" alt="Order Image" class="product-image">
+        @endforeach
+    </div>
+@endif
+@endif
 
-                                    @if ($base64Image)
-                                        <img src="{{ $base64Image }}" class="product-image" alt="spec image">
-                                    @endif
-                                @endforeach
-                            </div>
-                        @endif
-                    @endif
 
                 </div>
             @endforeach
