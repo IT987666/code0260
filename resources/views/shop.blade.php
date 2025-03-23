@@ -957,33 +957,32 @@ document.addEventListener("DOMContentLoaded", function () {
 $(document).ready(function() {
     let isProcessing = false;   
 
-     function disableButtons() {
+    function disableButtons() {
         $(".btn").prop("disabled", true);
     }
 
-     function enableButtons() {
+    function enableButtons() {
         $(".btn").prop("disabled", false);
     }
 
-     function toggleUpdateButton() {
+    function toggleUpdateButton() {
         let price = $("input[name='price']").val().trim();
         let qty = $("input[name='qty']").val().trim();
-        
-         if (price !== "" && qty !== "") {
-            $(".update-btn").prop("disabled", false);  
-        } else {
-            $(".update-btn").prop("disabled", true);
-        }
+        $(".update-btn").prop("disabled", price === "" || qty === "");
+    }
+
+    function updateTotal(row) {
+        let price = parseFloat(row.find("input[name='price']").val()) || 0;
+        let quantity = parseInt(row.find("input[name='qty']").val()) || 1;
+        row.find(".total-price").text("$" + (price * quantity).toFixed(2));
     }
 
     $("input[name='price']").on("input", function() {
-        var row = $(this).closest("tr");
-        var priceInput = $(this);
-        var price = parseFloat(priceInput.val()) || 0;
-        var quantity = parseInt(row.find("input[name='qty']").val()) || 1;
-        var total = (price * quantity).toFixed(2); 
+        let row = $(this).closest("tr");
+        let priceInput = $(this);
+        let price = parseFloat(priceInput.val()) || 0;
 
-        row.find(".total-price").text("$" + total); 
+        updateTotal(row);
 
         $.ajax({
             url: priceInput.closest("form").attr("action"),
@@ -994,30 +993,28 @@ $(document).ready(function() {
                 price: price
             },
             success: function(response) {
-             },
+                console.log("✅ Price updated successfully");
+            },
             error: function(error) {
-             }
+                console.log("❌ Error updating price", error);
+            }
         });
 
-        toggleUpdateButton();  // تحقق من تفعيل الزر
+        toggleUpdateButton();
     });
 
     $("input[name='qty']").on("input", function() {
-        var row = $(this).closest("tr");
-        var quantityInput = $(this);
-        var price = parseFloat(row.find("input[name='price']").val()) || 0;
-        var quantity = parseInt(quantityInput.val()) || 1;
-        var total = (price * quantity).toFixed(2); 
+        let row = $(this).closest("tr");
+        updateTotal(row);
 
-        row.find(".total-price").text("$" + total); 
-
+        let qtyInput = $(this);
         $.ajax({
-            url: quantityInput.closest("form").attr("action"),
+            url: qtyInput.closest("form").attr("action"),
             method: "POST",
             data: {
                 _token: "{{ csrf_token() }}",
                 _method: "PUT",
-                qty: quantity
+                qty: qtyInput.val()
             },
             success: function(response) {
                 console.log("✅ Quantity updated successfully");
@@ -1027,74 +1024,49 @@ $(document).ready(function() {
             }
         });
 
-        toggleUpdateButton();  // تحقق من تفعيل الزر
+        toggleUpdateButton();
     });
 
-    $("input[name='area']").on("blur", function() {
-        if (isProcessing) return;
+    function handleAjaxUpdate(inputSelector) {
+        $(inputSelector).on("blur", function() {
+            if (isProcessing) return;
+            isProcessing = true;
+            disableButtons();
 
-        isProcessing = true;
-        disableButtons();
+            let inputField = $(this);
+            let form = inputField.closest("form");
+            let formData = new FormData(form[0]);
 
-        var areaInput = $(this);
-        var form = areaInput.closest("form");
-        var formData = new FormData(form[0]);
-
-        $.ajax({
-            url: form.attr("action"),
-            method: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
-            },
-            success: function(response) {
-                 setTimeout(() => location.reload(), 50); // Reload فورًا بعد نجاح الطلب
-                isProcessing = false;
-                enableButtons();
-            },
-            error: function(error) {
-                 isProcessing = false;
-                enableButtons();
-            }
+            $.ajax({
+                url: form.attr("action"),
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                cache: false,
+                async: false,
+                headers: {
+                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
+                },
+                success: function(response) {
+                    console.log(`✅ ${inputField.attr("name")} updated successfully`);
+                    location.reload(true); // 🚀 Reload سريع بدون تأخير
+                },
+                error: function(error) {
+                    console.log(`❌ Error updating ${inputField.attr("name")}`, error);
+                },
+                complete: function() {
+                    isProcessing = false;
+                    enableButtons();
+                }
+            });
         });
-    });
+    }
 
-    $(".description-input").on("blur", function() {
-        if (isProcessing) return;
-
-        isProcessing = true;
-        disableButtons();
-
-        var descInput = $(this);
-        var form = descInput.closest("form");
-        var formData = new FormData(form[0]);
-
-        $.ajax({
-            url: form.attr("action"),
-            method: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
-            },
-            success: function(response) {
-                 setTimeout(() => location.reload(), 50); // Reload فورًا بعد نجاح الطلب
-                isProcessing = false;
-                enableButtons();
-            },
-            error: function(error) {
-                 isProcessing = false;
-                enableButtons();
-            }
-        });
-    });
+    handleAjaxUpdate("input[name='area']");
+    handleAjaxUpdate(".description-input");
 });
-
-    
-    
+  
  
  $(document).ready(function() {
     $("#proceedToOrder").on("click", function(event) {
