@@ -916,7 +916,7 @@ function autoSaveShippingDetails() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            console.log("Shipping details saved successfully!");
+           // console.log("Shipping details saved successfully!");
         }
     })
     .catch(error => console.error('Error saving shipping details:', error));
@@ -936,7 +936,7 @@ window.onload = () => {
     updateTotalCost();
 };
 
-console.log("Auto-save shipping script loaded!");
+//console.log("Auto-save shipping script loaded!");
 document.addEventListener("DOMContentLoaded", function () {
      if (sessionStorage.getItem('clear_shipping')) {
         clearCartData();
@@ -946,7 +946,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
  function clearCartData() {
     localStorage.removeItem('cartData');
-    console.log(" done");
+    //console.log(" done");
 }
 
   
@@ -955,118 +955,144 @@ document.addEventListener("DOMContentLoaded", function () {
 @push('scripts')
 <script>
 $(document).ready(function() {
-    let isProcessing = false;   
-
-    function disableButtons() {
-        $(".btn").prop("disabled", true);
-    }
-
-    function enableButtons() {
-        $(".btn").prop("disabled", false);
-    }
-
-    function toggleUpdateButton() {
-        let price = $("input[name='price']").val().trim();
-        let qty = $("input[name='qty']").val().trim();
-        $(".update-btn").prop("disabled", price === "" || qty === "");
-    }
-
-    function updateTotal(row) {
-        let price = parseFloat(row.find("input[name='price']").val()) || 0;
-        let quantity = parseInt(row.find("input[name='qty']").val()) || 1;
-        row.find(".total-price").text("$" + (price * quantity).toFixed(2));
-    }
-
-    $("input[name='price']").on("input", function() {
-        let row = $(this).closest("tr");
-        let priceInput = $(this);
-        let price = parseFloat(priceInput.val()) || 0;
-
-        updateTotal(row);
-
-        $.ajax({
-            url: priceInput.closest("form").attr("action"),
-            method: "POST",
-            data: {
-                _token: "{{ csrf_token() }}",
-                _method: "PUT",
-                price: price
-            },
-            success: function(response) {
-                console.log("✅ Price updated successfully");
-            },
-            error: function(error) {
-                console.log("❌ Error updating price", error);
-            }
-        });
-
-        toggleUpdateButton();
-    });
-
-    $("input[name='qty']").on("input", function() {
-        let row = $(this).closest("tr");
-        updateTotal(row);
-
-        let qtyInput = $(this);
-        $.ajax({
-            url: qtyInput.closest("form").attr("action"),
-            method: "POST",
-            data: {
-                _token: "{{ csrf_token() }}",
-                _method: "PUT",
-                qty: qtyInput.val()
-            },
-            success: function(response) {
-                console.log("✅ Quantity updated successfully");
-            },
-            error: function(error) {
-                console.log("❌ Error updating quantity", error);
-            }
-        });
-
-        toggleUpdateButton();
-    });
-
-    function handleAjaxUpdate(inputSelector) {
-        $(inputSelector).on("blur", function() {
-            if (isProcessing) return;
-            isProcessing = true;
-            disableButtons();
-
-            let inputField = $(this);
-            let form = inputField.closest("form");
-            let formData = new FormData(form[0]);
-
-            $.ajax({
-                url: form.attr("action"),
-                method: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                cache: false,
-                async: false,
-                headers: {
-                    "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
-                },
-                success: function(response) {
-                    console.log(`✅ ${inputField.attr("name")} updated successfully`);
-                    location.reload(true); // 🚀 Reload سريع بدون تأخير
-                },
-                error: function(error) {
-                    console.log(`❌ Error updating ${inputField.attr("name")}`, error);
-                },
-                complete: function() {
-                    isProcessing = false;
-                    enableButtons();
-                }
-            });
-        });
-    }
-
-    handleAjaxUpdate("input[name='area']");
-    handleAjaxUpdate(".description-input");
-});
-  
+     let isProcessing = false;   
+ 
+      function disableButtons() {
+         $(".btn").prop("disabled", true);
+     }
+ 
+      function enableButtons() {
+         $(".btn").prop("disabled", false);
+     }
+ 
+      function toggleUpdateButton() {
+         let price = $("input[name='price']").val().trim();
+         let qty = $("input[name='qty']").val().trim();
+         
+          if (price !== "" && qty !== "") {
+             $(".update-btn").prop("disabled", false);  
+         } else {
+             $(".update-btn").prop("disabled", true);
+         }
+     }
+ 
+     $("input[name='price']").on("input", function() {
+         var row = $(this).closest("tr");
+         var priceInput = $(this);
+         var price = parseFloat(priceInput.val()) || 0;
+         var quantity = parseInt(row.find("input[name='qty']").val()) || 1;
+         var total = (price * quantity).toFixed(2); 
+ 
+         row.find(".total-price").text("$" + total); 
+ 
+         $.ajax({
+             url: priceInput.closest("form").attr("action"),
+             method: "POST",
+             data: {
+                 _token: "{{ csrf_token() }}",
+                 _method: "PUT",
+                 price: price
+             },
+             success: function(response) {
+              },
+             error: function(error) {
+              }
+         });
+ 
+         toggleUpdateButton();  // تحقق من تفعيل الزر
+     });
+ 
+     $("input[name='qty']").on("input", function() {
+         var row = $(this).closest("tr");
+         var quantityInput = $(this);
+         var price = parseFloat(row.find("input[name='price']").val()) || 0;
+         var quantity = parseInt(quantityInput.val()) || 1;
+         var total = (price * quantity).toFixed(2); 
+ 
+         row.find(".total-price").text("$" + total); 
+ 
+         $.ajax({
+             url: quantityInput.closest("form").attr("action"),
+             method: "POST",
+             data: {
+                 _token: "{{ csrf_token() }}",
+                 _method: "PUT",
+                 qty: quantity
+             },
+             success: function(response) {
+                // console.log("✅ Quantity updated successfully");
+             },
+             error: function(error) {
+                // console.log("❌ Error updating quantity", error);
+             }
+         });
+ 
+         toggleUpdateButton();  // تحقق من تفعيل الزر
+     });
+ 
+     $("input[name='area']").on("blur", function() {
+         if (isProcessing) return;
+ 
+         isProcessing = true;
+         disableButtons();
+ 
+         var areaInput = $(this);
+         var form = areaInput.closest("form");
+         var formData = new FormData(form[0]);
+ 
+         $.ajax({
+             url: form.attr("action"),
+             method: "POST",
+             data: formData,
+             processData: false,
+             contentType: false,
+             headers: {
+                 "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
+             },
+             success: function(response) {
+                  setTimeout(() => location.reload(), 50);  
+                 isProcessing = false;
+                 enableButtons();
+             },
+             error: function(error) {
+                  isProcessing = false;
+                 enableButtons();
+             }
+         });
+     });
+ 
+     $(".description-input").on("blur", function() {
+         if (isProcessing) return;
+ 
+         isProcessing = true;
+         disableButtons();
+ 
+         var descInput = $(this);
+         var form = descInput.closest("form");
+         var formData = new FormData(form[0]);
+ 
+         $.ajax({
+             url: form.attr("action"),
+             method: "POST",
+             data: formData,
+             processData: false,
+             contentType: false,
+             headers: {
+                 "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
+             },
+             success: function(response) {
+                  setTimeout(() => location.reload(), 50);  
+                 isProcessing = false;
+                 enableButtons();
+             },
+             error: function(error) {
+                  isProcessing = false;
+                 enableButtons();
+             }
+         });
+     });
+ });
+ 
  
  $(document).ready(function() {
     $("#proceedToOrder").on("click", function(event) {
