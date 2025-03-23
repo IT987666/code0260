@@ -697,40 +697,46 @@
 @push('scripts')
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let searchBox = document.getElementById("searchBox");
-        let dropdownContainer = document.getElementById("dropdownContainer");
-        let productDropdown = document.getElementById("productDropdown");
+ document.addEventListener("DOMContentLoaded", function () {
+    let searchBox = document.getElementById("searchBox");
+    let dropdownContainer = document.getElementById("dropdownContainer");
+    let productDropdown = document.getElementById("productDropdown");
 
-        searchBox.addEventListener("focus", function() {
-            dropdownContainer.style.display = "block";
-        });
+    searchBox.addEventListener("focus", function () {
+        dropdownContainer.style.display = "block";
+    });
 
-        document.addEventListener("click", function(event) {
-            if (!dropdownContainer.contains(event.target) && event.target !== searchBox) {
-                dropdownContainer.style.display = "none";
-            }
-        });
+    document.addEventListener("click", function (event) {
+        if (!dropdownContainer.contains(event.target) && event.target !== searchBox) {
+            dropdownContainer.style.display = "none";
+        }
+    });
 
-        searchBox.addEventListener("keyup", function() {
-            let query = this.value.toLowerCase();
-            let items = productDropdown.getElementsByClassName("dropdown-item");
-            let hasResults = false;
+    searchBox.addEventListener("keyup", debounce(function () {
+        let query = this.value.toLowerCase();
+        let items = productDropdown.getElementsByClassName("dropdown-item");
+        let hasResults = false;
 
-            for (let item of items) {
-                let match = item.textContent.toLowerCase().includes(query);
-                item.style.display = match ? "flex" : "none";
-                if (match) hasResults = true;
-            }
+        for (let item of items) {
+            let match = item.textContent.toLowerCase().includes(query);
+            item.style.display = match ? "flex" : "none";
+            if (match) hasResults = true;
+        }
 
-            dropdownContainer.style.display = hasResults ? "block" : "none";
-        });
+        dropdownContainer.style.display = hasResults ? "block" : "none";
+    }, 200));
 
-        productDropdown.addEventListener("click", function(event) {
-            if (event.target.classList.contains("add-to-cart-btn")) {
-                let productId = event.target.getAttribute("data-id");
+    productDropdown.addEventListener("click", async function (event) {
+        if (event.target.classList.contains("add-to-cart-btn")) {
+            let productId = event.target.getAttribute("data-id");
+            let button = event.target;
+            
+            // تعطيل الزر أثناء الإضافة
+            button.disabled = true;
+            button.textContent = "Adding...";
 
-                fetch("{{ route('cart.add') }}", {
+            try {
+                let response = await fetch("{{ route('cart.add') }}", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -740,10 +746,32 @@
                         id: productId,
                         quantity: 1
                     })
-                }).then(() => window.location.replace(window.location.href));
+                });
+
+                if (response.ok) {
+                    // ✅ تحسين إعادة تحميل الصفحة بدون إعادة تحميل الكاش
+                    window.location.reload(true); 
+                } else {
+                    console.error("Error adding to cart:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            } finally {
+                button.disabled = false;
+                button.textContent = "Add";
             }
-        });
+        }
     });
+
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+});
+
 </script>
 <script>
     const quantityInput = document.getElementById('quantity');
