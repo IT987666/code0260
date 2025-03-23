@@ -393,27 +393,29 @@
 
 
         document.addEventListener('DOMContentLoaded', function() {
-            ClassicEditor
-                .create(document.querySelector('#extra'))
-                .then(editor => {
-                    let clientName = "{{ $address->name }}"; // جلب اسم العميل من الـ Controller
-                    let productNames = @json($cartItems->pluck('name')); // جلب أسماء المنتجات من الكارت
+    ClassicEditor
+        .create(document.querySelector('#extra'))
+        .then(editor => {
+            let clientName = "{{ $address->name }}";  
+            let productNames = @json($cartItems->pluck('name'));  
 
-                    // إذا كانت هناك منتجات، اجمع أسمائها في نص
-                    let productNamesText = productNames.length > 0 ? productNames.join(', ') :
-                        'Product Name'; // دمج الأسماء أو وضع اسم افتراضي
+             let uniqueProductNames = [...new Set(productNames)];
 
-                    editor.setData(`
+             let productNamesText = uniqueProductNames.length > 0 ? uniqueProductNames.join(', ') :
+                'Product Name'; 
+
+            editor.setData(`
                 Dear <strong>${clientName}</strong>,<br>
                 Please find attached the offer for your inquiry along with all sales conditions and technical specifications for <strong>${productNamesText}</strong>.<br>
                 We wish this offer would welcome all of your needs.<br><br>
                 Best Regards.
             `);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+        })
+        .catch(error => {
+            console.error(error);
         });
+});
+
 
         document.addEventListener('DOMContentLoaded', function() {
 

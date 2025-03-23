@@ -492,15 +492,78 @@
                             </td>
                             <td>
                                 <div class="button-group">
-                                    
-                                    <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}" class="btn btn-primary">Edit Specifications</a>
+                                    <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}" class="btn btn-primary" id="editButton">Edit Specifications</a>
                                     <form method="POST" action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-danger" style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
                                     </form>
+                                    <script>
+                                        let isProcessing = false;  // متغير لتتبع حالة العمليات الجارية
+                            
+                                        function disableButtons() {
+                                            document.querySelectorAll('.btn').forEach(button => {
+                                                button.disabled = true;
+                                            });
+                                        }
+                            
+                                        function enableButtons() {
+                                            document.querySelectorAll('.btn').forEach(button => {
+                                                button.disabled = false;
+                                            });
+                                        }
+                            
+                                        // Disable edit button until all operations are finished
+                                        function toggleEditButton() {
+                                            const editButton = document.getElementById('editButton');
+                                            if (isProcessing) {
+                                                editButton.disabled = true;  // تعطيل زر التعديل
+                                            } else {
+                                                editButton.disabled = false;  // تفعيل زر التعديل
+                                            }
+                                        }
+                            
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            // تعطيل زر الحذف عندما تكون هناك عملية جارية
+                                            document.querySelectorAll("form[action*='cart.item.remove']").forEach(form => {
+                                                form.addEventListener("submit", function(event) {
+                                                    if (isProcessing) {
+                                                        event.preventDefault();  // منع الإرسال إذا كانت هناك عملية جارية
+                                                        alert("يرجى الانتظار حتى تكتمل العملية الحالية.");
+                                                    } else {
+                                                        isProcessing = true;
+                                                        disableButtons();  // تعطيل الأزرار أثناء العملية
+                                                        toggleEditButton();  // تعطيل زر التعديل
+                                                    }
+                                                });
+                                            });
+                            
+                                            // تعطيل زر التعديل عندما تكون هناك عملية جارية
+                                            document.querySelectorAll("a[href*='cart.edit']").forEach(link => {
+                                                link.addEventListener("click", function(event) {
+                                                    if (isProcessing) {
+                                                        event.preventDefault();  // منع التفاعل إذا كانت هناك عملية جارية
+                                                        alert("يرجى الانتظار حتى تكتمل العملية الحالية.");
+                                                    } else {
+                                                        isProcessing = true;
+                                                        disableButtons();  // تعطيل الأزرار أثناء العملية
+                                                        toggleEditButton();  // تعطيل زر التعديل
+                                                    }
+                                                });
+                                            });
+                                        });
+                            
+                                        // تمكين الأزرار بعد انتهاء العملية (إذا كنت تستخدم AJAX، ضع هذا في الـ success callback)
+                                        window.addEventListener("load", function() {
+                                            isProcessing = false;
+                                            enableButtons();
+                                            toggleEditButton();  // تفعيل زر التعديل بعد انتهاء العمليات
+                                        });
+                                    </script>
                                 </div>
                             </td>
+                            
+                            
                         </tr>
                     @endforeach
                 @else
@@ -863,10 +926,31 @@ document.addEventListener("DOMContentLoaded", function () {
 @endpush
 @push('scripts')
 <script>
- $(document).ready(function() {
+$(document).ready(function() {
+    let isProcessing = false;   
+
+     function disableButtons() {
+        $(".btn").prop("disabled", true);
+    }
+
+     function enableButtons() {
+        $(".btn").prop("disabled", false);
+    }
+
+     function toggleUpdateButton() {
+        let price = $("input[name='price']").val().trim();
+        let qty = $("input[name='qty']").val().trim();
+        
+         if (price !== "" && qty !== "") {
+            $(".update-btn").prop("disabled", false);  
+        } else {
+            $(".update-btn").prop("disabled", true);
+        }
+    }
+
     $("input[name='price']").on("input", function() {
-        var row = $(this).closest("tr"); 
-        var priceInput = $(this); 
+        var row = $(this).closest("tr");
+        var priceInput = $(this);
         var price = parseFloat(priceInput.val()) || 0;
         var quantity = parseInt(row.find("input[name='qty']").val()) || 1;
         var total = (price * quantity).toFixed(2); 
@@ -882,16 +966,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 price: price
             },
             success: function(response) {
-                console.log("✅ Price updated successfully");
-            },
+             },
             error: function(error) {
-                console.log("❌ Error updating price", error);
-            }
+             }
         });
+
+        toggleUpdateButton();  // تحقق من تفعيل الزر
     });
 
     $("input[name='qty']").on("input", function() {
-        var row = $(this).closest("tr"); 
+        var row = $(this).closest("tr");
         var quantityInput = $(this);
         var price = parseFloat(row.find("input[name='price']").val()) || 0;
         var quantity = parseInt(quantityInput.val()) || 1;
@@ -914,55 +998,71 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("❌ Error updating quantity", error);
             }
         });
+
+        toggleUpdateButton();  // تحقق من تفعيل الزر
     });
+
     $("input[name='area']").on("blur", function() {
-    var areaInput = $(this);
-    var form = areaInput.closest("form");
-    var formData = new FormData(form[0]);
+        if (isProcessing) return;
 
-    $.ajax({
-        url: form.attr("action"),
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
-        },
-        success: function(response) {
-            console.log("✅ Area updated successfully");
-            location.reload();
-        },
-        error: function(error) {
-            console.log("❌ Error updating area", error);
-        }
+        isProcessing = true;
+        disableButtons();
+
+        var areaInput = $(this);
+        var form = areaInput.closest("form");
+        var formData = new FormData(form[0]);
+
+        $.ajax({
+            url: form.attr("action"),
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
+            },
+            success: function(response) {
+                 setTimeout(() => location.reload(), 50); // Reload فورًا بعد نجاح الطلب
+                isProcessing = false;
+                enableButtons();
+            },
+            error: function(error) {
+                 isProcessing = false;
+                enableButtons();
+            }
+        });
     });
-});
- $(".description-input").on("blur", function() {
-    var descInput = $(this);
-    var form = descInput.closest("form");
-    var formData = new FormData(form[0]);
 
-    $.ajax({
-        url: form.attr("action"),
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-            "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
-        },
-        success: function(response) {
-            console.log("✅ Description updated successfully");
-            location.reload(); 
-        },
-        error: function(error) {
-            console.log("❌ Error updating description", error);
-        }
+    $(".description-input").on("blur", function() {
+        if (isProcessing) return;
+
+        isProcessing = true;
+        disableButtons();
+
+        var descInput = $(this);
+        var form = descInput.closest("form");
+        var formData = new FormData(form[0]);
+
+        $.ajax({
+            url: form.attr("action"),
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
+            },
+            success: function(response) {
+                 setTimeout(() => location.reload(), 50); // Reload فورًا بعد نجاح الطلب
+                isProcessing = false;
+                enableButtons();
+            },
+            error: function(error) {
+                 isProcessing = false;
+                enableButtons();
+            }
+        });
     });
-});
-
- 
 });
 
     

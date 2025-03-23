@@ -177,6 +177,7 @@ class CartController extends Controller
             'country' => 'required',
         ]);
 
+        //Cart::instance('cart')->destroy();
 
 
         // Save the address
@@ -472,29 +473,32 @@ class CartController extends Controller
     }
     public function edit_cart_item($rowId)
     {
-        // استرجاع العنصر من السلة
-        $item = Cart::instance('cart')->get($rowId);
-
-        if (!$item) {
-            return redirect()->route('shop.index')->with('error', 'Item not found in the cart');
+        try {
+             $item = Cart::instance('cart')->get($rowId);
+        } catch (\Surfsidemedia\Shoppingcart\Exceptions\InvalidRowIDException $e) {
+             return back();   
         }
-        // عرض نموذج التعديل
-        return view('cart.edit', compact('item'));
+    
+         return view('cart.edit', compact('item'));
     }
+    
+    
     public function update_cart_item(Request $request, $rowId)
     {
-        // استرجاع العنصر من السلة
-        $item = Cart::instance('cart')->get($rowId);
-
+          try {
+             $item = Cart::instance('cart')->get($rowId);
+        } catch (\Surfsidemedia\Shoppingcart\Exceptions\InvalidRowIDException $e) {
+             return back()->with('error', 'Item not found in the cart');   
+        }
         if (!$item) {
             return redirect()->route('shop.index')->with('error', 'Item not found in the cart');
         }
 
         // التحقق من صحة المدخلات (الكمية والسعر)
         $validated = $request->validate([
-            'qty' => 'required|integer|min:1',  // التحقق من الكمية
-            'price' => 'required|numeric|min:0',  // التحقق من السعر
-            'area' => 'required|string',  // إضافة التحقق من المنطقة
+            'qty' => 'nullable|integer|min:1',  // التحقق من الكمية
+            'price' => 'nullable|numeric|min:0',  // التحقق من السعر
+            'area' => 'nullable|string',  // إضافة التحقق من المنطقة
 
             'description' => 'nullable|string',  // التحقق من الوصف
             'companies_responsibilities' => 'nullable|string',  // التحقق من الوصف
