@@ -67,7 +67,7 @@
                     </div>
                     <div class="order-info__item">
                         <label>Total</label>
-                        <span>${{ $shipping_type->total_cost }}</span>
+                        <span>${{ $shipping_type->total_cost ?? 0 }}</span>
                     </div>
                 </div>
 
@@ -194,19 +194,19 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>{{ $shipping_type->shipping_type }}</td>
+                                        <td>{{ $shipping_type->shipping_type ?? 0 }}</td>
                                         <td>{{ $shipping_type->shipping_incoterm ?? '-' }}</td>
                                         <td>{{ $shipping_type->port_name_or_city ?? '-' }}</td>
                                         <td class="text-right">
-                                            {{ $shipping_type->quantity }}
+                                            {{ $shipping_type->quantity ?? 0 }}
                                         </td>
                                         <td class="text-right">
-                                            {{ $shipping_type->unit_price }}
+                                            {{ $shipping_type->unit_price ?? 0 }}
                                         </td>
                                         <td class="text-right">
-                                            {{ $shipping_type->shipping_cost }}
+                                            {{ $shipping_type->shipping_cost ?? 0 }}
                                         </td>
-                                        <td class="text-right">{{ $shipping_type->total_cost }}</td>
+                                        <td class="text-right">{{ $shipping_type->total_cost ?? 0 }}</td>
 
                                     </tr>
 

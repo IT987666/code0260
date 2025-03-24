@@ -221,41 +221,35 @@ class CartController extends Controller
     }
     private function generateReferenceCode()
     {
-        // الحصول على تاريخ اليوم
         $date = Carbon::now()->format('ymd');
-
-        // تحديد كود نوع المنتج بناءً على الاسم أو معايير أخرى
-        //$productType = $this->getProductCodeByName($request->name);
-
-        // الحصول على كود الفئة من قاعدة البيانات بناءً على الـ category_id
-        // الحصول على الكود من المنتج
+        $categoryCode = "000";  
+    
         foreach (Cart::instance('cart')->content() as $item) {
             $product = Product::find($item->id);
-
-
-            $categoryCode = $product->code;
+    
+            if ($product && $product->code) {
+                $categoryCode = $product->code;
+            }
         }
-        // الحصول على رقم الموظف
-        $employeeId = str_pad(Auth::user()->id, 3, '0', STR_PAD_LEFT);
-
-        // تحديد الرقم التسلسلي
-        $sequence = Order::whereDate('created_at', Carbon::today())->count() + 1;
+    
+         $employeeId = str_pad(Auth::user()->id, 3, '0', STR_PAD_LEFT);
+    
+         $sequence = Order::whereDate('created_at', Carbon::today())->count() + 1;
         $sequenceFormatted = str_pad($sequence, 3, '0', STR_PAD_LEFT);
-
-        // صياغة الريفرنس كود الأساسي ليشمل كود الفئة
-        $baseReferenceCode = "{$date}-{$categoryCode}-{$employeeId}-{$sequenceFormatted}";
+    
+         $baseReferenceCode = "{$date}-{$categoryCode}-{$employeeId}-{$sequenceFormatted}";
         $referenceCode = $baseReferenceCode;
-
+    
         $counter = 1;
-
-        // التأكد من أن الكود فريد
-        while (Order::where('reference_code', $referenceCode)->exists()) {
+    
+         while (Order::where('reference_code', $referenceCode)->exists()) {
             $referenceCode = "{$baseReferenceCode}-{$counter}";
             $counter++;
         }
-
+    
         return $referenceCode;
     }
+    
 
     public function order(Request $request)
     {
@@ -376,10 +370,10 @@ class CartController extends Controller
         $this->setAmountforCheckout();
 
         $order->reference_code = $this->generateReferenceCode();
-        $order->subtotal = number_format(floatval(Session::get('checkout')['subtotal']), 2, '.', ''); // حفظ الرقم مع تنسيق للأرقام العشرية
-        $order->total = floatval(Session::get('checkout')['total']); // Use float directly
-        $order->discount = Session::get('checkout')['discount'];
-        $order->tax = Session::get('checkout')['tax'];
+        $order->subtotal = number_format(floatval(Session::get('checkout')['subtotal']?? 0), 2, '.', ''); // حفظ الرقم مع تنسيق للأرقام العشرية
+        $order->total = floatval(Session::get('checkout')['total']?? 0); // Use float directly
+        $order->discount = Session::get('checkout')['discount']?? 0;
+        $order->tax = Session::get('checkout')['tax']?? 0;
         $order->save();
 
         Session::put('old_order_id', $old_order_id);

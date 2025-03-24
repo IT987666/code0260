@@ -48,16 +48,22 @@
 
         .description-input {
             width: 300px;
-             height: 100px;
-         }
+            /* زيادة العرض حسب الحاجة */
+            height: 100px;
+            /* تحديد ارتفاع الحقل */
+        }
 
-         input[name="qty"] {
+        /* جعل حقل الكمية أصغر */
+        input[name="qty"] {
             width: 60px;
-         }
+            /* تصغير العرض */
+        }
 
-         table {
+        /* تحسين مظهر الجدول */
+        table {
             width: 100%;
-         }
+            /* جعل الجدول يأخذ العرض الكامل */
+        }
 
         th,
         td {
@@ -69,7 +75,8 @@
         body {
 
             padding-top: 20px;
- 
+            /* Adds space at the top of the body content */
+
         }
 
         header {
@@ -290,38 +297,47 @@
 
         .cart-container {
             width: 135%;
-             margin: auto;
-             text-align: center;
-            margin-left: -15%;  
+            /* تحديد عرض مناسب للجدولين */
+            margin: auto;
+            /* جعل الجدولين في المنتصف */
+            text-align: center;
+            margin-left: -15%; /* تحريك العنصر نحو اليمين */
 
         }
 
         table {
             width: 100%;
             table-layout: fixed;
-         }
+            /* يجعل الأعمدة تحتفظ بحجم متساوٍ */
+        }
 
         th,
         td {
             white-space: nowrap;
-             overflow: hidden;
+            /* منع النصوص من الانكسار */
+            overflow: hidden;
             text-overflow: ellipsis;
-         }
+            /* إضافة "..." عند النصوص الطويلة */
+        }
 
         td input,
         td textarea {
             width: 90%;
-             max-width: 120px;
-         }
+            /* جعل الحقول داخل الجدول متناسبة */
+            max-width: 120px;
+            /* تحديد حد أقصى للعرض */
+        }
 
         td .description-input {
             width: 90%;
-             max-width: 250px;
+            /* التأكد من أن حقل الوصف لا يمتد خارج الجدول */
+            max-width: 250px;
         }
 
         .cart-container:last-child {
             margin-top: 40px;
-         }
+            /* إضافة مسافة بين الجدولين */
+        }
 
         @media (max-width: 768px) {
             .cart-container {
@@ -330,7 +346,8 @@
 
             table {
                 font-size: 12px;
-             }
+                /* تصغير حجم النصوص على الشاشات الصغيرة */
+            }
 
             td input,
             td textarea {
@@ -338,28 +355,38 @@
             }
         }
 
-         .dropdown-item {
+        /* ضبط تنسيق العناصر داخل القائمة */
+        .dropdown-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 8px;
             border-bottom: 1px solid #ddd;
             white-space: nowrap;
-             overflow: hidden;
+            /* تأكد من أن النص لا يلتف افتراضيًا */
+            overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
-         }
+            /* تحديد عرض العنصر */
+        }
 
-         .dropdown-item span {
+        /* في حال أردت أن يلتف النص على عدة أسطر بدلًا من الاقتصاص */
+        .dropdown-item span {
             max-width: 70%;
-             word-wrap: break-word;
-             overflow-wrap: break-word;
+            /* تحديد أقصى عرض للنص */
+            word-wrap: break-word;
+            /* السماح للنص بالالتفاف */
+            overflow-wrap: break-word;
             font-size: 14px;
-         }
+            /* تصغير الخط إذا لزم الأمر */
+        }
 
-         .add-to-cart-btn {
+        /* زر الإضافة يبقى بجانب النص دون أن يختفي */
+        .add-to-cart-btn {
             flex-shrink: 0;
-             margin-left: 10px;
+            /* يمنع الزر من التصغير */
+            margin-left: 10px;
+            /* إضافة مسافة بين النص والزر */
             padding: 5px 10px;
             font-size: 14px;
         }
@@ -376,6 +403,7 @@
             position: relative;
         }
 
+        /* تأثير الدوران */
         @keyframes spin {
             0% {
                 transform: rotate(0deg);
@@ -390,6 +418,7 @@
                 transform: rotate(360deg);
                 border-top-color: #0c4b64;
              }
+
         }
     </style>
 
@@ -424,13 +453,13 @@
     
         <table>
             <colgroup>
-                <col style="width:30%;"> 
-                <col style="width: 15%;"> 
-                <col style="width: 15%;"> 
-                <col style="width: 15%;">
-                <col style="width: 20%;">
-                <col style="width: 30%;"> 
-                <col style="width: 20%;"> 
+                <col style="width:30%;"> <!-- المنتج -->
+                <col style="width: 15%;"> <!-- السعر -->
+                <col style="width: 15%;"> <!-- المساحة -->
+                <col style="width: 15%;"> <!-- الكمية -->
+                <col style="width: 20%;"> <!-- المجموع -->
+                <col style="width: 30%;"> <!-- الوصف (أعرض) -->
+                <col style="width: 20%;"> <!-- الإجراءات (أعرض) -->
             </colgroup>
             <thead>
                 <tr>
@@ -470,10 +499,9 @@
                                 <form method="POST" action="{{ route('cart.area.update', ['rowId' => $item->rowId]) }}">
                                     @csrf
                                     @method('PUT')
-                                    <input type="text" name="area" data-row-id="{{ $item->rowId }}" value="{{ $item->options['area'] }}">
+                                    <input type="text" name="area" value="{{ $item->options['area'] ?? '' }}" />
                                 </form>
                             </td>
-                            
     
                             <td>
                                 <form method="POST" action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}">
@@ -492,78 +520,14 @@
                             </td>
                             <td>
                                 <div class="button-group">
-                                    <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}" class="btn btn-primary" id="editButton">Edit Specifications</a>
+                                    <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}" class="btn btn-primary">Edit Specifications</a>
                                     <form method="POST" action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-danger" style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
                                     </form>
-                                    <script>
-                                        let isProcessing = false;  // متغير لتتبع حالة العمليات الجارية
-                            
-                                        function disableButtons() {
-                                            document.querySelectorAll('.btn').forEach(button => {
-                                                button.disabled = true;
-                                            });
-                                        }
-                            
-                                        function enableButtons() {
-                                            document.querySelectorAll('.btn').forEach(button => {
-                                                button.disabled = false;
-                                            });
-                                        }
-                            
-                                        // Disable edit button until all operations are finished
-                                        function toggleEditButton() {
-                                            const editButton = document.getElementById('editButton');
-                                            if (isProcessing) {
-                                                editButton.disabled = true;  // تعطيل زر التعديل
-                                            } else {
-                                                editButton.disabled = false;  // تفعيل زر التعديل
-                                            }
-                                        }
-                            
-                                        document.addEventListener("DOMContentLoaded", function() {
-                                            // تعطيل زر الحذف عندما تكون هناك عملية جارية
-                                            document.querySelectorAll("form[action*='cart.item.remove']").forEach(form => {
-                                                form.addEventListener("submit", function(event) {
-                                                    if (isProcessing) {
-                                                        event.preventDefault();  // منع الإرسال إذا كانت هناك عملية جارية
-                                                        alert("يرجى الانتظار حتى تكتمل العملية الحالية.");
-                                                    } else {
-                                                        isProcessing = true;
-                                                        disableButtons();  // تعطيل الأزرار أثناء العملية
-                                                        toggleEditButton();  // تعطيل زر التعديل
-                                                    }
-                                                });
-                                            });
-                            
-                                            // تعطيل زر التعديل عندما تكون هناك عملية جارية
-                                            document.querySelectorAll("a[href*='cart.edit']").forEach(link => {
-                                                link.addEventListener("click", function(event) {
-                                                    if (isProcessing) {
-                                                        event.preventDefault();  // منع التفاعل إذا كانت هناك عملية جارية
-                                                        alert("يرجى الانتظار حتى تكتمل العملية الحالية.");
-                                                    } else {
-                                                        isProcessing = true;
-                                                        disableButtons();  // تعطيل الأزرار أثناء العملية
-                                                        toggleEditButton();  // تعطيل زر التعديل
-                                                    }
-                                                });
-                                            });
-                                        });
-                            
-                                        // تمكين الأزرار بعد انتهاء العملية (إذا كنت تستخدم AJAX، ضع هذا في الـ success callback)
-                                        window.addEventListener("load", function() {
-                                            isProcessing = false;
-                                            enableButtons();
-                                            toggleEditButton();  // تفعيل زر التعديل بعد انتهاء العمليات
-                                        });
-                                    </script>
                                 </div>
                             </td>
-                            
-                            
                         </tr>
                     @endforeach
                 @else
@@ -625,6 +589,7 @@
                                     <input type="number" id="shippingCost" value="0.00" step="0.01" readonly />
                                 </td>
                             </tr>
+                            <!-- الصف الخاص بإجمالي تكلفة المنتج -->
                             <div style="margin-top: 20px; text-align: right;">
                                 <input type="hidden" type="number" id="subtotal" value="0.00" step="0.01"
                                     readonly />
@@ -636,6 +601,7 @@
                                 </td>
                                 <td colspan="2"><span id="product-total">0.00</span></td>
                             </tr>
+                            <!-- الصف الخاص بالإجمالي مع الشحن -->
                             <tr>
                                 <td colspan="2" style="text-align: left;"><strong>Total Cost with Shipping
                                         (USD):</strong></td>
@@ -682,6 +648,7 @@
                 </button>
             </div>
 
+            <!-- شاشة التحميل -->
             <div id="loadingScreen"
                 style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; flex-direction: column;">
                 <div class="spinner"></div>
@@ -697,46 +664,45 @@
 @push('scripts')
 
 <script>
- document.addEventListener("DOMContentLoaded", function () {
-    let searchBox = document.getElementById("searchBox");
-    let dropdownContainer = document.getElementById("dropdownContainer");
-    let productDropdown = document.getElementById("productDropdown");
+    document.addEventListener("DOMContentLoaded", function() {
+        let searchBox = document.getElementById("searchBox");
+        let dropdownContainer = document.getElementById("dropdownContainer");
+        let productDropdown = document.getElementById("productDropdown");
 
-    searchBox.addEventListener("focus", function () {
-        dropdownContainer.style.display = "block";
-    });
+        // إظهار القائمة عند النقر على حقل البحث
+        searchBox.addEventListener("focus", function() {
+            dropdownContainer.style.display = "block";
+        });
 
-    document.addEventListener("click", function (event) {
-        if (!dropdownContainer.contains(event.target) && event.target !== searchBox) {
-            dropdownContainer.style.display = "none";
-        }
-    });
+        // إخفاء القائمة عند النقر خارجها
+        document.addEventListener("click", function(event) {
+            if (!dropdownContainer.contains(event.target) && event.target !== searchBox) {
+                dropdownContainer.style.display = "none";
+            }
+        });
 
-    searchBox.addEventListener("keyup", debounce(function () {
-        let query = this.value.toLowerCase();
-        let items = productDropdown.getElementsByClassName("dropdown-item");
-        let hasResults = false;
+        // البحث داخل القائمة
+        searchBox.addEventListener("keyup", function() {
+            let query = this.value.toLowerCase();
+            let items = productDropdown.getElementsByClassName("dropdown-item");
+            let hasResults = false;
 
-        for (let item of items) {
-            let match = item.textContent.toLowerCase().includes(query);
-            item.style.display = match ? "flex" : "none";
-            if (match) hasResults = true;
-        }
+            for (let item of items) {
+                let match = item.textContent.toLowerCase().includes(query);
+                item.style.display = match ? "flex" : "none";
+                if (match) hasResults = true;
+            }
 
-        dropdownContainer.style.display = hasResults ? "block" : "none";
-    }, 200));
+            // إظهار القائمة فقط إذا كان هناك نتائج
+            dropdownContainer.style.display = hasResults ? "block" : "none";
+        });
 
-    productDropdown.addEventListener("click", async function (event) {
-        if (event.target.classList.contains("add-to-cart-btn")) {
-            let productId = event.target.getAttribute("data-id");
-            let button = event.target;
-            
-            // تعطيل الزر أثناء الإضافة
-            button.disabled = true;
-            button.textContent = "Adding...";
+        // إضافة المنتج عند النقر على الزر
+        productDropdown.addEventListener("click", function(event) {
+            if (event.target.classList.contains("add-to-cart-btn")) {
+                let productId = event.target.getAttribute("data-id");
 
-            try {
-                let response = await fetch("{{ route('cart.add') }}", {
+                fetch("{{ route('cart.add') }}", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -746,32 +712,10 @@
                         id: productId,
                         quantity: 1
                     })
-                });
-
-                if (response.ok) {
-                    // ✅ تحسين إعادة تحميل الصفحة بدون إعادة تحميل الكاش
-                    window.location.reload(true); 
-                } else {
-                    console.error("Error adding to cart:", response.statusText);
-                }
-            } catch (error) {
-                console.error("Error:", error);
-            } finally {
-                button.disabled = false;
-                button.textContent = "Add";
+                }).then(() => window.location.replace(window.location.href));
             }
-        }
+        });
     });
-
-    function debounce(func, delay) {
-        let timer;
-        return function (...args) {
-            clearTimeout(timer);
-            timer = setTimeout(() => func.apply(this, args), delay);
-        };
-    }
-});
-
 </script>
 <script>
     const quantityInput = document.getElementById('quantity');
@@ -789,9 +733,7 @@ function saveToLocalStorage() {
         shipping_type: shippingTypeSelect.value,
         shipping_cost: shippingCostInput.value,
         total_cost: totalCostSpan.textContent.replace(',', ''),
-        subtotal: subtotalInput.value,
-        shipping_incoterm: document.getElementById('shipping_incoterm').value,
-        port_name_or_city: document.getElementById('port_name_or_city').value
+        subtotal: subtotalInput.value
     };
     localStorage.setItem('cartData', JSON.stringify(formData));
 }
@@ -900,10 +842,8 @@ function autoSaveShippingDetails() {
         quantity: quantityInput.value,
         unit_price: unitPriceInput.value,
         shipping_cost: shippingCostInput.value,
-        total_cost: totalCostSpan.textContent.replace(',', ''),
-        shipping_incoterm: document.getElementById('shipping_incoterm').value,
-        port_name_or_city: document.getElementById('port_name_or_city').value
-        };
+        total_cost: totalCostSpan.textContent.replace(',', '')
+    };
 
     fetch("{{ route('shipping.store') }}", {
         method: "POST",
@@ -916,7 +856,7 @@ function autoSaveShippingDetails() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-           // console.log("Shipping details saved successfully!");
+            console.log("Shipping details saved successfully!");
         }
     })
     .catch(error => console.error('Error saving shipping details:', error));
@@ -936,7 +876,7 @@ window.onload = () => {
     updateTotalCost();
 };
 
-//console.log("Auto-save shipping script loaded!");
+console.log("Auto-save shipping script loaded!");
 document.addEventListener("DOMContentLoaded", function () {
      if (sessionStorage.getItem('clear_shipping')) {
         clearCartData();
@@ -946,223 +886,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
  function clearCartData() {
     localStorage.removeItem('cartData');
-    //console.log(" done");
+    console.log(" done");
 }
 
   
 </script>
-@endpush
-@push('scripts')
 <script>
-$(document).ready(function() {
-     let isProcessing = false;   
- 
-      function disableButtons() {
-         $(".btn").prop("disabled", true);
-     }
- 
-      function enableButtons() {
-         $(".btn").prop("disabled", false);
-     }
- 
-      function toggleUpdateButton() {
-         let price = $("input[name='price']").val().trim();
-         let qty = $("input[name='qty']").val().trim();
-         
-          if (price !== "" && qty !== "") {
-             $(".update-btn").prop("disabled", false);  
-         } else {
-             $(".update-btn").prop("disabled", true);
-         }
-     }
- 
-     $("input[name='price']").on("input", function() {
-         var row = $(this).closest("tr");
-         var priceInput = $(this);
-         var price = parseFloat(priceInput.val()) || 0;
-         var quantity = parseInt(row.find("input[name='qty']").val()) || 1;
-         var total = (price * quantity).toFixed(2); 
- 
-         row.find(".total-price").text("$" + total); 
- 
-         $.ajax({
-             url: priceInput.closest("form").attr("action"),
-             method: "POST",
-             data: {
-                 _token: "{{ csrf_token() }}",
-                 _method: "PUT",
-                 price: price
-             },
-             success: function(response) {
-              },
-             error: function(error) {
-              }
-         });
- 
-         toggleUpdateButton();  // تحقق من تفعيل الزر
-     });
- 
-     $("input[name='qty']").on("input", function() {
-         var row = $(this).closest("tr");
-         var quantityInput = $(this);
-         var price = parseFloat(row.find("input[name='price']").val()) || 0;
-         var quantity = parseInt(quantityInput.val()) || 1;
-         var total = (price * quantity).toFixed(2); 
- 
-         row.find(".total-price").text("$" + total); 
- 
-         $.ajax({
-             url: quantityInput.closest("form").attr("action"),
-             method: "POST",
-             data: {
-                 _token: "{{ csrf_token() }}",
-                 _method: "PUT",
-                 qty: quantity
-             },
-             success: function(response) {
-                // console.log("✅ Quantity updated successfully");
-             },
-             error: function(error) {
-                // console.log("❌ Error updating quantity", error);
-             }
-         });
- 
-         toggleUpdateButton();  // تحقق من تفعيل الزر
-     });
- 
-     $("input[name='area']").on("blur", function() {
-         if (isProcessing) return;
- 
-         isProcessing = true;
-         disableButtons();
- 
-         var areaInput = $(this);
-         var form = areaInput.closest("form");
-         var formData = new FormData(form[0]);
- 
-         $.ajax({
-             url: form.attr("action"),
-             method: "POST",
-             data: formData,
-             processData: false,
-             contentType: false,
-             headers: {
-                 "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
-             },
-             success: function(response) {
-                  setTimeout(() => location.reload(), 50);  
-                 isProcessing = false;
-                 enableButtons();
-             },
-             error: function(error) {
-                  isProcessing = false;
-                 enableButtons();
-             }
-         });
-     });
- 
-     $(".description-input").on("blur", function() {
-         if (isProcessing) return;
- 
-         isProcessing = true;
-         disableButtons();
- 
-         var descInput = $(this);
-         var form = descInput.closest("form");
-         var formData = new FormData(form[0]);
- 
-         $.ajax({
-             url: form.attr("action"),
-             method: "POST",
-             data: formData,
-             processData: false,
-             contentType: false,
-             headers: {
-                 "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
-             },
-             success: function(response) {
-                  setTimeout(() => location.reload(), 50);  
-                 isProcessing = false;
-                 enableButtons();
-             },
-             error: function(error) {
-                  isProcessing = false;
-                 enableButtons();
-             }
-         });
-     });
- });
- 
- 
- $(document).ready(function() {
-    $("#proceedToOrder").on("click", function(event) {
-        event.preventDefault(); 
-
-        let requests = []; 
-
-        $("input[name='price'], input[name='area']").each(function() {
-            let input = $(this);
-            input.trigger("input"); 
-        });
-
-        $(".description-input").each(function() {
-            let form = $(this).closest(".description-form");
-            if (form.length) {
-                let formData = new FormData(form[0]);
-                let request = fetch(form.attr("action"), {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
-                    }
-                }).catch(error => console.error("❌ خطأ في حفظ الوصف:", error));
-
-                requests.push(request);
-            }
-        });
-
-       
-$("input[name='area']").each(function() {
-    let areaInput = $(this);
-    let form = areaInput.closest("form");
-    let formData = new FormData(form[0]);
-
-    let request = fetch(form.attr("action"), {
-        method: "POST",
-        body: formData,
-        headers: {
-            "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
-        }
-    }).catch(error => console.error("❌ خطأ في تحديث Area:", error));
-
-    requests.push(request);
-});
-
-        $("#shippingTypeInput").val($("#shippingType").val());
-        $("#quantityInput").val($("#quantity").val());
-        $("#unitPriceInput").val($("#unitPrice").val());
-        $("#shippingCostInput").val($("#shippingCost").val());
-        $("#totalCostInput").val($("#total-cost").text().replace(',', ''));
-      formData.set('shipping_incoterm', document.getElementById('shipping_incoterm').value);
-    formData.set('port_name_or_city', document.getElementById('port_name_or_city').value);
-
-        let shippingRequest = fetch($("#shippingForm").attr("action"), {
-            method: "POST",
-            body: new FormData($("#shippingForm")[0]),
-            headers: {
-                "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content")
-            }
-        }).catch(error => console.error("❌", error));
-
-        requests.push(shippingRequest);
-
-        Promise.all(requests).finally(() => {
-            window.location.href = "{{ route('cart.order') }}"; 
-        });
-    });
-});
-
-document.getElementById("proceedToOrder").addEventListener("click", function() {
+    document.getElementById("proceedToOrder").addEventListener("click", function() {
         let loadingScreen = document.getElementById("loadingScreen");
         loadingScreen.style.display = "flex";      
         loadingScreen.style.position = "fixed"; 
@@ -1178,7 +908,165 @@ document.getElementById("proceedToOrder").addEventListener("click", function() {
             loadingScreen.style.display = "none";
         }
     };
- 
+</script>
 
+
+    <script>
+      
+      document.querySelectorAll('.description-input').forEach(textarea => {
+             textarea.addEventListener('keydown', function(event) {
+                 if (event.key === 'Enter') {
+                     event.preventDefault();
+                     this.closest('.description-form').submit();
+                    }
+                });
+            });
+
+
+        $(function() {
+            $(".qty-control__increase").on("click", function() {
+                $(this).closest('form').submit();
+            });
+            $(".qty-control__reduce").on("click", function() {
+                $(this).closest('form').submit();
+            });
+            $('.remove-cart').on("click", function() {
+                $(this).closest('form').submit();
+            });
+        })
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("input[name='price']").on("input", function() {
+                var row = $(this).closest("tr"); // Get the closest table row
+                var priceInput = $(this); // The input field
+                var price = parseFloat(priceInput.val()) || 0;
+                var area = parseFloat(priceInput.val()) || 0;
+
+                var quantity = parseInt(row.find("input[name='qty']").val()) || 1;
+                var total = (price * quantity).toFixed(2); // Calculate total
+
+                row.find(".total-price").text("$" + total); // Update total in UI
+
+                // Send AJAX request to update the price in the database
+                $.ajax({
+                    url: priceInput.closest("form").attr("action"),
+                    method: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: "PUT",
+                        price: price
+                    },
+                    success: function(response) {
+                        console.log("Price updated successfully");
+                    },
+                    error: function(error) {
+                        console.log("Error updating price", error);
+                    }
+                });
+            });
+
+            $("input[name='qty']").on("input", function() {
+                var row = $(this).closest("tr"); // Get the closest table row
+                var quantityInput = $(this);
+                var price = parseFloat(row.find("input[name='price']").val()) || 0;
+                var area = parseFloat(row.find("input[name='area']").val()) || 0;
+
+                var quantity = parseInt(quantityInput.val()) || 1;
+                var total = (price * quantity).toFixed(2); // Calculate total
+
+                row.find(".total-price").text("$" + total); // Update total in UI
+
+                // Send AJAX request to update the quantity
+                $.ajax({
+                    url: quantityInput.closest("form").attr("action"),
+                    method: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: "PUT",
+                        qty: quantity
+                    },
+                    success: function(response) {
+                        console.log("Quantity updated successfully");
+                    },
+                    error: function(error) {
+                        console.log("Error updating quantity", error);
+                    }
+                });
+            });
+        });
+        $(document).ready(function() {
+            // تحديث الحقل Area عندما يفقد الحقل التركيز
+            $("input[name='area']").on("blur", function() {
+                var row = $(this).closest("tr"); // تحديد الصف الحالي
+                var areaInput = $(this);
+                var area = areaInput.val(); // قراءة القيمة المدخلة
+
+                // إرسال الطلب عبر AJAX لتحديث القيمة في الداتا بيز
+                $.ajax({
+                    url: areaInput.closest("form").attr("action"),
+                    method: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: "PUT",
+                        area: area
+                    },
+                    success: function(response) {
+                        console.log("Area updated successfully", response);
+                    },
+                    error: function(error) {
+                        console.log("Error updating area", error);
+                    }
+                });
+            });
+        });
+        
+    </script>
+@endpush
+@push('scripts')
+    <script>
+        document.getElementById('proceedToOrder').addEventListener('click', function(event) {
+            event.preventDefault();
+
+            // تحديث الحقول المخفية الخاصة بالشحن
+            document.getElementById('shippingTypeInput').value = document.getElementById('shippingType').value;
+            document.getElementById('quantityInput').value = document.getElementById('quantity').value;
+            document.getElementById('unitPriceInput').value = document.getElementById('unitPrice').value;
+            document.getElementById('shippingCostInput').value = document.getElementById('shippingCost').value;
+            document.getElementById('totalCostInput').value = document.getElementById('total-cost').textContent
+                .replace(',', '');
+
+            let descriptions = document.querySelectorAll('.description-input');
+            let forms = [];
+
+            descriptions.forEach(textarea => {
+                let form = textarea.closest('.description-form');
+                if (form) {
+                    forms.push(fetch(form.action, {
+                        method: "POST",
+                        body: new FormData(form),
+                        headers: {
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        }
+                    }));
+                }
+            });
+
+            const shippingForm = document.getElementById('shippingForm');
+            forms.push(fetch(shippingForm.action, {
+                method: "POST",
+                body: new FormData(shippingForm),
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content')
+                }
+            }));
+
+            // إرسال جميع البيانات ثم الانتقال إلى صفحة الطلب
+            Promise.all(forms).then(() => {
+                window.location.href = "{{ route('cart.order') }}";
+            });
+        });
     </script>
 @endpush
