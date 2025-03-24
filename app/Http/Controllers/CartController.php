@@ -501,7 +501,7 @@ class CartController extends Controller
 
         $specifications = $request->specifications;
 
-        if ($specifications && is_array($specifications)) {
+        /*if ($specifications && is_array($specifications)) {
             foreach ($specifications as &$spec) {
                 if (isset($spec['images']) && is_array($spec['images'])) {
                     $imagePaths = [];
@@ -511,6 +511,27 @@ class CartController extends Controller
                         }
                     }
                     $spec['images'] = $imagePaths;
+                }
+            }
+        }*/
+        if ($specifications && is_array($specifications)) {
+            foreach ($specifications as $key => &$spec) {
+                if (isset($spec['images']) && is_array($spec['images'])) {
+                    $imagePaths = [];
+        
+                    foreach ($spec['images'] as $image) {
+                        if ($image instanceof \Illuminate\Http\UploadedFile) {
+                            $imagePaths[] = $image->store('specifications', 'public');
+                        }
+                    }
+        
+                     if (empty($imagePaths) && isset($item->options['specifications'][$key]['images'])) {
+                        $spec['images'] = $item->options['specifications'][$key]['images'];
+                    } else {
+                        $spec['images'] = $imagePaths;
+                    }
+                } elseif (isset($item->options['specifications'][$key]['images'])) {
+                     $spec['images'] = $item->options['specifications'][$key]['images'];
                 }
             }
         }
@@ -604,67 +625,18 @@ class CartController extends Controller
         return $pdf->download('order_' . $order->id . '.pdf');
     }
 
-    /* public function downloadPdf($orderId)
-    {
-        // Retrieve the order
-        $order = Order::findOrFail($orderId);
-
-        // Fetch order items with product details
-        $orderItems = OrderItem::with(['product' => function ($query) {
-            $query->select('id', 'name',);
-        }])->where('order_id', $order->id)->get();
-
-        // Attach specifications to order items
-        foreach ($orderItems as $item) {
-            $item->specifications = json_decode($item->custom_specifications, true);
-        }
-
-        $shipping_type = ShippingDetail::query()->where('order_id', Session::get('old_order_id'))->first();
-
-
-        // Generate the PDF
-        $pdf = PDF::loadView('orders.pdf', [
-            'order' => $order,
-            'shipping_type' => $shipping_type,
-            'orderItems' => $orderItems,
-            'base64EncodeImageA' => [$this, 'base64EncodeImageA'], // Pass the image encoding function
-        ]);
-
-        Cart::instance('cart')->destroy();
-// وضع متغير في Session لحذف بيانات الشحن بعد تحميل الصفحة
-session()->flash('clear_shipping', true);
-        return $pdf->download('order_' . $order->id . '.pdf');
-    }*/
-    /* public function updateDescription($rowId, Request $request)
-    {
-         $request->validate([
-            'description' => 'nullable|string|max:255'
-        ]);
-
-         $product = Cart::instance('cart')->get($rowId);
-
-        if (!$product) {
-            return redirect()->back()->with('error', 'Product not found in cart.');
-        }
-
-         $updatedOptions = $product->options->toArray();
-        $updatedOptions['description'] = $request->description;
-
-         Cart::instance('cart')->update($rowId, [
-            'options' => $updatedOptions,
-            'qty' => $product->qty
-        ]);
-
-         return redirect()->back()->with('success', 'Description updated successfully!');
-    }*/
+    
     public function updateDescription(Request $request, $rowId)
     {
         $request->validate([
             'description' => 'nullable|string|max:255',
         ]);
-
-        $item = Cart::instance('cart')->get($rowId);
-
+        try {
+            $item = Cart::instance('cart')->get($rowId);
+       } catch (\Surfsidemedia\Shoppingcart\Exceptions\InvalidRowIDException $e) {
+            return back()->with('error', 'Item not found in the cart');   
+       }
+ 
         if (!$item) {
             return redirect()->back()->withErrors('The item does not exist in the cart.');
         }
