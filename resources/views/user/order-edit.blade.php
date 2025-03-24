@@ -271,8 +271,10 @@
 
 
 
-            <button type="submit" class="btn btn-success">Update Order</button>
-        </form>
+            <button type="submit" class="btn btn-success" style="background-color: #20BEC6; border-color: #20BEC6; color: white;">
+                Update Order
+            </button>
+                    </form>
     </div>
 
 
