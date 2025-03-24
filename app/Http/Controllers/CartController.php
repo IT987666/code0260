@@ -73,8 +73,11 @@ class CartController extends Controller
     }
     public function duplicateItem($rowId)
     {
-        $item = Cart::instance('cart')->get($rowId);
-
+        try {
+            $item = Cart::instance('cart')->get($rowId);
+       } catch (\Surfsidemedia\Shoppingcart\Exceptions\InvalidRowIDException $e) {
+            return back();   
+       }
         if (!$item) {
             return redirect()->back()->withErrors('The item does not exist in the cart.');
         }
@@ -120,8 +123,11 @@ class CartController extends Controller
     }*/
     public function remove_item($rowId)
     {
-        $item = Cart::instance('cart')->get($rowId);
-
+        try {
+            $item = Cart::instance('cart')->get($rowId);
+       } catch (\Surfsidemedia\Shoppingcart\Exceptions\InvalidRowIDException $e) {
+            return back();   
+       }
         if (!$item) {
             return redirect()->back()->withErrors('The item does not exist in the cart.');
         }
@@ -451,9 +457,11 @@ class CartController extends Controller
             'qty' => 'required|integer|min:1',
         ]);
 
-        // استرجاع العنصر من السلة
-        $item = Cart::instance('cart')->get($rowId);
-
+         try {
+            $item = Cart::instance('cart')->get($rowId);
+       } catch (\Surfsidemedia\Shoppingcart\Exceptions\InvalidRowIDException $e) {
+            return back();   
+       }
         if (!$item) {
             return redirect()->route('shop.index')->with('error', 'Item not found in the cart');
         }
