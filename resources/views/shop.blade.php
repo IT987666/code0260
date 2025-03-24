@@ -1020,6 +1020,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             });
         });
+        $(document).ready(function() {
+     $("textarea[name='description']").on("blur", function() {
+        var row = $(this).closest("tr");  
+        var descriptionInput = $(this);
+        var description = descriptionInput.val();  
+
+         $.ajax({
+            url: descriptionInput.closest("form").attr("action"),
+            method: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                _method: "PUT",
+                description: description
+            },
+            success: function(response) {
+                console.log("Description updated successfully", response);
+            },
+            error: function(error) {
+                console.log("Error updating description", error);
+            }
+        });
+    });
+});
+
         
     </script>
 @endpush
