@@ -137,8 +137,11 @@ class UserController extends Controller
             }
         }
 
-         return redirect()->route('user.orders')->with('success', 'Order updated successfully.');
-
+        if (Auth::check() && Auth::user()->utype === 'ADM') {
+            return redirect()->route('admin.orders')->with('success', 'Order updated successfully.');
+        } else {
+            return redirect()->route('user.orders')->with('success', 'Order updated successfully.');
+        }
     }
 
 
