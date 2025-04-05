@@ -407,14 +407,24 @@ td.text-center a.edit-note:hover {
                             note: note
                         },
                         success: function(response) {
-                            // Update the note in the table
-                            $(`.edit-note[data-order-id="${orderId}"]`).text(note || 'Add Note');
+    if (response.success) {
+        // تحديث نص الملاحظة في الجدول مباشرة
+        const noteText = note ? note : 'Add Note';
+        $(`.edit-note[data-order-id="${orderId}"]`).text(noteText).data('note', note);
 
-                            // Hide the modal
-                            $('#editNoteModal').modal('hide');
+        // إغلاق المودال
+        $('#editNoteModal').modal('hide');
 
+        // إظهار رسالة نجاح (اختياري)
+        Swal.fire({
+            icon: 'success',
+            title: 'Note updated successfully!',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
+},
 
-                        },
                         error: function() {
                             alert('Failed to update the note.');
                         }

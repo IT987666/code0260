@@ -108,9 +108,12 @@
     </table>
 
     <!-- الملاحظة تحت الجدول -->
+    @if (!empty($shipping_type->shipping_incoterm) && !empty($shipping_type->port_name_or_city))
     <p style="margin-top: 10px; font-weight: bold;">
         Given offer is {{ $shipping_type->shipping_incoterm }} - Jeddah Port according to Incoterms {{ $shipping_type->port_name_or_city }}.
     </p>
+@endif
+
 @endif
 
 

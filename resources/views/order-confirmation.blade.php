@@ -48,7 +48,10 @@
     </style>
 
     </style>
-
+    <script>
+        window.userType = "{{ Auth::user()->utype ?? 'USR' }}";
+    </script>
+    
     <main class="pt-90">
         <section class="shop-checkout container">
             <div class="order-complete">
@@ -238,12 +241,15 @@
 
             <!-- Download PDF Button at the end -->
             <div class="checkout__pdf-button mt-4 text-center">
-                <a href="{{ route('order.downloadPdf', ['orderId' => $order->id]) }}" class="btn btn-primary"
-                    id="downloadPdfButton"
-                    style="background-color: #20bec6; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 16px; text-decoration: none; transition: transform 0.3s ease, background-color 0.3s ease;"
-                    onclick="disableButton(event)">
-                    Download Order PDF
-                </a>
+                <a href="javascript:void(0)" 
+                data-url="{{ route('order.downloadPdf', ['orderId' => $order->id]) }}"
+                class="btn btn-primary"
+                id="downloadPdfButton"
+                style="background-color: #20bec6; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 16px; text-decoration: none; transition: transform 0.3s ease, background-color 0.3s ease;"
+                onclick="handlePdfDownload(event)">
+                Download Order PDF
+            </a>
+            
             </div>
 
             @if(session('clear_shipping'))
@@ -255,34 +261,52 @@
         </section>
     </main>
 @endsection
- @push('scripts')
-    <script>
-        function disableButton(event) {
-            const button = event.currentTarget;
+@push('scripts')
+<script>
+    function handlePdfDownload(event) {
+        event.preventDefault();
 
-            button.style.pointerEvents = 'none';
-            button.style.opacity = '0.6';
+        const button = event.currentTarget;
+        const url = button.getAttribute('data-url');
 
-            button.innerHTML = 'Processing...';
+        // تعطيل الزر
+        button.style.pointerEvents = 'none';
+        button.style.opacity = '0.6';
+        button.innerHTML = 'Processing...';
+
+        // إنشاء عنصر تحميل غير ظاهر
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = ''; // يخليه يتصرف كـ download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // تحويل فوري بدون انتظار
+        if (window.userType === 'ADM') {
+            window.location.href = "{{ route('admin.index') }}";
+        } else {
+            window.location.href = "{{ route('cart.checkout') }}";
         }
-        document.addEventListener("DOMContentLoaded", function () {
-     if (sessionStorage.getItem('clear_shipping')) {
-        clearCartData();
-        sessionStorage.removeItem('clear_shipping');   
     }
 
-     document.getElementById('downloadPdfButton').addEventListener('click', function () {
-        sessionStorage.setItem('clear_shipping', 'true');   
+    document.addEventListener("DOMContentLoaded", function () {
+        if (sessionStorage.getItem('clear_shipping')) {
+            clearCartData();
+            sessionStorage.removeItem('clear_shipping');
+        }
+
+        document.getElementById('downloadPdfButton').addEventListener('click', function () {
+            sessionStorage.setItem('clear_shipping', 'true');
+        });
     });
-});
 
-// دالة لحذف بيانات الشحن من localStorage
-function clearCartData() {
-    localStorage.removeItem('cartData');
-    console.log("done");
-}
+    function clearCartData() {
+        localStorage.removeItem('cartData');
+        console.log("Cart cleared");
+    }
+</script>
 
-    </script>
-    
 @endpush
+
  
