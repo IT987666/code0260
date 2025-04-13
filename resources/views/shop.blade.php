@@ -944,27 +944,24 @@
 
     <script>
         document.querySelectorAll('.description-input').forEach(textarea => {
-            textarea.addEventListener('keyup', function(event) {
-                if (event.keyCode === 13 && !event.shiftKey) {
-                    event.preventDefault();
+            let typingTimer;
+            const doneTypingInterval = 2000; // 2 seconds after user stops typing
+
+            textarea.addEventListener('input', function() {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => {
                     this.closest('.description-form').submit();
-                }
+                }, doneTypingInterval);
+            });
+
+            textarea.addEventListener('keydown', function() {
+                clearTimeout(typingTimer);
+
             });
         });
 
 
 
-        $(function() {
-            $(".qty-control__increase").on("click", function() {
-                $(this).closest('form').submit();
-            });
-            $(".qty-control__reduce").on("click", function() {
-                $(this).closest('form').submit();
-            });
-            $('.remove-cart').on("click", function() {
-                $(this).closest('form').submit();
-            });
-        })
     </script>
     <script>
         $(document).ready(function() {
