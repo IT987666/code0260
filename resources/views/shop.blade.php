@@ -301,7 +301,8 @@
             margin: auto;
             /* جعل الجدولين في المنتصف */
             text-align: center;
-            margin-left: -15%; /* تحريك العنصر نحو اليمين */
+            margin-left: -15%;
+            /* تحريك العنصر نحو اليمين */
 
         }
 
@@ -391,7 +392,7 @@
             font-size: 14px;
         }
     </style>
-       <style>
+    <style>
         .spinner {
             width: 60px;
             height: 60px;
@@ -408,23 +409,23 @@
             0% {
                 transform: rotate(0deg);
                 border-top-color: #dbdbdbc4;
-             }
+            }
 
             50% {
                 border-top-color: #20bec6;
-             }
+            }
 
             100% {
                 transform: rotate(360deg);
                 border-top-color: #0c4b64;
-             }
+            }
 
         }
     </style>
 
     <main class="pt-90">
         <section class="shop-main container">
-            
+
             <!-- Product List -->
             <div class="product-container">
                 <h3>Products</h3>
@@ -442,102 +443,113 @@
                 </div>
             </div>
 
-         
-         
-      <!-- Cart Table -->
-      <div class="cart-container">
-        <div style="height: 22px;"></div>
-        <h3>Selected Products</h3>
-        <span style="display: block; height: 20px;"></span>
-        <div style="height: 50px;"></div>
-    
-        <table>
-            <colgroup>
-                <col style="width:30%;"> <!-- المنتج -->
-                <col style="width: 15%;"> <!-- السعر -->
-                <col style="width: 15%;"> <!-- المساحة -->
-                <col style="width: 15%;"> <!-- الكمية -->
-                <col style="width: 20%;"> <!-- المجموع -->
-                <col style="width: 30%;"> <!-- الوصف (أعرض) -->
-                <col style="width: 20%;"> <!-- الإجراءات (أعرض) -->
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Area</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th>Description</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-    
-            <tbody>
-                @if ($items->count() > 0)
-                    @foreach ($items as $item)
+
+
+            <!-- Cart Table -->
+            <div class="cart-container">
+                <div style="height: 22px;"></div>
+                <h3>Selected Products</h3>
+                <span style="display: block; height: 20px;"></span>
+                <div style="height: 50px;"></div>
+
+                <table>
+                    <colgroup>
+                        <col style="width:30%;"> <!-- المنتج -->
+                        <col style="width: 15%;"> <!-- السعر -->
+                        <col style="width: 15%;"> <!-- المساحة -->
+                        <col style="width: 15%;"> <!-- الكمية -->
+                        <col style="width: 20%;"> <!-- المجموع -->
+                        <col style="width: 30%;"> <!-- الوصف (أعرض) -->
+                        <col style="width: 20%;"> <!-- الإجراءات (أعرض) -->
+                    </colgroup>
+                    <thead>
                         <tr>
-                            <td>{{ $item->name }}</td>
-                            <td>
-                                <form method="POST" action="{{ route('cart.price.update', ['rowId' => $item->rowId]) }}">
-                                    @csrf
-                                    @method('PUT')
-                                     <input type="number" name="price" value="{{ $item->price }}" step="0.01" min="0" oninput="checkPrice(this)" />
-
-<script>
-    function checkPrice(input) {
-        if (input.value < 0) {
-            input.value = 0;
-        }
-    }
-</script>
-
-                                </form>
-                            </td>
-    
-                            <td>
-                                <form method="POST" action="{{ route('cart.area.update', ['rowId' => $item->rowId]) }}">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="text" name="area" value="{{ $item->options['area'] ?? '' }}" />
-                                </form>
-                            </td>
-    
-                            <td>
-                                <form method="POST" action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="number" name="qty" value="{{ $item->qty }}" min="1" />
-                                </form>
-                            </td>
-                            <td class="total-price">${{ $item->subTotal() }}</td>
-                            <td>
-                                <form method="POST" action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}" class="description-form">
-                                    @csrf
-                                    @method('PUT')
-                                    <textarea name="description" class="description-input" data-row-id="{{ $item->rowId }}">{{ $item->options['description'] }}</textarea>
-                                </form>
-                            </td>
-                            <td>
-                                <div class="button-group">
-                                    <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}" class="btn btn-primary">Edit Specifications</a>
-                                    <form method="POST" action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-danger" style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
-                                    </form>
-                                </div>
-                            </td>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Area</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Description</th>
+                            <th>Actions</th>
                         </tr>
-                    @endforeach
-                @else
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 20px;">No items selected.</td>
-                    </tr>
-                @endif
-            </tbody>
-        </table>
-    </div>
+                    </thead>
+
+                    <tbody>
+                        @if ($items->count() > 0)
+                            @foreach ($items as $item)
+                                <tr>
+                                    <td>{{ $item->name }}</td>
+                                    <td>
+                                        <form method="POST"
+                                            action="{{ route('cart.price.update', ['rowId' => $item->rowId]) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="number" name="price" value="{{ $item->price }}" step="0.01"
+                                                min="0" oninput="checkPrice(this)" />
+
+                                            <script>
+                                                function checkPrice(input) {
+                                                    if (input.value < 0) {
+                                                        input.value = 0;
+                                                    }
+                                                }
+                                            </script>
+
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST"
+                                            action="{{ route('cart.area.update', ['rowId' => $item->rowId]) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="text" name="area"
+                                                value="{{ $item->options['area'] ?? '' }}" />
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <form method="POST"
+                                            action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="number" name="qty" value="{{ $item->qty }}"
+                                                min="1" />
+                                        </form>
+                                    </td>
+                                    <td class="total-price">${{ $item->subTotal() }}</td>
+                                    <td>
+                                        <form method="POST"
+                                            action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}"
+                                            class="description-form">
+                                            @csrf
+                                            @method('PUT')
+                                            <textarea name="description" class="description-input" data-row-id="{{ $item->rowId }}">{{ $item->options['description'] }}</textarea>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <div class="button-group">
+                                            <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}"
+                                                class="btn btn-primary">Edit Specifications</a>
+                                            <form method="POST"
+                                                action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-danger"
+                                                    style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 20px;">No items selected.</td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
             <div class="cart-container">
                 <h3>Shipping Details</h3>
                 <form id="shippingForm" action="{{ route('shipping.store') }}" method="POST">
@@ -574,9 +586,10 @@
                                     <input type="number" name="quantity" id="quantity" value="1" min="1" />
                                 </td>
                                 <td>
-                                    <input type="number" name="unit_price" id="unitPrice" value="0.00" step="0.01" min="0" oninput="checkPrice(this)" />
+                                    <input type="number" name="unit_price" id="unitPrice" value="0.00" step="0.01"
+                                        min="0" oninput="checkPrice(this)" />
                                 </td>
-                                
+
                                 <script>
                                     function checkPrice(input) {
                                         if (input.value < 0) {
@@ -584,7 +597,7 @@
                                         }
                                     }
                                 </script>
-                                
+
                                 <td>
                                     <input type="number" id="shippingCost" value="0.00" step="0.01" readonly />
                                 </td>
@@ -640,10 +653,10 @@
             </div>
 
 
-   
+
             <div style="text-align: center; margin-top: 100px;">
-                <button type="button" class="btn btn-primary" id="proceedToOrder" @if ($items->count() < 1) disabled @endif
-                    style="font-size: 16px; padding: 10px 20px;">
+                <button type="button" class="btn btn-primary" id="proceedToOrder"
+                    @if ($items->count() < 1) disabled @endif style="font-size: 16px; padding: 10px 20px;">
                     Proceed to Order
                 </button>
             </div>
@@ -655,272 +668,290 @@
                 <p style="color: white; font-size: 18px; margin-top: 10px;">Loading, please wait...</p>
             </div>
 
-          
-         
+
+
 
         </section>
     </main>
 @endsection
 @push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let searchBox = document.getElementById("searchBox");
+            let dropdownContainer = document.getElementById("dropdownContainer");
+            let productDropdown = document.getElementById("productDropdown");
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let searchBox = document.getElementById("searchBox");
-        let dropdownContainer = document.getElementById("dropdownContainer");
-        let productDropdown = document.getElementById("productDropdown");
+            // إظهار القائمة عند النقر على حقل البحث
+            searchBox.addEventListener("focus", function() {
+                dropdownContainer.style.display = "block";
+            });
 
-        // إظهار القائمة عند النقر على حقل البحث
-        searchBox.addEventListener("focus", function() {
-            dropdownContainer.style.display = "block";
+            // إخفاء القائمة عند النقر خارجها
+            document.addEventListener("click", function(event) {
+                if (!dropdownContainer.contains(event.target) && event.target !== searchBox) {
+                    dropdownContainer.style.display = "none";
+                }
+            });
+
+            // البحث داخل القائمة
+            searchBox.addEventListener("keyup", function() {
+                let query = this.value.toLowerCase();
+                let items = productDropdown.getElementsByClassName("dropdown-item");
+                let hasResults = false;
+
+                for (let item of items) {
+                    let match = item.textContent.toLowerCase().includes(query);
+                    item.style.display = match ? "flex" : "none";
+                    if (match) hasResults = true;
+                }
+
+                // إظهار القائمة فقط إذا كان هناك نتائج
+                dropdownContainer.style.display = hasResults ? "block" : "none";
+            });
+
+            // إضافة المنتج عند النقر على الزر
+            productDropdown.addEventListener("click", function(event) {
+                if (event.target.classList.contains("add-to-cart-btn")) {
+                    let productId = event.target.getAttribute("data-id");
+
+                    fetch("{{ route('cart.add') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            id: productId,
+                            quantity: 1
+                        })
+                    }).then(() => window.location.replace(window.location.href));
+                }
+            });
         });
+    </script>
+    <script>
+        const quantityInput = document.getElementById('quantity');
+        const unitPriceInput = document.getElementById('unitPrice');
+        const shippingTypeSelect = document.getElementById('shippingType');
+        const shippingCostInput = document.getElementById('shippingCost');
+        const productTotalSpan = document.getElementById('product-total');
+        const totalCostSpan = document.getElementById('total-cost');
+        const subtotalInput = document.getElementById('subtotal');
 
-        // إخفاء القائمة عند النقر خارجها
-        document.addEventListener("click", function(event) {
-            if (!dropdownContainer.contains(event.target) && event.target !== searchBox) {
-                dropdownContainer.style.display = "none";
+        function saveToLocalStorage() {
+            const formData = {
+                quantity: quantityInput.value,
+                unit_price: unitPriceInput.value,
+                shipping_type: shippingTypeSelect.value,
+                shipping_cost: shippingCostInput.value,
+                total_cost: totalCostSpan.textContent.replace(',', ''),
+                subtotal: subtotalInput.value
+            };
+            localStorage.setItem('cartData', JSON.stringify(formData));
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = JSON.parse(localStorage.getItem('cartData'));
+            if (savedData) {
+                quantityInput.value = savedData.quantity || "";
+                unitPriceInput.value = savedData.unit_price || "";
+                shippingTypeSelect.value = savedData.shipping_type || "";
+                shippingCostInput.value = savedData.shipping_cost || "";
+                subtotalInput.value = savedData.subtotal || "";
+                totalCostSpan.textContent = savedData.total_cost || "0.00";
+                updateTotalCost();
             }
+        }
+
+        function calculateProductSubtotal() {
+            let productTotal = 0;
+            document.querySelectorAll('.total-price').forEach(item => {
+                let price = parseFloat(item.textContent.replace(/[^0-9.]/g, '')) || 0;
+                productTotal += price;
+            });
+            return parseFloat(productTotal.toFixed(2));
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('proceedToOrder').addEventListener('click', function(event) {
+                event.preventDefault();
+                document.getElementById('shippingTypeInput').value = shippingTypeSelect.value;
+                document.getElementById('quantityInput').value = quantityInput.value;
+                document.getElementById('unitPriceInput').value = unitPriceInput.value;
+                document.getElementById('shippingCostInput').value = shippingCostInput.value;
+                document.getElementById('totalCostInput').value = totalCostSpan.textContent.replace(',',
+                    '');
+                debugger;
+                let descriptions = document.querySelectorAll('.description-input');
+                let forms = [];
+                descriptions.forEach(textarea => {
+                    let form = textarea.closest('.description-form');
+                    if (form) {
+                        forms.push(fetch(form.action, {
+                            method: "POST",
+                            body: new FormData(form),
+                            headers: {
+                                "X-CSRF-TOKEN": document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            }
+                        }));
+                    }
+                });
+
+                const shippingForm = document.getElementById('shippingForm');
+                forms.push(fetch(shippingForm.action, {
+                    method: "POST",
+                    body: new FormData(shippingForm),
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content')
+                    }
+                }));
+
+                Promise.all(forms).then(() => {
+                    window.location.href = "{{ route('cart.order') }}";
+                });
+            });
         });
 
-        // البحث داخل القائمة
-        searchBox.addEventListener("keyup", function() {
-            let query = this.value.toLowerCase();
-            let items = productDropdown.getElementsByClassName("dropdown-item");
-            let hasResults = false;
+        function updateTotalCost(shippingCost = null) {
+            const productTotal = calculateProductSubtotal();
+            const quantity = parseFloat(quantityInput.value) || 1;
+            const shippingUnitPrice = shippingCost !== null ? shippingCost : (parseFloat(unitPriceInput.value) || 0);
+            const totalShippingCost = quantity * shippingUnitPrice;
 
-            for (let item of items) {
-                let match = item.textContent.toLowerCase().includes(query);
-                item.style.display = match ? "flex" : "none";
-                if (match) hasResults = true;
-            }
+            shippingCostInput.value = totalShippingCost.toFixed(2);
+            productTotalSpan.textContent = productTotal.toLocaleString('en-US', {
+                minimumFractionDigits: 2
+            });
+            subtotalInput.value = productTotal.toFixed(2);
 
-            // إظهار القائمة فقط إذا كان هناك نتائج
-            dropdownContainer.style.display = hasResults ? "block" : "none";
-        });
+            const totalWithShipping = productTotal + totalShippingCost;
+            totalCostSpan.textContent = totalWithShipping.toLocaleString('en-US', {
+                minimumFractionDigits: 2
+            });
 
-        // إضافة المنتج عند النقر على الزر
-        productDropdown.addEventListener("click", function(event) {
-            if (event.target.classList.contains("add-to-cart-btn")) {
-                let productId = event.target.getAttribute("data-id");
+            autoSaveShippingDetails();
+            saveToLocalStorage();
+        }
 
-                fetch("{{ route('cart.add') }}", {
+        function fetchShippingCost() {
+            const shippingType = shippingTypeSelect.value;
+
+            fetch("{{ route('shipping.update') }}", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
                     body: JSON.stringify({
-                        id: productId,
-                        quantity: 1
+                        shipping_type: shippingType
                     })
-                }).then(() => window.location.replace(window.location.href));
-            }
-        });
-    });
-</script>
-<script>
-    const quantityInput = document.getElementById('quantity');
-const unitPriceInput = document.getElementById('unitPrice');
-const shippingTypeSelect = document.getElementById('shippingType');
-const shippingCostInput = document.getElementById('shippingCost');
-const productTotalSpan = document.getElementById('product-total');
-const totalCostSpan = document.getElementById('total-cost');
-const subtotalInput = document.getElementById('subtotal');
-
-function saveToLocalStorage() {
-    const formData = {
-        quantity: quantityInput.value,
-        unit_price: unitPriceInput.value,
-        shipping_type: shippingTypeSelect.value,
-        shipping_cost: shippingCostInput.value,
-        total_cost: totalCostSpan.textContent.replace(',', ''),
-        subtotal: subtotalInput.value
-    };
-    localStorage.setItem('cartData', JSON.stringify(formData));
-}
-
-function loadFromLocalStorage() {
-    const savedData = JSON.parse(localStorage.getItem('cartData'));
-    if (savedData) {
-        quantityInput.value = savedData.quantity || "";
-        unitPriceInput.value = savedData.unit_price || "";
-        shippingTypeSelect.value = savedData.shipping_type || "";
-        shippingCostInput.value = savedData.shipping_cost || "";
-        subtotalInput.value = savedData.subtotal || "";
-        totalCostSpan.textContent = savedData.total_cost || "0.00";
-        updateTotalCost();
-    }
-}
-
-function calculateProductSubtotal() {
-    let productTotal = 0;
-    document.querySelectorAll('.total-price').forEach(item => {
-        let price = parseFloat(item.textContent.replace(/[^0-9.]/g, '')) || 0;
-        productTotal += price;
-    });
-    return parseFloat(productTotal.toFixed(2));
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById('proceedToOrder').addEventListener('click', function(event) {
-        event.preventDefault();
-        document.getElementById('shippingTypeInput').value = shippingTypeSelect.value;
-        document.getElementById('quantityInput').value = quantityInput.value;
-        document.getElementById('unitPriceInput').value = unitPriceInput.value;
-        document.getElementById('shippingCostInput').value = shippingCostInput.value;
-        document.getElementById('totalCostInput').value = totalCostSpan.textContent.replace(',', '');
-
-        let descriptions = document.querySelectorAll('.description-input');
-        let forms = [];
-        descriptions.forEach(textarea => {
-            let form = textarea.closest('.description-form');
-            if (form) {
-                forms.push(fetch(form.action, {
-                    method: "POST",
-                    body: new FormData(form),
-                    headers: {
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.shipping_cost !== undefined) {
+                        updateTotalCost(data.shipping_cost);
                     }
-                }));
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function autoSaveShippingDetails() {
+            const formData = {
+                shipping_type: shippingTypeSelect.value,
+                quantity: quantityInput.value,
+                unit_price: unitPriceInput.value,
+                shipping_cost: shippingCostInput.value,
+                total_cost: totalCostSpan.textContent.replace(',', '')
+            };
+
+            fetch("{{ route('shipping.store') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("Shipping details saved successfully!");
+                    }
+                })
+                .catch(error => console.error('Error saving shipping details:'));
+        }
+
+        const observer = new MutationObserver(() => updateTotalCost());
+        document.querySelectorAll('.total-price').forEach(element => {
+            observer.observe(element, {
+                childList: true
+            });
+        });
+
+        quantityInput.addEventListener('input', () => {
+            updateTotalCost();
+            saveToLocalStorage();
+        });
+        unitPriceInput.addEventListener('input', () => {
+            updateTotalCost();
+            saveToLocalStorage();
+        });
+        shippingTypeSelect.addEventListener('change', () => {
+            fetchShippingCost();
+            saveToLocalStorage();
+        });
+
+        window.onload = () => {
+            loadFromLocalStorage();
+            updateTotalCost();
+        };
+
+        console.log("Auto-save shipping script loaded!");
+        document.addEventListener("DOMContentLoaded", function() {
+            if (sessionStorage.getItem('clear_shipping')) {
+                clearCartData();
+                sessionStorage.removeItem('clear_shipping');
             }
         });
 
-        const shippingForm = document.getElementById('shippingForm');
-        forms.push(fetch(shippingForm.action, {
-            method: "POST",
-            body: new FormData(shippingForm),
-            headers: {
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        }));
-
-        Promise.all(forms).then(() => {
-            window.location.href = "{{ route('cart.order') }}";
-        });
-    });
-});
-
-function updateTotalCost(shippingCost = null) {
-    const productTotal = calculateProductSubtotal();
-    const quantity = parseFloat(quantityInput.value) || 1;
-    const shippingUnitPrice = shippingCost !== null ? shippingCost : (parseFloat(unitPriceInput.value) || 0);
-    const totalShippingCost = quantity * shippingUnitPrice;
-
-    shippingCostInput.value = totalShippingCost.toFixed(2);
-    productTotalSpan.textContent = productTotal.toLocaleString('en-US', { minimumFractionDigits: 2 });
-    subtotalInput.value = productTotal.toFixed(2);
-
-    const totalWithShipping = productTotal + totalShippingCost;
-    totalCostSpan.textContent = totalWithShipping.toLocaleString('en-US', { minimumFractionDigits: 2 });
-
-    autoSaveShippingDetails();
-    saveToLocalStorage();
-}
-
-function fetchShippingCost() {
-    const shippingType = shippingTypeSelect.value;
-
-    fetch("{{ route('shipping.update') }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({ shipping_type: shippingType })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.shipping_cost !== undefined) {
-            updateTotalCost(data.shipping_cost);
+        function clearCartData() {
+            localStorage.removeItem('cartData');
+            console.log(" done");
         }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-function autoSaveShippingDetails() {
-    const formData = {
-        shipping_type: shippingTypeSelect.value,
-        quantity: quantityInput.value,
-        unit_price: unitPriceInput.value,
-        shipping_cost: shippingCostInput.value,
-        total_cost: totalCostSpan.textContent.replace(',', '')
-    };
-
-    fetch("{{ route('shipping.store') }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log("Shipping details saved successfully!");
-        }
-    })
-    .catch(error => console.error('Error saving shipping details:', error));
-}
-
-const observer = new MutationObserver(() => updateTotalCost());
-document.querySelectorAll('.total-price').forEach(element => {
-    observer.observe(element, { childList: true });
-});
-
-quantityInput.addEventListener('input', () => { updateTotalCost(); saveToLocalStorage(); });
-unitPriceInput.addEventListener('input', () => { updateTotalCost(); saveToLocalStorage(); });
-shippingTypeSelect.addEventListener('change', () => { fetchShippingCost(); saveToLocalStorage(); });
-
-window.onload = () => {
-    loadFromLocalStorage();
-    updateTotalCost();
-};
-
-console.log("Auto-save shipping script loaded!");
-document.addEventListener("DOMContentLoaded", function () {
-     if (sessionStorage.getItem('clear_shipping')) {
-        clearCartData();
-        sessionStorage.removeItem('clear_shipping');  
-    }
-});
-
- function clearCartData() {
-    localStorage.removeItem('cartData');
-    console.log(" done");
-}
-
-  
-</script>
-<script>
-    document.getElementById("proceedToOrder").addEventListener("click", function() {
-        let loadingScreen = document.getElementById("loadingScreen");
-        loadingScreen.style.display = "flex";      
-        loadingScreen.style.position = "fixed"; 
-
-        setTimeout(function() {
-            window.location.href = "{{ route('cart.order') }}";
-        }, 3000);
-    });
-
-     window.onpageshow = function(event) {
-        if (event.persisted) {
+    </script>
+    <script>
+        document.getElementById("proceedToOrder").addEventListener("click", function() {
             let loadingScreen = document.getElementById("loadingScreen");
-            loadingScreen.style.display = "none";
-        }
-    };
-</script>
+            loadingScreen.style.display = "flex";
+            loadingScreen.style.position = "fixed";
+
+            setTimeout(function() {
+                window.location.href = "{{ route('cart.order') }}";
+            }, 3000);
+        });
+
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                let loadingScreen = document.getElementById("loadingScreen");
+                loadingScreen.style.display = "none";
+            }
+        };
+    </script>
 
 
     <script>
-      
-      document.querySelectorAll('.description-input').forEach(textarea => {
-             textarea.addEventListener('keydown', function(event) {
-                 if (event.key === 'Enter') {
-                     event.preventDefault();
-                     this.closest('.description-form').submit();
-                    }
-                });
+        document.querySelectorAll('.description-input').forEach(textarea => {
+            textarea.addEventListener('keyup', function(event) {
+                if (event.keyCode === 13 && !event.shiftKey) {
+                    event.preventDefault();
+                    this.closest('.description-form').submit();
+                }
             });
+        });
+
 
 
         $(function() {
@@ -1021,30 +1052,28 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
         $(document).ready(function() {
-     $("textarea[name='description']").on("blur", function() {
-        var row = $(this).closest("tr");  
-        var descriptionInput = $(this);
-        var description = descriptionInput.val();  
+            $("textarea[name='description']").on("blur", function() {
+                var row = $(this).closest("tr");
+                var descriptionInput = $(this);
+                var description = descriptionInput.val();
 
-         $.ajax({
-            url: descriptionInput.closest("form").attr("action"),
-            method: "POST",
-            data: {
-                _token: "{{ csrf_token() }}",
-                _method: "PUT",
-                description: description
-            },
-            success: function(response) {
-                console.log("Description updated successfully", response);
-            },
-            error: function(error) {
-                console.log("Error updating description", error);
-            }
+                $.ajax({
+                    url: descriptionInput.closest("form").attr("action"),
+                    method: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        _method: "PUT",
+                        description: description
+                    },
+                    success: function(response) {
+                        console.log("Description updated successfully", response);
+                    },
+                    error: function(error) {
+                        console.log("Error updating description", error);
+                    }
+                });
+            });
         });
-    });
-});
-
-        
     </script>
 @endpush
 @push('scripts')
