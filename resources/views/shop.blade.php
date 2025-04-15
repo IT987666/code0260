@@ -478,68 +478,43 @@
                         @if ($items->count() > 0)
                             @foreach ($items as $item)
                                 <tr>
-                                    <td>{{ $item->name }}</td>
-                                    <td>
-                                        <form method="POST"
-                                            action="{{ route('cart.price.update', ['rowId' => $item->rowId]) }}">
-                                            @csrf
-                                            @method('PUT')
-                                            <input type="number" name="price" value="{{ $item->price }}" step="0.01"
-                                                min="0" oninput="checkPrice(this)" />
-
-                                            <script>
-                                                function checkPrice(input) {
-                                                    if (input.value < 0) {
-                                                        input.value = 0;
-                                                    }
-                                                }
-                                            </script>
-
-                                        </form>
-                                    </td>
-
-                                    <td>
-                                        <form method="POST"
-                                            action="{{ route('cart.area.update', ['rowId' => $item->rowId]) }}">
-                                            @csrf
-                                            @method('PUT')
-                                            <input type="text" name="area"
-                                                value="{{ $item->options['area'] ?? '' }}" />
-                                        </form>
-                                    </td>
-
-                                    <td>
-                                        <form method="POST"
-                                            action="{{ route('cart.qty.update', ['rowId' => $item->rowId]) }}">
-                                            @csrf
-                                            @method('PUT')
-                                            <input type="number" name="qty" value="{{ $item->qty }}"
-                                                min="1" />
-                                        </form>
-                                    </td>
-                                    <td class="total-price">${{ $item->subTotal() }}</td>
-                                    <td>
-                                        <form method="POST"
-                                            action="{{ route('cart.description.update', ['rowId' => $item->rowId]) }}"
-                                            class="description-form">
-                                            @csrf
-                                            @method('PUT')
+                                    <form method="POST" action="{{ route('cart.item.updateAll', ['rowId' => $item->rowId]) }}">
+                                        @csrf
+                                        @method('PUT')
+                    
+                                        <td>{{ $item->name }}</td>
+                    
+                                        <td>
+                                            <input type="number" name="price" value="{{ $item->price }}" step="0.01" min="0" oninput="checkPrice(this)" />
+                                        </td>
+                    
+                                        <td>
+                                            <input type="text" name="area" value="{{ $item->options['area'] ?? '' }}" />
+                                        </td>
+                    
+                                        <td>
+                                            <input type="number" name="qty" value="{{ $item->qty }}" min="1" />
+                                        </td>
+                    
+                                        <td class="total-price">${{ $item->subTotal() }}</td>
+                    
+                                        <td>
                                             <textarea name="description" class="description-input" data-row-id="{{ $item->rowId }}">{{ $item->options['description'] }}</textarea>
-                                        </form>
-                                    </td>
-                                    <td>
-                                        <div class="button-group">
-                                            <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}"
-                                                class="btn btn-primary">Edit Specifications</a>
-                                            <form method="POST"
-                                                action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger"
-                                                    style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
-                                            </form>
-                                        </div>
-                                    </td>
+                                        </td>
+                    
+                                        <td>
+                                            <div class="button-group">
+                                                <a href="{{ route('cart.edit', ['rowId' => $item->rowId]) }}" class="btn btn-primary">Edit Specifications</a>
+                    
+                                                {{-- زر الحذف فقط --}}
+                                                </form> {{-- أغلقنا الفورم الأساسي هون قبل زر الحذف --}}
+                                                <form method="POST" action="{{ route('cart.item.remove', ['rowId' => $item->rowId]) }}" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-danger" style="border: none; background: none; color: rgba(32, 190, 198, 0.5); font-size: 20px;">&times;</button>
+                                                </form>
+                                            </div>
+                                        </td>
                                 </tr>
                             @endforeach
                         @else
@@ -548,6 +523,15 @@
                             </tr>
                         @endif
                     </tbody>
+                    
+                    <script>
+                        function checkPrice(input) {
+                            if (input.value < 0) {
+                                input.value = 0;
+                            }
+                        }
+                    </script>
+                    
                 </table>
             </div>
             <div class="cart-container">
@@ -675,6 +659,16 @@
     </main>
 @endsection
 @push('scripts')
+<script>
+    // إذا رجع المستخدم للصفحة من الـ history (يعني عن طريق زر الرجوع)
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted || window.performance.getEntriesByType("navigation")[0].type === "back_forward") {
+            // Reload الصفحة تلقائياً
+            window.location.reload();
+        }
+    });
+</script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let searchBox = document.getElementById("searchBox");
@@ -940,138 +934,210 @@
             }
         };
     </script>
+ 
+{{-- <script>
+    $(document).ready(function () {
+        // تحديث السعر في الواجهة فقط (بدون إرسال للباك)
+        $("input[name='price'], input[name='qty']").on("input", function () {
+            let row = $(this).closest("tr");
+            let price = parseFloat(row.find("input[name='price']").val()) || 0;
+            let qty = parseInt(row.find("input[name='qty']").val()) || 1;
+            let total = (price * qty).toFixed(2);
+            row.find(".total-price").text("$" + total);
 
+            // منع السالب
+            if (price < 0) {
+                row.find("input[name='price']").val(0);
+                row.find(".total-price").text("$" + (0 * qty).toFixed(2));
+            }
+        });
 
+        // عند فقدان التركيز من حقل الوصف، نرسل كل شي للباك مرة وحدة
+        $("textarea[name='description']").on("blur", function () {
+            let row = $(this).closest("tr");
+            let form = row.find("form").first(); // نفترض إنو أول فورم هو المشترك
+
+            let price = parseFloat(row.find("input[name='price']").val()) || 0;
+            let qty = parseInt(row.find("input[name='qty']").val()) || 1;
+            let area = row.find("input[name='area']").val();
+            let description = row.find("textarea[name='description']").val();
+
+            $.ajax({
+                url: form.attr("action"),
+                method: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    _method: "PUT",
+                    price: price,
+                    qty: qty,
+                    area: area,
+                    description: description
+                },
+                success: function (response) {
+                    console.log("All data updated successfully on blur");
+                },
+                error: function (error) {
+                    console.log("Error updating data", error);
+                }
+            });
+        });
+    });
+</script> 
+
+ <script>
+    $(document).ready(function () {
+        let timers = {};
+
+        $("tr").each(function () {
+            const row = $(this);
+
+            // لما المستخدم يطلع من أي عنصر داخل الصف
+            row.on("focusout", function () {
+                const rowId = row.index();
+
+                // نعمل تايمر صغير لنتأكد إنو فعلاً طلع من الصف
+                timers[rowId] = setTimeout(function () {
+                    // إذا ولا عنصر بالصف عليه تركيز (focus)
+                    if (!row.find(":focus").length) {
+                        sendRowData(row);
+                    }
+                }, 200); // استنى شوي بعد فقدان التركيز
+            });
+
+            // إذا رجع فوكس على عنصر داخل الصف قبل الوقت المحدد، نوقف الإرسال
+            row.on("focusin", function () {
+                const rowId = row.index();
+                clearTimeout(timers[rowId]);
+            });
+        });
+
+        // بس نغير السعر أو الكمية نحدث السعر بالواجهة (ما منبعت شي هون)
+        $("input[name='price'], input[name='qty']").on("input", function () {
+            let row = $(this).closest("tr");
+            let price = parseFloat(row.find("input[name='price']").val()) || 0;
+            let qty = parseInt(row.find("input[name='qty']").val()) || 1;
+            let total = (price * qty).toFixed(2);
+            row.find(".total-price").text("$" + total);
+
+            // منع السالب
+            if (price < 0) {
+                row.find("input[name='price']").val(0);
+                row.find(".total-price").text("$" + (0 * qty).toFixed(2));
+            }
+        });
+
+        // دالة إرسال القيم
+        function sendRowData(row) {
+            let form = row.find("form").first();
+
+            let price = parseFloat(row.find("input[name='price']").val()) || 0;
+            let qty = parseInt(row.find("input[name='qty']").val()) || 1;
+            let area = row.find("input[name='area']").val();
+            let description = row.find("textarea[name='description']").val();
+
+            $.ajax({
+                url: form.attr("action"),
+                method: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    _method: "PUT",
+                    price: price,
+                    qty: qty,
+                    area: area,
+                    description: description
+                },
+                success: function (response) {
+                    console.log("Row data updated successfully");
+                },
+                error: function (error) {
+                    console.log("Error updating row data", error);
+                }
+            });
+        }
+    }); --}}
     <script>
-        document.querySelectorAll('.description-input').forEach(textarea => {
-            let typingTimer;
-            const doneTypingInterval = 2000; // 2 seconds after user stops typing
-
-            textarea.addEventListener('input', function() {
-                clearTimeout(typingTimer);
-                typingTimer = setTimeout(() => {
-                    this.closest('.description-form').submit();
-                }, doneTypingInterval);
-            });
-
-            textarea.addEventListener('keydown', function() {
-                clearTimeout(typingTimer);
-
-            });
-        });
-
-
-
-    </script>
-    <script>
-        $(document).ready(function() {
-            $("input[name='price']").on("input", function() {
-                var row = $(this).closest("tr"); // Get the closest table row
-                var priceInput = $(this); // The input field
-                var price = parseFloat(priceInput.val()) || 0;
-                var area = parseFloat(priceInput.val()) || 0;
-
-                var quantity = parseInt(row.find("input[name='qty']").val()) || 1;
-                var total = (price * quantity).toFixed(2); // Calculate total
-
-                row.find(".total-price").text("$" + total); // Update total in UI
-
-                // Send AJAX request to update the price in the database
-                $.ajax({
-                    url: priceInput.closest("form").attr("action"),
-                    method: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        _method: "PUT",
-                        price: price
-                    },
-                    success: function(response) {
-                        console.log("Price updated successfully");
-                    },
-                    error: function(error) {
-                        console.log("Error updating price", error);
+        $(document).ready(function () {
+            let timers = {};
+            let rowSent = {}; // لتتبع إذا تم الإرسال لكل tr
+    
+            $("tr").each(function () {
+                const row = $(this);
+                const rowId = row.index();
+                rowSent[rowId] = false;
+    
+                // لما المستخدم يطلع من أي عنصر داخل الصف
+                row.on("focusout", function () {
+                    timers[rowId] = setTimeout(function () {
+                        if (!row.find(":focus").length) {
+                            // إذا ما تم الإرسال من قبل، أرسل
+                            if (!rowSent[rowId]) {
+                                sendRowData(row, rowId);
+                            }
+                        }
+                    }, 200);
+                });
+    
+                // إلغاء التايمر إذا رجع المستخدم على العنصر بسرعة
+                row.on("focusin", function () {
+                    clearTimeout(timers[rowId]);
+                });
+    
+                // لما يعدل المستخدم أي شي بعد ما تم إرسال البيانات، نعمل ريلود
+                row.find("input, textarea").on("input", function () {
+                    if (rowSent[rowId]) {
+                        location.reload(); // إعادة تحميل الصفحة
                     }
                 });
             });
-
-            $("input[name='qty']").on("input", function() {
-                var row = $(this).closest("tr"); // Get the closest table row
-                var quantityInput = $(this);
-                var price = parseFloat(row.find("input[name='price']").val()) || 0;
-                var area = parseFloat(row.find("input[name='area']").val()) || 0;
-
-                var quantity = parseInt(quantityInput.val()) || 1;
-                var total = (price * quantity).toFixed(2); // Calculate total
-
-                row.find(".total-price").text("$" + total); // Update total in UI
-
-                // Send AJAX request to update the quantity
-                $.ajax({
-                    url: quantityInput.closest("form").attr("action"),
-                    method: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        _method: "PUT",
-                        qty: quantity
-                    },
-                    success: function(response) {
-                        console.log("Quantity updated successfully");
-                    },
-                    error: function(error) {
-                        console.log("Error updating quantity", error);
-                    }
-                });
+    
+            // تحديث السعر بالواجهة
+            $("input[name='price'], input[name='qty']").on("input", function () {
+                let row = $(this).closest("tr");
+                let price = parseFloat(row.find("input[name='price']").val()) || 0;
+                let qty = parseInt(row.find("input[name='qty']").val()) || 1;
+                let total = (price * qty).toFixed(2);
+                row.find(".total-price").text("$" + total);
+    
+                if (price < 0) {
+                    row.find("input[name='price']").val(0);
+                    row.find(".total-price").text("$" + (0 * qty).toFixed(2));
+                }
             });
-        });
-        $(document).ready(function() {
-            // تحديث الحقل Area عندما يفقد الحقل التركيز
-            $("input[name='area']").on("blur", function() {
-                var row = $(this).closest("tr"); // تحديد الصف الحالي
-                var areaInput = $(this);
-                var area = areaInput.val(); // قراءة القيمة المدخلة
-
-                // إرسال الطلب عبر AJAX لتحديث القيمة في الداتا بيز
+    
+            // دالة إرسال البيانات
+            function sendRowData(row, rowId) {
+                let form = row.find("form").first();
+    
+                let price = parseFloat(row.find("input[name='price']").val()) || 0;
+                let qty = parseInt(row.find("input[name='qty']").val()) || 1;
+                let area = row.find("input[name='area']").val();
+                let description = row.find("textarea[name='description']").val();
+    
                 $.ajax({
-                    url: areaInput.closest("form").attr("action"),
+                    url: form.attr("action"),
                     method: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",
                         _method: "PUT",
-                        area: area
-                    },
-                    success: function(response) {
-                        console.log("Area updated successfully", response);
-                    },
-                    error: function(error) {
-                        console.log("Error updating area", error);
-                    }
-                });
-            });
-        });
-        $(document).ready(function() {
-            $("textarea[name='description']").on("blur", function() {
-                var row = $(this).closest("tr");
-                var descriptionInput = $(this);
-                var description = descriptionInput.val();
-
-                $.ajax({
-                    url: descriptionInput.closest("form").attr("action"),
-                    method: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        _method: "PUT",
+                        price: price,
+                        qty: qty,
+                        area: area,
                         description: description
                     },
-                    success: function(response) {
-                        console.log("Description updated successfully", response);
+                    success: function (response) {
+                        console.log("Row data updated successfully");
+                        rowSent[rowId] = true; // حط علامة إنه هالصف أُرسل
                     },
-                    error: function(error) {
-                        console.log("Error updating description", error);
+                    error: function (error) {
+                        console.log("Error updating row data", error);
                     }
                 });
-            });
+            }
         });
     </script>
+    
+</script>
+
 @endpush
 @push('scripts')
     <script>

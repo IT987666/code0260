@@ -719,4 +719,39 @@ class CartController extends Controller
 
         return redirect()->back()->with('shipping_details', $shipping_details);
     }
+
+    public function updateAll(Request $request, $rowId)
+{
+    $request->validate([
+        'price' => 'required|numeric|min:0',
+        'qty' => 'required|integer|min:1',
+        'area' => 'nullable|string|max:255',
+        'description' => 'nullable|string|max:255',
+    ]);
+
+    try {
+        $item = Cart::instance('cart')->get($rowId);
+    } catch (\Surfsidemedia\Shoppingcart\Exceptions\InvalidRowIDException $e) {
+        return back()->with('error', 'Item not found in the cart');
+    }
+
+    if (!$item) {
+        return redirect()->back()->withErrors('The item does not exist in the cart.');
+    }
+
+    // تحديث السعر والكمية
+    Cart::instance('cart')->update($rowId, [
+        'price' => $request->price,
+        'qty' => $request->qty,
+        'options' => array_merge($item->options->toArray(), [
+            'area' => $request->area,
+            'description' => $request->description,
+        ])
+    ]);
+
+    Session::save();
+
+    return redirect()->back()->with('success', 'Item updated successfully!');
+}
+
 }

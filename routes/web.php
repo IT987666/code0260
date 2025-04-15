@@ -35,6 +35,7 @@ Route::post('/task-list/duplicate/{rowId}', [CartController::class, 'duplicateIt
 Route::delete('/task-list/remove/{rowId}', [CartController::class, 'remove_item'])->name('cart.item.remove');
 Route::delete('/task-list/clear', [CartController::class, 'empty_cart'])->name('cart.empty');
 
+Route::put('/cart/update-all/{rowId}', [CartController::class, 'updateAll'])->name('cart.item.updateAll');
 
 // في ملف routes/web.php
 Route::get('task-list/{rowId}/edit', [CartController::class, 'edit_cart_item'])->name('cart.edit');
